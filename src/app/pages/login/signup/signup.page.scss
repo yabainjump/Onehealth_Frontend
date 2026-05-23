@@ -1,0 +1,102 @@
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+  overflow: hidden;
+}
+
+ion-content {
+  overflow: hidden;
+}
+
+ion-list {
+  background: transparent;
+  transform: translateY(13vh);
+  max-width: 520px;
+  margin-inline: auto;
+
+  ion-item {
+    --min-height: 46px;
+    --padding-start: 12px;
+    --inner-padding-end: 10px;
+    border: 1px solid var(--ion-color-medium);
+    border-radius: 10px;
+  }
+
+  ion-input,
+  ion-select,
+  ion-note,
+  ion-label {
+    font-size: 0.92rem;
+  }
+
+  ion-label {
+    font-size: 0.86rem;
+  }
+
+  ion-icon[slot='end'] {
+    font-size: 1.05rem;
+  }
+
+  ion-row {
+    margin-bottom: 4vh;
+  }
+
+  ion-button {
+    width: 30vh;
+    margin: auto;
+  }
+
+  .alignItems {
+    ion-checkbox,
+    ion-note {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    ion-checkbox {
+      margin-right: 3vw;
+      --size: 1rem;
+    }
+  }
+
+  ion-col {
+    ion-note {
+      font-size: 0.82rem;
+    }
+  }
+
+  .phone-field {
+    --padding-start: 8px;
+    gap: 8px;
+
+    .phone-code-select {
+      min-width: 130px;
+      max-width: 45%;
+      border-right: 1px solid rgba(128, 128, 128, 0.35);
+      padding-right: 6px;
+      margin-right: 2px;
+    }
+  }
+}
+
+.backButton {
+  position: absolute;
+  top: 190px;
+  left: 15px;
+  font-size: 2rem;
+  pointer-events: auto;
+}
+
+.bg-decor {
+  position: relative;
+  pointer-events: none;
+}
+
+.circleBase {
+  pointer-events: none;
+}
+
+.form-list {
+  padding-top: 96px;
+  padding-bottom: 24px;
+}

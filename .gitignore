@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Angular / Ionic build and cache
+.angular/
+dist/
+www/
+coverage/
+.nyc_output/
+.cache/
+*.tsbuildinfo
+.eslintcache
+
+# Local env
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Optional local backups
+backup_config_before_legacy_restore/
+backup_src_before_legacy_restore/
+
+# IDE / OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

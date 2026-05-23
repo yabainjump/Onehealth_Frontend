@@ -1,0 +1,102 @@
+<ion-header >
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/dashbord"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Post detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="post" class="ion-padding">
+  <!-- Auteur -->
+  <div *ngIf="!post">
+    <ion-text color="danger">Aucun post à afficher ou en chargement...</ion-text>
+  </div>
+  <div class="post-header">
+    <ion-avatar slot="start">
+      <img [src]="post.author?.photoURL || 'assets/default-profile.png'" loading="lazy" decoding="async" />
+    </ion-avatar>
+    <div class="post-info">
+      <h2>{{ post.author?.firstName }} {{ post.author?.lastName }}</h2>
+      <!-- <p>{{ post.timestamp?.toDate() | date: 'short' }}</p> -->
+      <p>{{ post.timestamp | date: 'short' }}</p>
+    </div>
+  </div>
+
+  <!-- Contenu -->
+  <div
+    class="post-content"
+    [class.collapsed]="post.id && !expanded[post.id] && longPost[post.id]"
+  >
+    <p class="post-title" *ngIf="post.title">{{ post.title }}</p>
+    <div class="post-text post-body" [innerHTML]="formatPostContent(post.content || post.title || '')"></div>
+  </div>
+
+  <button
+    *ngIf="post.id && longPost[post.id]"
+    class="show-more"
+    type="button"
+    (click)="toggleExpand(post.id)"
+  >
+    {{ expanded[post.id] ? 'Afficher moins' : 'Afficher plus' }}
+  </button>
+
+  <!-- Si une seule image (ancien format) -->
+  <div *ngIf="post.imageUrl && !post.imageUrls?.length" class="single-image-wrapper">
+    <img [src]="post.imageUrl" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
+  </div>
+  <div *ngIf="post.imageUrls?.length === 1" class="single-image-wrapper">
+    <img [src]="post.imageUrls[0]" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
+  </div>
+
+  <!-- Galerie d'images -->
+  <ion-grid *ngIf="post.imageUrls?.length > 1">
+    <ion-row>
+      <ion-col size="6" *ngFor="let img of post.imageUrls; trackBy: trackByImage">
+        <img [src]="img" alt="Image" class="gallery-img" loading="lazy" decoding="async" />
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div class="video-wrapper" *ngIf="hasVideoAttachment(post)">
+    <video
+      class="post-video"
+      [src]="post.attachment?.url"
+      controls
+      playsinline
+      preload="metadata">
+    </video>
+  </div>
+
+  <div class="doc-wrapper" *ngIf="hasDocumentAttachment(post)">
+    <div class="doc-head">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <div class="doc-meta">
+        <strong>{{ post.attachment?.fileName }}</strong>
+      </div>
+      <ion-button fill="clear" size="small" (click)="openAttachment(post)">
+        Ouvrir
+      </ion-button>
+    </div>
+    <iframe
+      class="doc-preview"
+      [src]="getDocumentPreviewUrl(post)"
+      loading="lazy"
+      title="Document preview">
+    </iframe>
+  </div>
+
+  <!-- Section commentaires -->
+  <ion-list>
+    <ion-list-header>Commentaires</ion-list-header>
+    <ion-item *ngFor="let comment of commentsWithUsers; trackBy: trackByComment">
+      <ion-avatar slot="start">
+        <img [src]="comment.userPhotoURL" loading="lazy" decoding="async" />
+      </ion-avatar>
+      <ion-label>
+        <h3>{{ comment.username }}</h3>
+        <p>{{ comment.text }}</p>
+      </ion-label>
+    </ion-item>   
+  </ion-list>
+</ion-content>

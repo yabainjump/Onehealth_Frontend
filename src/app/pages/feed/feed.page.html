@@ -1,0 +1,115 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-avatar slot="start">
+      <img [src]="userPhoto" alt="Profile Photo" loading="lazy" decoding="async" />
+    </ion-avatar>
+
+    <ion-searchbar
+      placeholder="Rechercher une publication, auteur, institution..."
+      [debounce]="200"
+      show-clear-button="focus"
+      [(ngModel)]="searchQuery"
+      (ionInput)="filterPosts()"
+      (ionClear)="filterPosts()"
+    ></ion-searchbar>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="goPushPub($event)" routerDirection="forward">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+      <ion-button routerLink="/tabs/home">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+      </ion-button>
+      <ion-button color="danger" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="showComposer">
+    <ion-card-header>
+      <ion-card-title>Create publication</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="postForm" (ngSubmit)="publish()">
+        <ion-item>
+          <ion-input formControlName="title" placeholder="Title (optional)"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-textarea formControlName="content" rows="4" placeholder="Write something..."></ion-textarea>
+        </ion-item>
+        <ion-button expand="block" type="submit" [disabled]="publishing">
+          {{ publishing ? 'Publishing...' : 'Publish' }}
+        </ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+
+  <div *ngFor="let post of filteredPosts; trackBy: trackByPostId" class="post-card">
+    <div class="post-header">
+      <ion-avatar>
+        <img [src]="post.author?.photoURL || 'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
+      </ion-avatar>
+
+      <div class="post-author-details">
+        <h3 class="law">{{ post.author?.firstName }} {{ post.author?.lastName }}</h3>
+        <p>{{ post.author?.institution || 'User Description' }}</p>
+        <span>{{ post.createdAt | date: 'short' }}</span>
+      </div>
+
+      <ion-button
+        class="post-menu-btn"
+        fill="clear"
+        *ngIf="isOwner(post)"
+        (click)="$event.stopPropagation(); presentPostActions(post)"
+        aria-label="Actions publication"
+      >
+        <ion-icon class="law" name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="post-content" [class.collapsed]="!expanded[post.id] && longPost[post.id]">
+      <p class="post-title">{{ post.title }}</p>
+      <p class="post-body">{{ post.content }}</p>
+    </div>
+
+    <div *ngIf="longPost[post.id]">
+      <ion-button fill="clear" size="small" class="show-more" (click)="toggleExpand(post.id)">
+        {{ expanded[post.id] ? 'Afficher moins' : 'Afficher plus' }}
+      </ion-button>
+    </div>
+
+    <div *ngIf="post.imageUrls?.length === 1" class="single-image-wrapper">
+      <img [src]="post.imageUrls[0]" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
+    </div>
+
+    <ion-grid *ngIf="(post.imageUrls?.length || 0) > 1">
+      <ion-row>
+        <ion-col size="6" *ngFor="let url of post.imageUrls; trackBy: trackByImageUrl">
+          <img [src]="url" alt="Post image" class="gallery-img" loading="lazy" decoding="async" />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <div class="post-footer">
+      <div class="post-actions">
+        <ion-button fill="clear" [disabled]="post.userHasLiked" (click)="like(post.id)">
+          {{ post.userHasLiked ? '❤️' : '🤍' }} {{ post.likesCount || 0 }} Likes
+        </ion-button>
+        <ion-button fill="clear" (click)="promptComment(post.id)">💬 Comment</ion-button>
+        <ion-button fill="clear" (click)="sharePost(post)">🔗 Share</ion-button>
+      </div>
+
+      <ion-list *ngIf="post.comments?.length">
+        <ion-item *ngFor="let comment of post.comments">
+          <ion-label>
+            <strong>{{ comment.author?.username || 'Anonyme' }}</strong>
+            <p>{{ comment.text }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+</ion-content>

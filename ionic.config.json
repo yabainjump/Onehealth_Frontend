@@ -1,0 +1,7 @@
+{
+  "name": "onehealth_frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

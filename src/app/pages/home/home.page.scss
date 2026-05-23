@@ -1,0 +1,101 @@
+ion-header.title-header {
+  ion-toolbar {
+    font-family: "Satisfy", cursive !important;
+    ion-title {
+      letter-spacing: 2px;
+      font-size: 1.8rem !important;
+    }
+  }
+  ion-segment {
+    --background: var(--ion-color-primary);
+    ion-segment-button {
+      font-size: 1rem;
+      --color: var(--ion-color-light);
+      --color-checked: #fff;
+    }
+  }
+}
+
+ion-content {
+  ion-list {
+    ion-list-header {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    ion-item {
+      margin-top: 2vh;
+      ion-label {
+        font-size: 1.2rem;
+        p {
+          margin-top: 3px;
+        }
+      }
+      ion-text {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+ion-item {
+  --padding-start: 12px;
+  --inner-padding-end: 8px;
+
+  ion-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  ion-label {
+    display: block;
+    .row-top {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      .name {
+        font-weight: 600;
+      }
+      .time {
+        margin-left: auto;
+        color: var(--ion-color);
+      }
+    }
+    .row-bottom {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      .preview {
+        font-size: 15px;
+        flex: 1;
+        min-width: 0;
+        color: var(--ion-color-medium);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80%;
+      }
+      .badge {
+        /* vrai centrage */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        /* look de la bulle */
+        background: var(--ion-color-primary);
+        color: #fff;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px; /* s’agrandit pour 2–3 chiffres */
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 1; /* évite le décalage vertical */
+
+        /* reculer un peu la bulle par rapport à la flèche de détail */
+        margin-right: 18px; /* ajuste 8–16px selon ton goût */
+        // /* optionnel si tu veux la reculer encore : */
+        transform: translateX(28px); 
+      }
+    }
+  }
+}

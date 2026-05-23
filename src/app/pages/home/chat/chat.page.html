@@ -1,0 +1,136 @@
+<ion-header>
+  <ion-toolbar class="chat-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <button type="button" class="chat-title-trigger" (click)="openOtherUserProfile()">
+        <img
+          class="chat-title-avatar"
+          [src]="otherPhoto"
+          alt="contact avatar"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async" />
+        <div class="chat-title-text">
+          <span class="chat-title-name">{{ name }}</span>
+          <span class="chat-title-status">{{ otherStatusText }}</span>
+        </div>
+      </button>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" class="toolbar-action" (click)="openOptionsMenu()">
+        <ion-icon name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content class="chat-content">
+  <app-empty-screen *ngIf="(chats | async)?.length === 0" [model]="model"></app-empty-screen>
+
+  <ng-container *ngIf="(chats | async) as chat$">
+    <div class="messages">
+      <div class="msg" *ngFor="let m of chat$" [ngClass]="{ mine: m.sender === chatService.currentUserId }">
+
+        <!-- Avatar de l’autre à gauche -->
+        <img
+          *ngIf="m.sender !== chatService.currentUserId"
+          class="avatar"
+          [src]="otherPhoto"
+          alt="user"
+          loading="lazy"
+          decoding="async" />
+
+        <div class="bubble">
+          <img
+            *ngIf="isImageMessage(m)"
+            class="photo"
+            [src]="m.imageUrl || m.fileUrl"
+            alt="image"
+            (click)="openAttachment(m)" />
+
+          <button
+            *ngIf="isDocumentMessage(m)"
+            type="button"
+            class="doc-attachment"
+            (click)="openAttachment(m)">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <div class="doc-meta">
+              <strong>{{ m.fileName || 'Document' }}</strong>
+              <span>{{ formatFileSize(m.fileSize) }}</span>
+            </div>
+          </button>
+
+          <div *ngIf="m.message" class="text">{{ m.message }}</div>
+          <!-- si createdAt est déjà un Date c’est OK ; sinon fallback toDate() -->
+          <div class="time">
+            {{ (m.createdAt?.toDate ? m.createdAt.toDate() : m.createdAt) | date:'shortTime' }}
+            <ion-icon
+              *ngIf="m.sender === chatService.currentUserId"
+              name="checkmark-done"
+              [ngClass]="['read-receipt', readReceiptClass(m)]"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Mon avatar à droite -->
+        <img
+          *ngIf="m.sender === chatService.currentUserId"
+          class="avatar"
+          [src]="myPhoto"
+          alt="me"
+          loading="lazy"
+          decoding="async" />
+
+      </div>
+    </div>
+  </ng-container>
+</ion-content>
+
+
+
+
+<ion-footer class="chat-footer">
+  <ion-toolbar class="composer-toolbar">
+    <!-- input fichier caché -->
+    <input
+      #fileInput
+      type="file"
+      accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+      hidden
+      (change)="onFileChosen($event)" />
+
+    <div class="composer-wrap">
+      <button type="button" class="composer-icon-btn" (click)="triggerFile()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+      </button>
+
+      <div class="composer-input-wrap">
+        <ion-textarea
+          autoGrow
+          rows="1"
+          placeholder="Message"
+          [(ngModel)]="message">
+        </ion-textarea>
+      </div>
+
+      <button
+        *ngIf="!isLoading"
+        type="button"
+        class="composer-send-btn"
+        (click)="sendMessage()">
+        <ion-icon name="send"></ion-icon>
+      </button>
+
+      <button
+        *ngIf="isLoading"
+        type="button"
+        class="composer-send-btn is-loading"
+        disabled>
+        <ion-spinner name="crescent"></ion-spinner>
+      </button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

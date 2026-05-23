@@ -1,0 +1,101 @@
+<ion-header class="edit-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="cancel()" aria-label="Retour">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Modifier Le Profil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="edit-content">
+  <ng-container *ngIf="!loadingProfile; else loading">
+    <form class="edit-form" (ngSubmit)="updateProfile()">
+      <section class="hero-card">
+        <button type="button" class="avatar-wrap" (click)="changeProfilePicture()">
+          <ion-avatar class="profile-avatar">
+            <img [src]="photoURL" alt="Photo de profil" loading="lazy" decoding="async" />
+          </ion-avatar>
+          <span class="avatar-badge">
+            <ion-icon name="camera-outline"></ion-icon>
+          </span>
+        </button>
+        <h2>{{ user.firstName || 'Votre' }} {{ user.lastName || 'Profil' }}</h2>
+        <p>Appuyez sur la photo pour la modifier</p>
+      </section>
+
+      <section class="form-card">
+        <h3>Informations de base</h3>
+        <ion-item lines="none">
+          <ion-label position="stacked">Prenom</ion-label>
+          <ion-input [(ngModel)]="user.firstName" name="firstName" required></ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">Nom</ion-label>
+          <ion-input [(ngModel)]="user.lastName" name="lastName" required></ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">Nom d'utilisateur</ion-label>
+          <ion-input [(ngModel)]="user.username" name="username" required></ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">Institution</ion-label>
+          <ion-input [(ngModel)]="user.institution" name="institution"></ion-input>
+        </ion-item>
+      </section>
+
+      <section class="form-card">
+        <h3>Coordonnees</h3>
+        <ion-item lines="none">
+          <ion-label position="stacked">Pays</ion-label>
+          <ion-input [(ngModel)]="user.country" name="country"></ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">Ville</ion-label>
+          <ion-input [(ngModel)]="user.city" name="city"></ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">Telephone (Ex: +237670...)</ion-label>
+          <ion-input [(ngModel)]="user.phone" name="phone"></ion-input>
+        </ion-item>
+      </section>
+
+      <section class="form-card">
+        <h3>Description Du Profil</h3>
+        <ion-item lines="none">
+          <ion-label position="stacked">Bio</ion-label>
+          <ion-textarea
+            [(ngModel)]="user.bio"
+            name="bio"
+            autoGrow="true"
+            [maxlength]="bioMaxLength"
+            placeholder="Parlez un peu de vous..."
+          ></ion-textarea>
+        </ion-item>
+        <p class="counter">{{ bioLength }}/{{ bioMaxLength }}</p>
+      </section>
+
+      <div class="actions">
+        <ion-button type="submit" expand="block" [disabled]="savingProfile">
+          {{ savingProfile ? 'Enregistrement...' : 'Enregistrer' }}
+        </ion-button>
+        <ion-button type="button" expand="block" fill="outline" (click)="cancel()">
+          Annuler
+        </ion-button>
+      </div>
+    </form>
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="loading-wrap">
+      <ion-spinner></ion-spinner>
+      <p>Chargement du profil...</p>
+    </div>
+  </ng-template>
+</ion-content>

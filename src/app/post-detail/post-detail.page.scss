@@ -1,0 +1,143 @@
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .post-info h2 {
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .post-info p {
+    font-size: 12px;
+    color: gray;
+    margin: 0;
+  }
+  
+.post-content {
+  margin: 12px 0 8px;
+  overflow-wrap: anywhere;
+}
+
+.post-content.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #141d31;
+}
+
+.post-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+:host ::ng-deep .post-body a {
+  color: #0d47d8;
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+.show-more {
+  border: 0;
+  background: transparent;
+  color: #0d47d8;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 8px;
+}
+  
+  .image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 16px 0;
+  }
+
+  .single-image-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+  }
+  
+  .single-image {
+    width: 95%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .gallery-img {
+    width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  }
+
+.video-wrapper {
+  margin: 12px 0;
+}
+
+.post-video {
+  width: 100%;
+  max-height: 420px;
+  border-radius: 12px;
+  background: #000;
+}
+
+.doc-wrapper {
+  margin: 12px 0;
+  border: 1px solid #dbe2ec;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fbff;
+}
+
+.doc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5ebf3;
+}
+
+.doc-head ion-icon {
+  font-size: 22px;
+  color: #195fc8;
+}
+
+.doc-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-meta strong {
+  font-size: 13px;
+  color: #14213d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 210px;
+}
+
+.doc-preview {
+  width: 100%;
+  height: 340px;
+  border: 0;
+  background: #fff;
+}
+  

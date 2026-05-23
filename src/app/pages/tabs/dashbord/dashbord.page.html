@@ -1,0 +1,220 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <!-- Photo de profil -->
+    <ion-avatar slot="start">
+      <img [src]="userPhoto" alt="Profile Photo" loading="lazy" decoding="async" />
+    </ion-avatar>
+
+    <!-- Barre de recherche -->
+    <ion-searchbar
+      placeholder="Search for a publication, author, institution..."
+      [debounce]="200"
+      show-clear-button="focus"
+      [(ngModel)]="searchQuery"
+      (ionInput)="filterPosts()"
+      (ionClear)="filterPosts()">
+    </ion-searchbar>
+
+    <!-- Boutons -->
+    <ion-buttons slot="end">
+      <!-- Bouton pour ajouter une publication -->
+      <ion-button (click)="goPushPub($event)" routerDirection="forward">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+
+      <!-- Bouton pour ouvrir la liste des chats -->
+      <ion-button routerLink="/tabs/home">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="isLoadingFeed">
+    <div class="post-card skeleton-post" *ngFor="let _ of skeletonItems">
+      <div class="post-header">
+        <ion-skeleton-text animated class="sk-avatar"></ion-skeleton-text>
+        <div class="sk-lines">
+          <ion-skeleton-text animated class="sk-line title"></ion-skeleton-text>
+          <ion-skeleton-text animated class="sk-line subtitle"></ion-skeleton-text>
+        </div>
+      </div>
+      <ion-skeleton-text animated class="sk-block"></ion-skeleton-text>
+      <ion-skeleton-text animated class="sk-block short"></ion-skeleton-text>
+      <ion-skeleton-text animated class="sk-image"></ion-skeleton-text>
+    </div>
+  </div>
+
+  <div *ngFor="let post of filteredPosts; trackBy: trackByPostId" class="post-card">
+    <!-- En-tête -->
+    <div class="post-header">
+      <ion-avatar class="clickable-avatar" (click)="openAuthorProfile(post, $event)">
+        <img [src]="post.author?.photoURL || 'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
+      </ion-avatar>
+
+      <div (click)="openPostDetail(post)" class="post-author-details">
+        <h3 class="law">{{ post.author?.firstName }} {{ post.author?.lastName }}</h3>
+        <p>{{ post.author?.institution || 'User Description' }}</p>
+        <span>{{ post.timestamp | date: 'short' }}</span>
+      </div>
+
+      <!-- 👇 Ajout: menu trois points (auteur uniquement) -->
+      <ion-button class="post-menu-btn" fill="clear"  *ngIf="isOwner(post)"
+        (click)="$event.stopPropagation(); presentPostActions(post)" aria-label="Actions publication">
+        <ion-icon class="law" name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+
+    </div>
+
+    <!-- CONTENU inchangé -->
+    <div class="post-content" [class.collapsed]="!expanded[post.id] && longPost[post.id]">
+      <p class="post-title" *ngIf="post.title">{{ post.title }}</p>
+      <div class="post-body" [innerHTML]="post.content | formatPost"></div>
+    </div>
+
+    <div *ngIf="longPost[post.id]">
+      <ion-button
+        fill="clear"
+        size="small"
+        class="show-more"
+        (click)="toggleExpand(post.id)">
+        {{ expanded[post.id] ? 'Afficher moins' : 'Afficher plus' }}
+      </ion-button>
+    </div>
+
+    <div (click)="openPostDetail(post)" *ngIf="post.imageUrl && !post.imageUrls?.length" class="single-image-wrapper">
+      <img [src]="post.imageUrl" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
+    </div>
+
+    <div (click)="openPostDetail(post)" *ngIf="post.imageUrls?.length === 1" class="single-image-wrapper">
+      <img [src]="post.imageUrls[0]" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
+    </div>
+
+    <ion-grid (click)="openPostDetail(post)" *ngIf="post.imageUrls?.length > 1">
+      <ion-row>
+        <ion-col size="6" *ngFor="let url of post.imageUrls; trackBy: trackByImageUrl">
+          <img [src]="url" alt="Post image" class="gallery-img" loading="lazy" decoding="async" />
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <div class="video-wrapper" *ngIf="hasVideoAttachment(post)">
+      <video
+        class="post-video"
+        [src]="post.attachment?.url"
+        controls
+        playsinline
+        preload="metadata">
+      </video>
+    </div>
+
+    <div class="doc-wrapper" *ngIf="hasDocumentAttachment(post)">
+      <div class="doc-head">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <div class="doc-meta">
+          <strong>{{ post.attachment?.fileName }}</strong>
+          <small>{{ formatBytes(post.attachment?.size) }}</small>
+        </div>
+        <ion-button fill="clear" size="small" (click)="openAttachment(post, $event)">
+          Ouvrir
+        </ion-button>
+      </div>
+      <iframe
+        class="doc-preview"
+        [src]="getDocumentPreviewUrl(post)"
+        loading="lazy"
+        title="Document preview">
+      </iframe>
+    </div>
+
+    <div class="post-footer">
+      <div class="post-actions">
+        <ion-button
+          fill="clear"
+          class="like-btn"
+          [class.liked]="post.userHasLiked"
+          (click)="likePost(post)">
+          {{ post.userHasLiked ? '❤️' : '🤍' }} {{ post.likes || 0 }} Likes
+        </ion-button>
+        <ion-button fill="clear" (click)="addComment(post)">💬 Comment</ion-button>
+        <ion-button fill="clear" [disabled]="!canShare" (click)="sharePost(post)">
+          🔗 Share
+        </ion-button>
+      </div>
+
+      <div class="comment-summary" *ngIf="(post.comments?.length || 0) > 0">
+        <button type="button" class="comment-toggle" (click)="addComment(post)">
+          Voir les commentaires ({{ post.comments?.length || 0 }})
+        </button>
+      </div>
+
+      <div class="comment-thread" *ngIf="commentsOpen[post.id]">
+        <div class="comment-list" *ngIf="(post.comments?.length || 0) > 0">
+          <div class="comment-item" *ngFor="let comment of post.comments; trackBy: trackByComment">
+            <img
+              class="comment-avatar"
+              [src]="comment.userPhoto || 'assets/default-profile.png'"
+              alt="avatar"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="comment-bubble">
+              <p class="comment-author">{{ comment.userName || 'Utilisateur' }}</p>
+              <p class="comment-text">{{ comment.comment }}</p>
+              <button
+                type="button"
+                class="comment-like-btn"
+                [class.liked]="comment.userHasLiked"
+                (click)="toggleCommentLike(post, comment)">
+                {{ comment.userHasLiked ? '❤️' : '🤍' }} {{ comment.likesCount || 0 }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="comment-composer">
+          <img class="comment-avatar" [src]="userPhoto || 'assets/default-profile.png'" alt="avatar" loading="lazy" decoding="async" />
+          <ion-input
+            class="comment-input"
+            placeholder="Écrivez un commentaire..."
+            [(ngModel)]="commentDrafts[post.id]"
+            (keyup.enter)="submitInlineComment(post)"
+          ></ion-input>
+          <ion-button
+            fill="clear"
+            class="comment-send"
+            [disabled]="!commentDrafts[post.id]?.trim() || commentSending[post.id]"
+            (click)="submitInlineComment(post)"
+          >
+            <ion-icon name="send"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="load-more-skeletons" *ngIf="isLoadingMore">
+    <div class="post-card skeleton-post" *ngFor="let _ of [1,2]">
+      <div class="post-header">
+        <ion-skeleton-text animated class="sk-avatar"></ion-skeleton-text>
+        <div class="sk-lines">
+          <ion-skeleton-text animated class="sk-line title"></ion-skeleton-text>
+          <ion-skeleton-text animated class="sk-line subtitle"></ion-skeleton-text>
+        </div>
+      </div>
+      <ion-skeleton-text animated class="sk-block"></ion-skeleton-text>
+      <ion-skeleton-text animated class="sk-image"></ion-skeleton-text>
+    </div>
+  </div>
+
+  <ion-infinite-scroll
+    threshold="120px"
+    [disabled]="!hasMorePosts || isLoadingFeed"
+    (ionInfinite)="loadMorePosts($event)"
+  >
+    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Chargement...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+</ion-content>

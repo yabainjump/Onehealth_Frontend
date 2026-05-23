@@ -1,0 +1,85 @@
+// Ionic Variables and Theming. For more info, please see:
+// http://ionicframework.com/docs/theming/
+
+/** Ionic CSS Variables **/
+:root {
+  /** primary **/
+  --ion-color-primary: #1d51a5;
+  --ion-color-primary-rgb: 29, 81, 165;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #1a4791;
+  --ion-color-primary-tint: #3462ae;
+
+  --ion-color-secondary: #58e958;
+  --ion-color-secondary-rgb: 88, 233, 88;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #4dcd4d;
+  --ion-color-secondary-tint: #69eb69;
+
+  --ion-color-tertiary: #50acbe;
+  --ion-color-tertiary-rgb: 80, 172, 190;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+  --ion-color-tertiary-shade: #4697a7;
+  --ion-color-tertiary-tint: #62b4c5;
+
+  /** success **/
+  --ion-color-success: #ffffff;
+  --ion-color-success-rgb: 45, 211, 111;
+  --ion-color-success-contrast: #1d51a5;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
+
+  /** win **/
+  --ion-color-win: #0ef86c;
+  --ion-color-win-rgb: 45, 211, 111;
+  --ion-color-win-contrast: #ffffff;
+  --ion-color-win-contrast-rgb: 255, 255, 255;
+  --ion-color-win-shade: #28ba62;
+  --ion-color-win-tint: #42d77d;
+
+  /** warning **/
+  --ion-color-warning: #ffc409;
+  --ion-color-warning-rgb: 255, 196, 9;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #e0ac08;
+  --ion-color-warning-tint: #ffca22;
+
+  /** danger **/
+  --ion-color-danger: #eb445a;
+  --ion-color-danger-rgb: 235, 68, 90;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #cf3c4f;
+  --ion-color-danger-tint: #ed576b;
+
+  /** dark **/
+  --ion-color-dark: #111213;
+  --ion-color-dark-rgb: 34, 36, 40;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #1e2023;
+  --ion-color-dark-tint: #383a3e;
+
+  /** medium **/
+  --ion-color-medium: #92949c;
+  --ion-color-medium-rgb: 146, 148, 156;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #808289;
+  --ion-color-medium-tint: #9d9fa6;
+
+  /** light **/
+  --ion-color-light: #f5f6ff;
+  --ion-color-light-rgb: 245, 246, 255;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #d8d8e0;
+  --ion-color-light-tint: #f6f7ff;
+}
+
+/* Dark mode is intentionally disabled: the app keeps the same visual theme. */

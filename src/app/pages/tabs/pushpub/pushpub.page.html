@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-title>Add Post</ion-title>
+  </ion-toolbar>
+  
+</ion-header>
+
+<ion-content>   
+<ion-item >
+    <ion-label class="box1" position="floating">What's on your mind?</ion-label>
+    <ion-textarea [autoGrow]="true" class="box1" [(ngModel)]="content"></ion-textarea>
+  </ion-item>
+
+   <ion-item lines="none">
+    <ion-label>Ajouter media (images, video, PDF, PPT, DOC)</ion-label>
+    <ion-icon name="image-outline" (click)="fileInput.click()" style="cursor: pointer; font-size: 24px;"></ion-icon>
+    <input
+      type="file"
+      #fileInput
+      accept="image/*,video/*,.pdf,.ppt,.pptx,.doc,.docx"
+      multiple
+      hidden
+      (change)="handleImageInput($event)"
+    />
+  </ion-item>
+
+  <!-- Prévisualisation des images sélectionnées -->
+  <ion-grid *ngIf="previewUrls.length">
+    <ion-row>
+      <ion-col size="4" *ngFor="let url of previewUrls; trackBy: trackByPreviewUrl">
+        <img [src]="url" alt="Prévisualisation image" loading="lazy" decoding="async" />
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div class="media-preview-card" *ngIf="attachmentFile && attachmentType === 'video'">
+    <video
+      class="video-preview"
+      [src]="attachmentPreviewUrl || ''"
+      controls
+      playsinline
+      preload="metadata">
+    </video>
+    <p class="media-name">{{ attachmentFile.name }}</p>
+  </div>
+
+  <div class="media-preview-card doc" *ngIf="attachmentFile && attachmentType === 'document'">
+    <ion-icon name="document-text-outline"></ion-icon>
+    <div>
+      <p class="media-name">{{ attachmentFile.name }}</p>
+      <small>Document pret a publier</small>
+    </div>
+  </div>
+
+   <ion-button expand="block"
+            color="primary"
+            [disabled]="isPublishing"
+            (click)="addPost()">
+  <ion-spinner name="crescent" *ngIf="isPublishing" style="margin-right:8px"></ion-spinner>
+  {{ isPublishing ? 'Publication…' : 'Post' }}
+</ion-button>
+
+
+</ion-content>

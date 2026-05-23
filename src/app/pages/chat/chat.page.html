@@ -1,0 +1,89 @@
+<ion-header>
+  <ion-toolbar [color]="selectedRoom ? 'primary' : 'success'">
+    <ion-buttons slot="start" *ngIf="selectedRoom">
+      <ion-button (click)="backToRooms()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="!selectedRoom" class="ion-padding">
+  <ion-text color="danger" *ngIf="errorMessage">
+    <p>{{ errorMessage }}</p>
+  </ion-text>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Start a conversation</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input [(ngModel)]="search" placeholder="Search users" (ionBlur)="searchUsers()"></ion-input>
+      </ion-item>
+      <ion-list>
+        <ion-item *ngFor="let user of users" (click)="startChatWith(user)">
+          <ion-label>
+            <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+            <p>@{{ user.username }} · {{ user.institution }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>My rooms</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let room of rooms" (click)="openRoom(room)">
+          <ion-label>
+            <h2>{{ room.otherUser?.firstName }} {{ room.otherUser?.lastName }}</h2>
+            <p>{{ room.lastMessage || 'No message yet' }}</p>
+          </ion-label>
+          <ion-badge color="primary" *ngIf="room.unreadCount > 0">{{ room.unreadCount }}</ion-badge>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<ion-content *ngIf="selectedRoom">
+  <div class="messages">
+    <div class="msg" *ngFor="let m of messages" [ngClass]="{ mine: m.senderId === currentUserId }">
+      <img *ngIf="m.senderId !== currentUserId" class="avatar" [src]="otherPhoto" alt="user" loading="lazy" decoding="async" />
+
+      <div class="bubble">
+        <img *ngIf="m.imageUrl" class="photo" [src]="m.imageUrl" alt="image" loading="lazy" decoding="async" />
+        <div *ngIf="m.text" class="text">{{ m.text }}</div>
+        <div class="time">{{ m.createdAt | date:'shortTime' }}</div>
+      </div>
+
+      <img *ngIf="m.senderId === currentUserId" class="avatar" [src]="myPhoto" alt="me" loading="lazy" decoding="async" />
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer *ngIf="selectedRoom">
+  <ion-toolbar color="light">
+    <ion-textarea
+      autoGrow
+      rows="1"
+      placeholder="Send message"
+      class="ion-text-center"
+      [(ngModel)]="messageText"
+    ></ion-textarea>
+
+    <ion-buttons slot="end">
+      <ion-fab-button *ngIf="!isLoading" size="small" color="primary" (click)="sendMessage()">
+        <ion-icon name="send"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button *ngIf="isLoading" size="small" color="primary">
+        <ion-spinner name="crescent" color="light"></ion-spinner>
+      </ion-fab-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

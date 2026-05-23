@@ -1,0 +1,85 @@
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+  overflow: hidden;
+}
+
+ion-content {
+  overflow: hidden;
+  --overflow: hidden;
+}
+
+.scroll-content {
+  overflow: hidden;
+}
+
+.login-logo-wrapper {
+  position: absolute;
+  top: 29.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.18));
+}
+
+ion-list {
+  background: transparent;
+  transform: translateY(20vh);
+
+  ion-item {
+    border: 1px solid var(--ion-color-medium);
+    border-radius: 10px;
+  }
+
+  ion-row {
+    margin-bottom: 5vh;
+  }
+
+  ion-button {
+    width: 30vh;
+    margin: auto;
+  }
+
+  .alignItems {
+    ion-checkbox,
+    ion-note {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    ion-checkbox {
+      margin-right: 1vw;
+      --size: 1.1rem;
+    }
+  }
+
+  .signup {
+    margin-top: 5vh;
+    font-size: 0.8rem;
+  }
+
+  ion-col {
+    ion-note {
+      font-size: 0.85rem;
+    }
+  }
+}
+
+@media (max-width: 380px) {
+  .login-logo-wrapper {
+    top: 28.5vh;
+    width: 84px;
+    height: 84px;
+  }
+}

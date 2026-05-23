@@ -1,0 +1,111 @@
+<ion-header class="ion-no-border welcome-header">
+  <ion-toolbar>
+    <div class="topbar">
+      <div class="brand">
+        <img
+          src="assets/images/logo-onehealth-in-cameroon.png"
+          alt="One Health Network logo"
+          class="brand-logo"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+        <span>One Health Network</span>
+      </div>
+      <div class="header-actions">
+        <div class="lang-switch" aria-label="language switch">
+          <button
+            type="button"
+            class="lang-btn"
+            [class.active]="currentLanguage === 'fr'"
+            (click)="setLanguage('fr')"
+          >
+            FR
+          </button>
+          <button
+            type="button"
+            class="lang-btn"
+            [class.active]="currentLanguage === 'en'"
+            (click)="setLanguage('en')"
+          >
+            EN
+          </button>
+        </div>
+        <button type="button" class="icon-btn">
+          <ion-icon name="search-outline"></ion-icon>
+        </button>
+        <button type="button" class="avatar-btn">
+          <img
+            src="assets/images/logo-onehealth-in-cameroon.png"
+            alt="Profile avatar"
+            loading="eager"
+            decoding="async"
+          />
+        </button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="welcome-content">
+  <section class="hero-section">
+    <article class="hero-card">
+      <span class="hero-badge">{{ content.badge }}</span>
+      <h1>{{ content.title }}</h1>
+      <p>{{ content.subtitle }}</p>
+
+      <ion-button expand="block" class="cta-primary" shape="round" (click)="navigateToLogin()">
+        {{ content.joinNetwork }}
+      </ion-button>
+      <ion-button
+        expand="block"
+        fill="outline"
+        class="cta-secondary"
+        shape="round"
+        (click)="scrollToPillars()"
+      >
+        {{ content.learnMore }}
+      </ion-button>
+    </article>
+  </section>
+
+  <section id="pillars" class="pillars-section">
+    <div class="section-title-wrap">
+      <h2>{{ content.pillarsTitle }}</h2>
+      <span class="section-underline"></span>
+    </div>
+
+    <article class="pillar-card" *ngFor="let pillar of content.pillars; trackBy: trackByPillarTitle">
+      <div class="pillar-icon">
+        <ion-icon [name]="pillar.icon"></ion-icon>
+      </div>
+      <h3>{{ pillar.title }}</h3>
+      <p>{{ pillar.description }}</p>
+    </article>
+  </section>
+
+  <section class="impact-section">
+    <article class="impact-card">
+      <h2>{{ content.impactTitle }}</h2>
+      <p>{{ content.impactText }}</p>
+
+      <div class="impact-stats">
+        <div><strong>50k+</strong><span>{{ content.members }}</span></div>
+        <div><strong>120+</strong><span>{{ content.countries }}</span></div>
+      </div>
+
+      <div class="impact-image">
+        <img
+          src="assets/images/world-oh.optimized.jpg"
+          alt="Professionnels de sante collaborant"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    </article>
+
+    <ion-button expand="block" fill="clear" class="login-link" (click)="navigateToLogin()">
+      {{ content.loginCta }}
+    </ion-button>
+  </section>
+</ion-content>

@@ -1,0 +1,32 @@
+<ion-tabs #tabs (ionTabsDidChange)="setCurrentTab()">
+  <ion-tab-bar slot="bottom" color="success">
+    <ion-tab-button class="let" tab="dashbord">
+      <ion-icon
+        color="primary"
+        [name]="selectedTab === 'dashbord' ? 'home' : 'home-outline'"
+      ></ion-icon>
+      Home
+    </ion-tab-button>
+    <ion-tab-button class="let" tab="pushpub">
+      <ion-icon
+        color="primary"
+        [name]="selectedTab === 'pushpub' ? 'add' : 'add-outline'"
+      ></ion-icon>
+      Publish
+    </ion-tab-button>
+    <ion-tab-button class="let" tab="home">
+      <ion-icon
+        color="primary"
+        [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"
+      ></ion-icon>
+      Messages
+    </ion-tab-button>
+    <ion-tab-button class="let" tab="profils">
+      <ion-icon
+        color="primary"
+        [name]="selectedTab === 'profils' ? 'person' : 'person-outline'"
+      ></ion-icon>
+      Profil
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

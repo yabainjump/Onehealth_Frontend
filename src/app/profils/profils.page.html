@@ -1,0 +1,204 @@
+<ion-content [fullscreen]="true" class="profile-page">
+  <section class="hero">
+    <img
+      class="hero-cover"
+      [src]="coverPhotoURL"
+      alt="Photo de mur"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+    />
+    <div class="hero-overlay"></div>
+
+    <button id="profile-options-trigger" class="menu-btn" type="button" aria-label="Options">
+      <ion-icon name="ellipsis-vertical"></ion-icon>
+    </button>
+
+    <button
+      *ngIf="isOwnProfile"
+      class="cover-btn"
+      type="button"
+      [disabled]="uploadingCover"
+      (click)="coverInput.click()"
+    >
+      <ion-icon name="camera-outline"></ion-icon>
+      <span>{{ uploadingCover ? 'Upload...' : 'Photo de mur' }}</span>
+    </button>
+    <input #coverInput type="file" hidden accept="image/*" (change)="onCoverSelected($event)" />
+  </section>
+
+  <ion-popover
+    #popover
+    trigger="profile-options-trigger"
+    triggerAction="click"
+    [dismissOnSelect]="true"
+    (ionPopoverWillPresent)="blurActive()"
+  >
+    <ng-template>
+      <ion-content class="ion-padding">
+        <ion-list lines="none">
+          <ion-item button (click)="editProfile()">
+            <ion-label color="primary">Modifier Le Profil</ion-label>
+          </ion-item>
+          <ion-item button *ngIf="!isOwnProfile" (click)="openMessage()">
+            <ion-label color="primary">Message</ion-label>
+          </ion-item>
+          <ion-item button (click)="logout()">
+            <ion-label color="danger">Logout</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-popover>
+
+  <section class="profile-surface">
+    <div class="avatar-wrap">
+      <ion-avatar class="avatar">
+        <img [src]="photoURL" alt="Photo de profil" loading="lazy" decoding="async" />
+      </ion-avatar>
+      <span class="online-dot"></span>
+    </div>
+
+    <h1>{{ displayName }}</h1>
+    <p class="subtitle">{{ displayRole }}</p>
+
+    <div class="action-row">
+      <button
+        class="btn"
+        [class.btn-primary]="!isFollowingUser"
+        [class.btn-outline]="isFollowingUser"
+        type="button"
+        *ngIf="!isOwnProfile"
+        [disabled]="followProcessing"
+        (click)="toggleFollow()"
+      >
+        {{ followProcessing ? '...' : followButtonLabel }}
+      </button>
+      <button class="btn btn-outline" type="button" *ngIf="!isOwnProfile" (click)="openMessage()">
+        Message
+      </button>
+      <button class="btn btn-primary" type="button" *ngIf="isOwnProfile" (click)="editProfile()">
+        Edit Profile
+      </button>
+    </div>
+
+    <p class="bio">{{ bioText }}</p>
+
+    <div class="stats-row">
+      <div class="stat-col">
+        <strong>{{ postsCount }}</strong>
+        <span>Posts</span>
+      </div>
+      <div class="stat-col">
+        <strong>{{ followersCount }}</strong>
+        <span>Followers</span>
+      </div>
+      <div class="stat-col">
+        <strong>{{ followingCount }}</strong>
+        <span>Following</span>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>Recent Posts</h2>
+      <button class="filter-btn" type="button">
+        Filter
+        <ion-icon name="options-outline"></ion-icon>
+      </button>
+    </div>
+
+    <div class="posts" *ngIf="(posts$ | async) as feed">
+      <article class="post-card skeleton" *ngIf="loadingPosts">
+        <ion-skeleton-text animated style="width: 44%; height: 16px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 14px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 96%; height: 14px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width: 100%; height: 164px"></ion-skeleton-text>
+      </article>
+
+      <article class="post-card" *ngFor="let p of feed; trackBy: trackByPostId" (click)="openPostDetail(p)">
+        <header class="post-header">
+          <ion-avatar class="post-avatar">
+            <img [src]="photoURL" alt="avatar auteur" loading="lazy" decoding="async" />
+          </ion-avatar>
+          <div>
+            <h3>{{ displayName }}</h3>
+            <p>{{ p.timestamp | date:'short' }}</p>
+          </div>
+        </header>
+
+        <div
+          class="post-content"
+          [class.collapsed]="p.id && !expanded[p.id] && longPost[p.id]"
+          (click)="stopPostBodyClick($event)"
+        >
+          <p class="post-title" *ngIf="p.title">{{ p.title }}</p>
+          <div
+            class="post-text post-body"
+            [innerHTML]="formatPostContent(p.content || p.title || 'Publication')"
+          ></div>
+        </div>
+
+        <button
+          *ngIf="p.id && longPost[p.id]"
+          class="show-more-profile"
+          type="button"
+          (click)="toggleExpand(p.id, $event)"
+        >
+          {{ expanded[p.id] ? 'Afficher moins' : 'Afficher plus' }}
+        </button>
+
+        <img
+          *ngIf="p.imageUrls?.length"
+          class="post-media"
+          [src]="p.imageUrls[0]"
+          alt="media publication"
+          loading="lazy"
+          decoding="async"
+        />
+        <img
+          *ngIf="!p.imageUrls?.length && p.imageUrl"
+          class="post-media"
+          [src]="p.imageUrl"
+          alt="media publication"
+          loading="lazy"
+          decoding="async"
+        />
+
+        <video
+          *ngIf="hasVideoAttachment(p)"
+          class="post-video"
+          [src]="p.attachment?.url"
+          controls
+          playsinline
+          preload="metadata">
+        </video>
+
+        <div class="doc-wrapper" *ngIf="hasDocumentAttachment(p)">
+          <div class="doc-head">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <div class="doc-meta">
+              <strong>{{ p.attachment?.fileName }}</strong>
+            </div>
+            <button type="button" class="doc-open" (click)="openAttachment(p, $event)">Ouvrir</button>
+          </div>
+          <iframe
+            class="doc-preview"
+            [src]="getDocumentPreviewUrl(p)"
+            loading="lazy"
+            title="Document preview">
+          </iframe>
+        </div>
+
+        <footer class="post-actions">
+          <span><ion-icon name="heart-outline"></ion-icon>{{ p.likes || 0 }}</span>
+          <span><ion-icon name="chatbubble-outline"></ion-icon>{{ p.comments?.length || 0 }}</span>
+          <span><ion-icon name="share-social-outline"></ion-icon></span>
+        </footer>
+      </article>
+
+      <p class="empty-state" *ngIf="!feed.length && !loadingPosts">
+        Aucune publication pour le moment.
+      </p>
+    </div>
+  </section>
+</ion-content>
