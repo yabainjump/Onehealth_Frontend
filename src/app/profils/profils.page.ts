@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
-import { IonPopover } from '@ionic/angular';
+import { IonPopover, ToastController } from '@ionic/angular';
 import { combineLatest, firstValueFrom, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UploadService } from '../core/services/upload.service';
 import { UsersService } from '../core/services/users.service';
+import { ShareLinkService } from '../core/services/share-link.service';
 import { AuthService } from '../services/auth/auth.service';
 import { ChatService } from '../services/chat/chat.service';
 import { PublishService, Post, PostAttachment } from 'src/app/services/publish/publish.service';
@@ -41,6 +42,8 @@ export class ProfilsPage implements OnInit {
     private readonly usersService: UsersService,
     private readonly uploadService: UploadService,
     private readonly sanitizer: DomSanitizer,
+    private readonly toastController: ToastController,
+    private readonly shareLinkService: ShareLinkService,
     public chatService: ChatService,
     private router: Router,
     private route: ActivatedRoute,
@@ -318,6 +321,28 @@ export class ProfilsPage implements OnInit {
     });
   }
 
+  async shareProfile(event?: Event) {
+    event?.stopPropagation();
+    const url = this.shareLinkService.buildProfileShareUrl(this.userId);
+    const title = `${this.displayName} • One Health Network`;
+    const text = `${this.displayName} - ${this.displayRole}`;
+    await this.shareWithFallback({ title, text, url });
+  }
+
+  async sharePost(post: Post, event?: Event) {
+    event?.stopPropagation();
+    const postId = `${post?.id || ''}`.trim();
+    if (!postId) {
+      return;
+    }
+
+    const url = this.shareLinkService.buildPostShareUrl(postId);
+    const excerpt = `${post.content || post.title || ''}`.trim();
+    const text = excerpt.length > 220 ? `${excerpt.slice(0, 217)}...` : excerpt;
+    const title = `${post.title || 'Publication OneHealth'}`.trim();
+    await this.shareWithFallback({ title, text, url });
+  }
+
   async openMessage() {
     if (this.isOwnProfile || !this.userId) {
       return;
@@ -401,5 +426,39 @@ export class ProfilsPage implements OnInit {
 
     this.longPost = nextLongPost;
     this.expanded = nextExpanded;
+  }
+
+  private async shareWithFallback(payload: {
+    title: string;
+    text: string;
+    url: string;
+  }) {
+    if (navigator.share) {
+      try {
+        await navigator.share(payload);
+        return;
+      } catch {
+        // Fallback clipboard below.
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(
+        [payload.title, payload.text, payload.url].filter(Boolean).join('\n\n').trim(),
+      );
+      const toast = await this.toastController.create({
+        message: 'Lien copié',
+        duration: 1500,
+        icon: 'copy',
+      });
+      await toast.present();
+    } catch {
+      const toast = await this.toastController.create({
+        message: 'Partage impossible',
+        duration: 1500,
+        color: 'danger',
+      });
+      await toast.present();
+    }
   }
 }

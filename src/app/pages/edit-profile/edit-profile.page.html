@@ -46,23 +46,68 @@
           <ion-label position="stacked">Institution</ion-label>
           <ion-input [(ngModel)]="user.institution" name="institution"></ion-input>
         </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="stacked">Specialite</ion-label>
+          <ion-select [(ngModel)]="user.typeMedecin" name="typeMedecin" interface="popover">
+            <ion-select-option *ngFor="let option of typeMedecinOptions" [value]="option">
+              {{ option }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
       </section>
 
       <section class="form-card">
         <h3>Coordonnees</h3>
         <ion-item lines="none">
           <ion-label position="stacked">Pays</ion-label>
-          <ion-input [(ngModel)]="user.country" name="country"></ion-input>
+          <ion-select
+            [(ngModel)]="user.country"
+            name="country"
+            interface="popover"
+            (ionChange)="onCountryChange($event.detail.value)"
+          >
+            <ion-select-option
+              *ngFor="let country of countries; trackBy: trackByCountryId"
+              [value]="country.name"
+            >
+              {{ country.name }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
 
         <ion-item lines="none">
           <ion-label position="stacked">Ville</ion-label>
-          <ion-input [(ngModel)]="user.city" name="city"></ion-input>
+          <ion-select
+            [(ngModel)]="user.city"
+            name="city"
+            interface="popover"
+            [disabled]="!cities.length"
+          >
+            <ion-select-option *ngFor="let city of cities; trackBy: trackByCityName" [value]="city.name">
+              {{ city.name }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
 
-        <ion-item lines="none">
-          <ion-label position="stacked">Telephone (Ex: +237670...)</ion-label>
-          <ion-input [(ngModel)]="user.phone" name="phone"></ion-input>
+        <ion-item lines="none" class="phone-field">
+          <ion-select
+            class="phone-code-select"
+            [(ngModel)]="phoneCountryId"
+            name="phoneCountryId"
+            interface="popover"
+            (ionChange)="onPhoneCountryChange($event.detail.value)"
+          >
+            <ion-select-option *ngFor="let country of countries; trackBy: trackByCountryId" [value]="country.id">
+              {{ country.flag }} {{ country.id }} {{ country.dialCode }}
+            </ion-select-option>
+          </ion-select>
+          <ion-input
+            [(ngModel)]="localPhone"
+            name="phone"
+            type="tel"
+            placeholder="Numero de telephone"
+          ></ion-input>
         </ion-item>
       </section>
 

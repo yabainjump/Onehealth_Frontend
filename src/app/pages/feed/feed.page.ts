@@ -7,6 +7,7 @@ import { ActionSheetController, AlertController, ToastController } from '@ionic/
 import { FeedPost } from '../../core/models/post.models';
 import { AuthService } from '../../core/services/auth.service';
 import { PostsService } from '../../core/services/posts.service';
+import { ShareLinkService } from '../../core/services/share-link.service';
 import { UsersService } from '../../core/services/users.service';
 
 @Component({
@@ -19,6 +20,7 @@ export class FeedPage implements OnInit {
   private readonly postsService = inject(PostsService);
   private readonly authService = inject(AuthService);
   private readonly usersService = inject(UsersService);
+  private readonly shareLinkService = inject(ShareLinkService);
   private readonly router = inject(Router);
   private readonly formBuilder = inject(FormBuilder);
   private readonly actionSheetCtrl = inject(ActionSheetController);
@@ -44,7 +46,7 @@ export class FeedPage implements OnInit {
   });
 
   private buildPostUrl(id: string): string {
-    return `${window.location.origin}/post-detail?id=${encodeURIComponent(id)}`;
+    return this.shareLinkService.buildPostShareUrl(id);
   }
 
   async ngOnInit(): Promise<void> {

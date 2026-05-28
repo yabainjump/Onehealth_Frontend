@@ -111,6 +111,18 @@
   font-size: 0.98rem;
 }
 
+.phone-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.phone-code-select {
+  min-width: 122px;
+  max-width: 140px;
+  flex: 0 0 auto;
+}
+
 .counter {
   margin: 8px 4px 0;
   text-align: right;

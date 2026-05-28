@@ -17,6 +17,7 @@ import {
   PublishService,
 } from 'src/app/services/publish/publish.service';
 import { Capacitor } from '@capacitor/core';
+import { ShareLinkService } from 'src/app/core/services/share-link.service';
 
 @Component({
   selector: 'app-dashbord',
@@ -56,12 +57,12 @@ export class DashbordPage implements OnInit {
     private alertController: AlertController,
     private actionSheetCtrl: ActionSheetController,
     private toastCtrl: ToastController,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private readonly shareLinkService: ShareLinkService,
   ) {}
 
   private buildPostUrl(id: string): string {
-    const origin = window.location.origin;
-    return `${origin}/post-detail?id=${encodeURIComponent(id)}`;
+    return this.shareLinkService.buildPostShareUrl(id);
   }
 
   blurActive() {

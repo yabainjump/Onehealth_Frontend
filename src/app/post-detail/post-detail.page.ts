@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Post, PostAttachment, PublishService } from '../services/publish/publish.service';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import { ToastController } from '@ionic/angular';
+import { ShareLinkService } from '../core/services/share-link.service';
 
 @Component({
   selector: 'app-post-detail',
@@ -23,7 +25,9 @@ longPost:   Record<string, boolean> = {};
   constructor(
     private route: ActivatedRoute,
     private publishService: PublishService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private readonly toastController: ToastController,
+    private readonly shareLinkService: ShareLinkService,
   ) {}
 
   async ngOnInit() {
@@ -195,5 +199,43 @@ longPost:   Record<string, boolean> = {};
     comment: { text: string; username: string; userPhotoURL: string },
   ): string {
     return `${comment.username || 'user'}-${comment.text || ''}-${_index}`;
+  }
+
+  async shareCurrentPost() {
+    const postId = `${this.post?.id || ''}`.trim();
+    if (!postId) {
+      return;
+    }
+
+    const url = this.shareLinkService.buildPostShareUrl(postId);
+    const title = `${this.post?.title || 'Publication OneHealth'}`.trim();
+    const excerpt = `${this.post?.content || this.post?.title || ''}`.trim();
+    const text = excerpt.length > 220 ? `${excerpt.slice(0, 217)}...` : excerpt;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+        return;
+      } catch {
+        // Fallback clipboard below.
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText([title, text, url].filter(Boolean).join('\n\n').trim());
+      const toast = await this.toastController.create({
+        message: 'Lien copié',
+        duration: 1500,
+        icon: 'copy',
+      });
+      await toast.present();
+    } catch {
+      const toast = await this.toastController.create({
+        message: 'Partage impossible',
+        duration: 1500,
+        color: 'danger',
+      });
+      await toast.present();
+    }
   }
 }

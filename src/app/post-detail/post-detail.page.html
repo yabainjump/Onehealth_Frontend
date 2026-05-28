@@ -4,6 +4,11 @@
       <ion-back-button defaultHref="/tabs/dashbord"></ion-back-button>
     </ion-buttons>
     <ion-title>Post detail</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="shareCurrentPost()" aria-label="Partager ce post">
+        <ion-icon name="share-social-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

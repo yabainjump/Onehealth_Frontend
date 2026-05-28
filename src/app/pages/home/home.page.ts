@@ -6,6 +6,7 @@ import { Observable, map, take } from 'rxjs';
 import { ApiService } from 'src/app/services/api/api.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -128,11 +129,20 @@ export class HomePage implements OnInit {
   }
 
   scrollToBottom() {
-    console.log('scroll bottom');
     if (this.chats) this.contentChat.scrollToBottom(500);
   }
 
   async sendMessage() {
+    const botApiUrl = (environment.botApiUrl || '').trim();
+    if (!botApiUrl) {
+      alert('Service momentanement indisponible');
+      return;
+    }
+
+    if (environment.production && !botApiUrl.toLowerCase().startsWith('https://')) {
+      alert('Configuration securite invalide (HTTPS requis).');
+      return;
+    }
     this.chats = [
       ...this.chats,
       {
@@ -143,9 +153,9 @@ export class HomePage implements OnInit {
     this.scrollToBottom();
     this.http
       .post<any>(
-        'http://194.113.194.90:5000/api/bot/',
+        botApiUrl,
         {
-          username: this.currentUser.name,
+          username: this.currentUser?.name || this.currentUser?.username || 'User',
           query: this.textToSend,
           user_id: this.chatService.currentUserId,
           sended_at: new Date().toISOString(),
@@ -156,7 +166,6 @@ export class HomePage implements OnInit {
       )
       .subscribe(
         (data) => {
-          console.log('Data ', data);
 
           this.chats = [
             ...this.chats,
@@ -233,7 +242,6 @@ export class HomePage implements OnInit {
     // this.chatService.getId();
     this.chatService.getChatRooms();
     this.chatRooms = this.chatService.chatRooms;
-    console.log('chatroom llkls: ', this.chatRooms);
   }
 
   async logout() {
@@ -250,7 +258,6 @@ export class HomePage implements OnInit {
 
 
   onSegmentChanged(event: any) {
-    console.log(event);
     this.segment = event.detail.value;
   }
 
@@ -285,7 +292,6 @@ export class HomePage implements OnInit {
       // this.global.showLoader();
       // create chatroom
       const room = await this.chatService.createChatRoom(item?.uid);
-      console.log('room: ', room);
       this.cancel();
       const targetUid = item?.uid || item?.id || '';
       const navData: NavigationExtras = {
@@ -297,7 +303,6 @@ export class HomePage implements OnInit {
       this.router.navigate(['/', 'tabs', 'home', 'chats', room?.id], navData);
       // this.global.hideLoader();
     } catch (e) {
-      console.log(e);
       // this.global.hideLoader();
     }
   }
@@ -334,3 +339,5 @@ export class HomePage implements OnInit {
     return index;
   }
 }
+
+

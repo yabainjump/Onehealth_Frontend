@@ -80,6 +80,9 @@
       <button class="btn btn-primary" type="button" *ngIf="isOwnProfile" (click)="editProfile()">
         Edit Profile
       </button>
+      <button class="btn btn-outline" type="button" (click)="shareProfile($event)">
+        Share
+      </button>
     </div>
 
     <p class="bio">{{ bioText }}</p>
@@ -192,7 +195,9 @@
         <footer class="post-actions">
           <span><ion-icon name="heart-outline"></ion-icon>{{ p.likes || 0 }}</span>
           <span><ion-icon name="chatbubble-outline"></ion-icon>{{ p.comments?.length || 0 }}</span>
-          <span><ion-icon name="share-social-outline"></ion-icon></span>
+          <span role="button" aria-label="Partager la publication" (click)="sharePost(p, $event)">
+            <ion-icon name="share-social-outline"></ion-icon>
+          </span>
         </footer>
       </article>
 
