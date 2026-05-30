@@ -3,14 +3,14 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { AuthService } from '../services/auth.service';
+import { TokenStorageService } from '../services/token-storage.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private readonly authService = inject(AuthService);
+  private readonly tokenStorage = inject(TokenStorageService);
 
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    return from(this.authService.getToken()).pipe(
+    return from(this.tokenStorage.getToken()).pipe(
       switchMap((token) => {
         if (!token) {
           return next.handle(req);

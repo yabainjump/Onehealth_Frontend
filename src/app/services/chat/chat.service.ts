@@ -12,6 +12,7 @@ import {
 import { ChatService as CoreChatService } from '../../core/services/chat.service';
 import { UploadService } from '../../core/services/upload.service';
 import { UsersService } from '../../core/services/users.service';
+import { resolveMediaUrl } from '../../core/utils/media-url.util';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
@@ -127,8 +128,8 @@ export class ChatService {
             id: message.id,
             sender: message.senderId,
             message: message.text || '',
-            imageUrl: message.imageUrl || '',
-            fileUrl: message.fileUrl || '',
+            imageUrl: resolveMediaUrl(message.imageUrl),
+            fileUrl: resolveMediaUrl(message.fileUrl),
             fileName: message.fileName || '',
             fileMimeType: message.fileMimeType || '',
             fileSize: message.fileSize || 0,
@@ -182,8 +183,8 @@ export class ChatService {
       id: sent.id,
       sender: sent.senderId,
       message: sent.text || '',
-      imageUrl: sent.imageUrl || '',
-      fileUrl: sent.fileUrl || '',
+      imageUrl: resolveMediaUrl(sent.imageUrl),
+      fileUrl: resolveMediaUrl(sent.fileUrl),
       fileName: sent.fileName || '',
       fileMimeType: sent.fileMimeType || '',
       fileSize: sent.fileSize || 0,
@@ -250,8 +251,10 @@ export class ChatService {
         user.name ||
         user.username ||
         `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-      photoURL: user.photoURL || 'assets/default-profile.png',
-      photo: user.photo || user.photoURL || 'assets/default-profile.png',
+      photoURL: resolveMediaUrl(user.photoURL) || 'assets/default-profile.png',
+      photo:
+        resolveMediaUrl(user.photo || user.photoURL) ||
+        'assets/default-profile.png',
     };
   }
 }

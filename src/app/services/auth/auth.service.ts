@@ -4,6 +4,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ApiService as CoreApiService } from '../../core/services/api.service';
 import { TokenStorageService } from '../../core/services/token-storage.service';
+import { resolveMediaUrl } from '../../core/utils/media-url.util';
 
 type LegacyUser = {
   uid: string;
@@ -133,6 +134,10 @@ export class AuthService {
     return this.userSubject.value;
   }
 
+  async isAuthenticated(): Promise<boolean> {
+    return !!(await this.tokenStorage.getToken());
+  }
+
   getId(): string | null {
     return this.userSubject.value?.uid ?? null;
   }
@@ -246,8 +251,12 @@ export class AuthService {
         user.name ||
         user.username ||
         `${user.firstName || ''} ${user.lastName || ''}`.trim(),
-      photo: user.photo || user.photoURL || 'assets/default-profile.png',
-      photoURL: user.photoURL || user.photo || 'assets/default-profile.png',
+      photo:
+        resolveMediaUrl(user.photo || user.photoURL) ||
+        'assets/default-profile.png',
+      photoURL:
+        resolveMediaUrl(user.photoURL || user.photo) ||
+        'assets/default-profile.png',
     };
   }
 }

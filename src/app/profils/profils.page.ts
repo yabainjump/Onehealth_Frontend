@@ -7,6 +7,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { UploadService } from '../core/services/upload.service';
 import { UsersService } from '../core/services/users.service';
 import { ShareLinkService } from '../core/services/share-link.service';
+import { resolveMediaUrl } from '../core/utils/media-url.util';
 import { AuthService } from '../services/auth/auth.service';
 import { ChatService } from '../services/chat/chat.service';
 import { PublishService, Post, PostAttachment } from 'src/app/services/publish/publish.service';
@@ -141,8 +142,10 @@ export class ProfilsPage implements OnInit {
 
   private setUserData(data: any) {
     this.user = data || {};
-    this.photoURL = data?.photoURL || data?.photo || 'assets/default-profile.png';
-    this.coverPhotoURL = data?.coverPhotoURL || 'assets/images/bg1.avif';
+    this.photoURL =
+      resolveMediaUrl(data?.photoURL || data?.photo) || 'assets/default-profile.png';
+    this.coverPhotoURL =
+      resolveMediaUrl(data?.coverPhotoURL) || 'assets/images/bg1.avif';
     const followersCount = this.resolveMetricValue(
       data?.followers,
       data?.followersCount ?? 0,
@@ -302,8 +305,8 @@ export class ProfilsPage implements OnInit {
     try {
       const uploaded = await firstValueFrom(this.uploadService.uploadProfile(file));
       await firstValueFrom(this.usersService.updateMe({ coverPhotoURL: uploaded.url }));
-      this.coverPhotoURL = uploaded.url;
-      this.user = { ...this.user, coverPhotoURL: uploaded.url };
+      this.coverPhotoURL = resolveMediaUrl(uploaded.url);
+      this.user = { ...this.user, coverPhotoURL: resolveMediaUrl(uploaded.url) };
     } catch (error) {
       console.error('Erreur lors de la mise a jour de la photo de mur :', error);
     } finally {

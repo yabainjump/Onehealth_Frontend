@@ -5,6 +5,7 @@ import { ToastController } from '@ionic/angular';
 
 import { UploadService } from '../../core/services/upload.service';
 import { UsersService } from '../../core/services/users.service';
+import { resolveMediaUrl } from '../../core/utils/media-url.util';
 import { AuthService } from '../../services/auth/auth.service';
 import {
   LocationCity,
@@ -97,7 +98,7 @@ export class EditProfilePage implements OnInit {
       bio: data?.bio || '',
     };
     this.photoURL =
-      data?.photoURL || data?.photo || 'assets/default-profile.png';
+      resolveMediaUrl(data?.photoURL || data?.photo) || 'assets/default-profile.png';
 
     this.initializeCountryAndCity();
     this.initializePhoneParts();
@@ -118,7 +119,7 @@ export class EditProfilePage implements OnInit {
       }
 
       const uploaded = await firstValueFrom(this.uploadService.uploadProfile(file));
-      this.photoURL = uploaded.url;
+      this.photoURL = resolveMediaUrl(uploaded.url);
       this.user.photoURL = uploaded.url;
     };
     input.click();

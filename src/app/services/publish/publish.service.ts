@@ -4,6 +4,7 @@ import { catchError } from 'rxjs/operators';
 
 import { ApiService as CoreApiService } from '../../core/services/api.service';
 import { UploadService } from '../../core/services/upload.service';
+import { resolveMediaUrl } from '../../core/utils/media-url.util';
 
 export type PostAttachmentType = 'video' | 'document';
 
@@ -107,8 +108,12 @@ export class PublishService {
             user?.name ||
             user?.username ||
             `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
-          photo: user?.photo || user?.photoURL || 'assets/default-profile.png',
-          photoURL: user?.photoURL || user?.photo || 'assets/default-profile.png',
+          photo:
+            resolveMediaUrl(user?.photo || user?.photoURL) ||
+            'assets/default-profile.png',
+          photoURL:
+            resolveMediaUrl(user?.photoURL || user?.photo) ||
+            'assets/default-profile.png',
         };
         this.userCache.set(uid, normalized);
         return normalized;
@@ -224,7 +229,8 @@ export class PublishService {
       userName:
         comment?.author?.username ||
         `${comment?.author?.firstName || ''} ${comment?.author?.lastName || ''}`.trim(),
-      userPhoto: comment?.author?.photoURL || 'assets/default-profile.png',
+      userPhoto:
+        resolveMediaUrl(comment?.author?.photoURL) || 'assets/default-profile.png',
       likesCount: comment?.likesCount ?? 0,
       userHasLiked: !!comment?.userHasLiked,
       createdAt: comment?.createdAt,
@@ -235,12 +241,12 @@ export class PublishService {
       authorId: author?.id || post?.authorId || '',
       title: post?.title || '',
       content: post?.content || '',
-      imageUrl: post?.imageUrls?.[0] || '',
-      imageUrls: post?.imageUrls || [],
+      imageUrl: resolveMediaUrl(post?.imageUrls?.[0]),
+      imageUrls: (post?.imageUrls || []).map((url: string) => resolveMediaUrl(url)),
       attachment: post?.attachment
         ? {
             type: post.attachment.type,
-            url: post.attachment.url,
+            url: resolveMediaUrl(post.attachment.url),
             fileName: post.attachment.fileName,
             mimeType: post.attachment.mimeType,
             size: post.attachment.size,
@@ -257,7 +263,7 @@ export class PublishService {
             firstName: author.firstName || '',
             lastName: author.lastName || '',
             institution: author.institution || '',
-            photoURL: author.photoURL || 'assets/default-profile.png',
+            photoURL: resolveMediaUrl(author.photoURL) || 'assets/default-profile.png',
           }
         : undefined,
     };
