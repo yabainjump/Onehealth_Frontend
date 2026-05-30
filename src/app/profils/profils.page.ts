@@ -254,22 +254,18 @@ export class ProfilsPage implements OnInit {
     return this.getAttachment(post)?.type === 'document';
   }
 
-  isPdfAttachment(post: Post): boolean {
-    const attachment = this.getAttachment(post);
-    if (!attachment) return false;
-    const fileName = attachment.fileName?.toLowerCase() || '';
-    return attachment.mimeType === 'application/pdf' || fileName.endsWith('.pdf');
-  }
-
   getDocumentPreviewUrl(post: Post): SafeResourceUrl {
     const attachment = this.getAttachment(post);
     if (!attachment?.url) {
       return this.sanitizer.bypassSecurityTrustResourceUrl('');
     }
 
-    const url = this.isPdfAttachment(post)
-      ? `${attachment.url}#view=FitH`
-      : `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(attachment.url)}`;
+    // Tous les documents (PDF inclus) sont previsualises via Google Docs Viewer.
+    // Embarquer le fichier directement depuis le backend echouerait : ce dernier
+    // refuse le framing cross-sous-domaine (X-Frame-Options).
+    const url = `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(
+      attachment.url,
+    )}`;
 
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
