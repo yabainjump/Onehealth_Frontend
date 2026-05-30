@@ -63,7 +63,7 @@ export class AuthService {
             .trim(),
         firstName: (formValue.firstName || '').toString().trim() || 'User',
         lastName: (formValue.lastName || '').toString().trim() || 'Onehealth',
-        institution: (formValue.institution || '').toString().trim() || 'N/A',
+        institution: (formValue.institution || '').toString().trim(),
         typeMedecin: (formValue.typeMedecin || '').toString().trim(),
         country: (formValue.country || '').toString().trim(),
         city: (formValue.city || '').toString().trim(),

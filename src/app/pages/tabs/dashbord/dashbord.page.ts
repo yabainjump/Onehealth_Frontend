@@ -28,6 +28,7 @@ export class DashbordPage implements OnInit {
   @ViewChild('popover') popover: PopoverController;
 
   userPhoto: string = 'assets/default-profile.png';
+  showProfileBanner = false;
   posts: Post[] = [];
   currentUserId: string;
   pageSize = 4;
@@ -243,12 +244,45 @@ export class DashbordPage implements OnInit {
       const userData = await this.authService.getUserData(this.currentUserId);
       this.userPhoto =
         userData?.photoURL || userData?.photo || 'assets/default-profile.png';
+      this.showProfileBanner =
+        this.isProfileIncomplete(userData) && !this.isProfileBannerDismissed();
     } catch (error) {
       console.error(
         'Erreur lors du chargement de la photo utilisateur :',
         error
       );
     }
+  }
+
+  private isProfileIncomplete(user: any): boolean {
+    if (!user) return false;
+    const hasInstitution = !!`${user.institution || ''}`.trim();
+    const hasCity = !!`${user.city || ''}`.trim();
+    const photo = `${user.photoURL || user.photo || ''}`.trim();
+    const hasPhoto = !!photo && !photo.includes('default-profile');
+    return !(hasInstitution && hasCity && hasPhoto);
+  }
+
+  private isProfileBannerDismissed(): boolean {
+    try {
+      return localStorage.getItem('ohn_profile_banner_dismissed') === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  dismissProfileBanner(): void {
+    this.showProfileBanner = false;
+    try {
+      localStorage.setItem('ohn_profile_banner_dismissed', '1');
+    } catch {
+      // Ignore storage errors (mode prive, etc.).
+    }
+  }
+
+  completeProfile(): void {
+    this.showProfileBanner = false;
+    void this.router.navigateByUrl('/edit-profile');
   }
 
   getRelativeTime(timestamp: any): string {

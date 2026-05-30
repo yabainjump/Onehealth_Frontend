@@ -31,6 +31,16 @@
 </ion-header>
 
 <ion-content>
+  <div class="profile-complete-banner" *ngIf="showProfileBanner">
+    <ion-icon name="person-circle-outline" class="pcb-icon"></ion-icon>
+    <div class="pcb-text">
+      <strong>Complétez votre profil</strong>
+      <p>Ajoutez votre institution, spécialité, localisation et photo pour mieux vous connecter au réseau.</p>
+    </div>
+    <ion-button size="small" (click)="completeProfile()">Compléter</ion-button>
+    <ion-icon name="close-outline" class="pcb-close" (click)="dismissProfileBanner()"></ion-icon>
+  </div>
+
   <div *ngIf="isLoadingFeed">
     <div class="post-card skeleton-post" *ngFor="let _ of skeletonItems">
       <div class="post-header">
