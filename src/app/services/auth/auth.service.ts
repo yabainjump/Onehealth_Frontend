@@ -159,7 +159,19 @@ export class AuthService {
   }
 
   async getUserData(id: string): Promise<any> {
-    return firstValueFrom(this.api.get<any>(`/users/${id}`));
+    const user = await firstValueFrom(this.api.get<any>(`/users/${id}`));
+    if (user && typeof user === 'object') {
+      if (user.photoURL) {
+        user.photoURL = resolveMediaUrl(user.photoURL);
+      }
+      if (user.photo) {
+        user.photo = resolveMediaUrl(user.photo);
+      }
+      if (user.coverPhotoURL) {
+        user.coverPhotoURL = resolveMediaUrl(user.coverPhotoURL);
+      }
+    }
+    return user;
   }
 
   private async refreshCurrentUser(): Promise<void> {
