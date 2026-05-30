@@ -150,6 +150,14 @@ longPost:   Record<string, boolean> = {};
     window.open(url, '_blank', 'noopener');
   }
 
+  // Repli : si la miniature (/api/media/thumb) echoue, on charge l'image originale.
+  onMediaError(event: Event, fallback?: string): void {
+    const img = event.target as HTMLImageElement | null;
+    if (img && fallback && img.getAttribute('src') !== fallback) {
+      img.src = fallback;
+    }
+  }
+
   formatPostContent(value: string | null | undefined): SafeHtml {
     if (!value) return '';
 

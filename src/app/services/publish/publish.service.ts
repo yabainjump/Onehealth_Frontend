@@ -27,6 +27,9 @@ export interface Post {
   content: string;
   imageUrl?: string;
   imageUrls?: string[];
+  // URLs originales (pleine resolution), utilisees en repli si la miniature echoue.
+  fullImageUrl?: string;
+  fullImageUrls?: string[];
   attachment?: PostAttachment | null;
   likes: number;
   title?: string;
@@ -248,6 +251,8 @@ export class PublishService {
       content: post?.content || '',
       imageUrl: mediaThumbUrl(post?.imageUrls?.[0], 1000),
       imageUrls: (post?.imageUrls || []).map((url: string) => mediaThumbUrl(url, 1000)),
+      fullImageUrl: resolveMediaUrl(post?.imageUrls?.[0]),
+      fullImageUrls: (post?.imageUrls || []).map((url: string) => resolveMediaUrl(url)),
       attachment: post?.attachment
         ? {
             type: post.attachment.type,

@@ -603,6 +603,14 @@ export class DashbordPage implements OnInit {
     return `${size.toFixed(size < 10 && unit > 0 ? 1 : 0)} ${units[unit]}`;
   }
 
+  // Repli : si la miniature (/api/media/thumb) echoue, on charge l'image originale.
+  onMediaError(event: Event, fallback?: string): void {
+    const img = event.target as HTMLImageElement | null;
+    if (img && fallback && img.getAttribute('src') !== fallback) {
+      img.src = fallback;
+    }
+  }
+
   openAttachment(post: Post, event?: Event) {
     event?.stopPropagation();
     const url = this.getAttachment(post)?.url;
