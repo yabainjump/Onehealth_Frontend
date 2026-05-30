@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Post, PostAttachment, PublishService } from '../services/publish/publish.service';
 import { ActivatedRoute } from '@angular/router';
-import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ToastController } from '@ionic/angular';
 import { ShareLinkService } from '../core/services/share-link.service';
 
@@ -142,22 +142,6 @@ longPost:   Record<string, boolean> = {};
 
   hasDocumentAttachment(post: Post | null): boolean {
     return this.getAttachment(post)?.type === 'document';
-  }
-
-  getDocumentPreviewUrl(post: Post | null): SafeResourceUrl {
-    const attachment = this.getAttachment(post);
-    if (!attachment?.url) {
-      return this.sanitizer.bypassSecurityTrustResourceUrl('');
-    }
-
-    // Tous les documents (PDF inclus) sont previsualises via Google Docs Viewer.
-    // Embarquer le fichier directement depuis le backend echouerait : ce dernier
-    // refuse le framing cross-sous-domaine (X-Frame-Options).
-    const url = `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(
-      attachment.url,
-    )}`;
-
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   openAttachment(post: Post | null) {

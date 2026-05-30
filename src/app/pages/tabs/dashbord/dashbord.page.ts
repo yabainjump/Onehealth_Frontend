@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   AlertController,
   PopoverController,
@@ -57,7 +56,6 @@ export class DashbordPage implements OnInit {
     private alertController: AlertController,
     private actionSheetCtrl: ActionSheetController,
     private toastCtrl: ToastController,
-    private sanitizer: DomSanitizer,
     private readonly shareLinkService: ShareLinkService,
   ) {}
 
@@ -603,22 +601,6 @@ export class DashbordPage implements OnInit {
       unit += 1;
     }
     return `${size.toFixed(size < 10 && unit > 0 ? 1 : 0)} ${units[unit]}`;
-  }
-
-  getDocumentPreviewUrl(post: Post): SafeResourceUrl {
-    const attachment = this.getAttachment(post);
-    if (!attachment?.url) {
-      return this.sanitizer.bypassSecurityTrustResourceUrl('');
-    }
-
-    // Tous les documents (PDF inclus) sont previsualises via Google Docs Viewer.
-    // Embarquer le fichier directement depuis le backend echouerait : ce dernier
-    // refuse le framing cross-sous-domaine (X-Frame-Options).
-    const url = `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(
-      attachment.url,
-    )}`;
-
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   openAttachment(post: Post, event?: Event) {

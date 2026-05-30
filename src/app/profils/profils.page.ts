@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IonPopover, ToastController } from '@ionic/angular';
 import { combineLatest, firstValueFrom, Observable, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -252,22 +252,6 @@ export class ProfilsPage implements OnInit {
 
   hasDocumentAttachment(post: Post): boolean {
     return this.getAttachment(post)?.type === 'document';
-  }
-
-  getDocumentPreviewUrl(post: Post): SafeResourceUrl {
-    const attachment = this.getAttachment(post);
-    if (!attachment?.url) {
-      return this.sanitizer.bypassSecurityTrustResourceUrl('');
-    }
-
-    // Tous les documents (PDF inclus) sont previsualises via Google Docs Viewer.
-    // Embarquer le fichier directement depuis le backend echouerait : ce dernier
-    // refuse le framing cross-sous-domaine (X-Frame-Options).
-    const url = `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(
-      attachment.url,
-    )}`;
-
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   openAttachment(post: Post, event?: Event) {
