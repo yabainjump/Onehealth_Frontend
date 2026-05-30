@@ -50,6 +50,8 @@
             class="photo"
             [src]="m.imageUrl || m.fileUrl"
             alt="image"
+            loading="lazy"
+            decoding="async"
             (click)="openAttachment(m)" />
 
           <button

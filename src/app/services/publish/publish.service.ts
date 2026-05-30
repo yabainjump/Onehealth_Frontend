@@ -4,7 +4,11 @@ import { catchError } from 'rxjs/operators';
 
 import { ApiService as CoreApiService } from '../../core/services/api.service';
 import { UploadService } from '../../core/services/upload.service';
-import { resolveMediaUrl } from '../../core/utils/media-url.util';
+import {
+  mediaPosterUrl,
+  mediaThumbUrl,
+  resolveMediaUrl,
+} from '../../core/utils/media-url.util';
 
 export type PostAttachmentType = 'video' | 'document';
 
@@ -14,6 +18,7 @@ export interface PostAttachment {
   fileName: string;
   mimeType: string;
   size: number;
+  posterUrl?: string;
 }
 
 export interface Post {
@@ -241,8 +246,8 @@ export class PublishService {
       authorId: author?.id || post?.authorId || '',
       title: post?.title || '',
       content: post?.content || '',
-      imageUrl: resolveMediaUrl(post?.imageUrls?.[0]),
-      imageUrls: (post?.imageUrls || []).map((url: string) => resolveMediaUrl(url)),
+      imageUrl: mediaThumbUrl(post?.imageUrls?.[0], 1000),
+      imageUrls: (post?.imageUrls || []).map((url: string) => mediaThumbUrl(url, 1000)),
       attachment: post?.attachment
         ? {
             type: post.attachment.type,
@@ -250,6 +255,10 @@ export class PublishService {
             fileName: post.attachment.fileName,
             mimeType: post.attachment.mimeType,
             size: post.attachment.size,
+            posterUrl:
+              post.attachment.type === 'video'
+                ? mediaPosterUrl(post.attachment.url)
+                : undefined,
           }
         : null,
       likes: post?.likesCount ?? post?.likes ?? 0,

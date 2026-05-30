@@ -8,6 +8,16 @@ const BACKEND_ORIGIN = (environment.apiBaseUrl || '')
   .replace(/\/api\/?$/, '')
   .replace(/\/+$/, '');
 
+/** Base de l'API (avec le suffixe /api), utilisee pour les endpoints media. */
+const API_BASE = (environment.apiBaseUrl || '').replace(/\/+$/, '');
+
+/** Extrait la portion `/uploads/...` d'une URL, ou '' si absente. */
+function uploadsPath(rawUrl?: string | null): string {
+  const value = `${rawUrl ?? ''}`.trim();
+  const index = value.indexOf('/uploads/');
+  return index >= 0 ? value.substring(index) : '';
+}
+
 /**
  * Normalise une URL de media servie par le backend.
  *
@@ -41,4 +51,36 @@ export function resolveMediaUrl(raw?: string | null): string {
   }
 
   return value;
+}
+
+/**
+ * URL d'une miniature redimensionnee servie par le backend (sharp, mise en cache).
+ * Pour une image d'upload, pointe vers `/api/media/thumb`. Sinon, renvoie l'URL
+ * normalisee telle quelle (assets locaux, data:, etc.).
+ */
+export function mediaThumbUrl(rawUrl?: string | null, width = 800): string {
+  const value = `${rawUrl ?? ''}`.trim();
+  if (!value) {
+    return '';
+  }
+
+  const path = uploadsPath(value);
+  if (!path) {
+    return resolveMediaUrl(value);
+  }
+
+  return `${API_BASE}/media/thumb?path=${encodeURIComponent(path)}&w=${width}`;
+}
+
+/**
+ * URL du poster (1ʳᵉ frame) d'une video d'upload, genere par le backend (ffmpeg).
+ * Renvoie '' si l'URL n'est pas une video d'upload.
+ */
+export function mediaPosterUrl(rawUrl?: string | null): string {
+  const path = uploadsPath(rawUrl);
+  if (!path) {
+    return '';
+  }
+
+  return `${API_BASE}/media/poster?path=${encodeURIComponent(path)}`;
 }

@@ -171,9 +171,10 @@
           *ngIf="hasVideoAttachment(p)"
           class="post-video"
           [src]="p.attachment?.url"
+          [poster]="p.attachment?.posterUrl || null"
           controls
           playsinline
-          preload="metadata">
+          preload="none">
         </video>
 
         <div class="doc-wrapper" *ngIf="hasDocumentAttachment(p)">

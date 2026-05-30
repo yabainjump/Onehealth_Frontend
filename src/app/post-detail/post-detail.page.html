@@ -67,9 +67,10 @@
     <video
       class="post-video"
       [src]="post.attachment?.url"
+      [poster]="post.attachment?.posterUrl || null"
       controls
       playsinline
-      preload="metadata">
+      preload="none">
     </video>
   </div>
 
