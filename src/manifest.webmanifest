@@ -1,0 +1,19 @@
+{
+  "name": "One Health Network",
+  "short_name": "OneHealth",
+  "description": "One Health Network connects professionals in human, animal, and environmental health.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#0b4ed6",
+  "icons": [
+    {
+      "src": "assets/icon/favicon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
