@@ -1,5 +1,5 @@
 import { ChatService } from './../../services/chat/chat.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { IonContent, ModalController, PopoverController } from '@ionic/angular';
 import { Observable, map, take } from 'rxjs';
@@ -15,7 +15,8 @@ import { environment } from 'src/environments/environment';
   
   standalone: false,
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
+  private roomsRefreshTimer: ReturnType<typeof setInterval> | null = null;
   @ViewChild('new_chat') modal: ModalController;
   @ViewChild('popover') popover: PopoverController;
   @ViewChild('contentChat', { static: false }) contentChat: IonContent;
@@ -126,6 +127,16 @@ export class HomePage implements OnInit {
     this.chatService
       .getCurrentUserProfil()
       .subscribe((user) => (this.currentUser = user[0]));
+
+    // Rafraichit periodiquement la liste des conversations (nouveaux messages / non-lus).
+    this.roomsRefreshTimer = setInterval(() => this.getRooms(), 10000);
+  }
+
+  ngOnDestroy() {
+    if (this.roomsRefreshTimer) {
+      clearInterval(this.roomsRefreshTimer);
+      this.roomsRefreshTimer = null;
+    }
   }
 
   scrollToBottom() {

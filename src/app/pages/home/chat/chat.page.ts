@@ -28,6 +28,7 @@ export class ChatPage implements OnInit, OnDestroy {
   private roomRecoveryInProgress = false;
   private statusRefreshTimer: ReturnType<typeof setInterval> | null = null;
   private readSyncTimer: ReturnType<typeof setInterval> | null = null;
+  private messageRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
   id: string;
   name: string;
@@ -81,6 +82,7 @@ export class ChatPage implements OnInit, OnDestroy {
     }
 
     this.chats = this.chatService.selectedChatRoomMessages;
+    this.startMessageRefresh();
 
     const authUser = await firstValueFrom(
       this.chatService.auth.getAuthState().pipe(take(1))
@@ -163,6 +165,21 @@ export class ChatPage implements OnInit, OnDestroy {
       clearInterval(this.readSyncTimer);
       this.readSyncTimer = null;
     }
+    if (this.messageRefreshTimer) {
+      clearInterval(this.messageRefreshTimer);
+      this.messageRefreshTimer = null;
+    }
+  }
+
+  // Quasi temps reel : re-recupere les messages periodiquement (pas de WebSocket).
+  private startMessageRefresh() {
+    if (!this.id || this.messageRefreshTimer) {
+      return;
+    }
+
+    this.messageRefreshTimer = setInterval(() => {
+      this.chatService.getChatRoomMessages(this.id);
+    }, 4000);
   }
 
   scrollToBottom() {

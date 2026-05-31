@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, firstValueFrom, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -183,12 +184,21 @@ export class AuthService {
       return;
     }
 
-    const user = await firstValueFrom(
-      this.api.get<any>('/auth/me').pipe(catchError(() => of(null))),
-    );
+    let user: any = null;
+    try {
+      user = await firstValueFrom(this.api.get<any>('/auth/me'));
+    } catch (error) {
+      const status = (error as HttpErrorResponse)?.status ?? 0;
+      // 401/403 = token invalide/expire -> deconnexion.
+      // Sinon (status 0 = reseau, 5xx = backend momentanement indisponible) :
+      // on CONSERVE la session pour ne pas casser l'app sur un simple blip.
+      if (status === 401 || status === 403) {
+        await this.logout();
+      }
+      return;
+    }
 
     if (!user) {
-      await this.logout();
       return;
     }
 
