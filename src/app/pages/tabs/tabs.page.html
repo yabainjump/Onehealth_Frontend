@@ -5,28 +5,28 @@
         color="primary"
         [name]="selectedTab === 'dashbord' ? 'home' : 'home-outline'"
       ></ion-icon>
-      Home
+      {{ 'TABS.HOME' | translate }}
     </ion-tab-button>
     <ion-tab-button class="let" tab="pushpub">
       <ion-icon
         color="primary"
         [name]="selectedTab === 'pushpub' ? 'add' : 'add-outline'"
       ></ion-icon>
-      Publish
+      {{ 'TABS.PUBLISH' | translate }}
     </ion-tab-button>
     <ion-tab-button class="let" tab="home">
       <ion-icon
         color="primary"
         [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"
       ></ion-icon>
-      Messages
+      {{ 'TABS.MESSAGES' | translate }}
     </ion-tab-button>
     <ion-tab-button class="let" tab="profils">
       <ion-icon
         color="primary"
         [name]="selectedTab === 'profils' ? 'person' : 'person-outline'"
       ></ion-icon>
-      Profil
+      {{ 'TABS.PROFILE' | translate }}
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>

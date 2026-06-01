@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/dashbord"></ion-back-button>
     </ion-buttons>
-    <ion-title>Post detail</ion-title>
+    <ion-title>{{ 'POSTDETAIL.TITLE' | translate }}</ion-title>
     <ion-buttons slot="end">
       <ion-button fill="clear" (click)="shareCurrentPost()" aria-label="Partager ce post">
         <ion-icon name="share-social-outline"></ion-icon>
@@ -15,7 +15,7 @@
 <ion-content *ngIf="post" class="ion-padding">
   <!-- Auteur -->
   <div *ngIf="!post">
-    <ion-text color="danger">Aucun post à afficher ou en chargement...</ion-text>
+    <ion-text color="danger">{{ 'POSTDETAIL.NO_POST' | translate }}</ion-text>
   </div>
   <div class="post-header">
     <ion-avatar slot="start">
@@ -43,7 +43,7 @@
     type="button"
     (click)="toggleExpand(post.id)"
   >
-    {{ expanded[post.id] ? 'Afficher moins' : 'Afficher plus' }}
+    {{ (expanded[post.id] ? 'DASHBOARD.SHOW_LESS' : 'DASHBOARD.SHOW_MORE') | translate }}
   </button>
 
   <!-- Si une seule image (ancien format) -->
@@ -81,14 +81,14 @@
         <strong>{{ post.attachment?.fileName }}</strong>
       </div>
       <ion-button fill="clear" size="small" (click)="openAttachment(post)">
-        Ouvrir
+        {{ 'DASHBOARD.OPEN' | translate }}
       </ion-button>
     </div>
   </div>
 
   <!-- Section commentaires -->
   <ion-list>
-    <ion-list-header>Commentaires</ion-list-header>
+    <ion-list-header>{{ 'POSTDETAIL.COMMENTS' | translate }}</ion-list-header>
     <ion-item *ngFor="let comment of commentsWithUsers; trackBy: trackByComment">
       <ion-avatar slot="start">
         <img [src]="comment.userPhotoURL" loading="lazy" decoding="async" />

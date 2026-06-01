@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { HomePageRoutingModule } from './home-routing.module';
 
@@ -17,7 +18,8 @@ import { HomePage } from './home.page';
     IonicModule,
     HomePageRoutingModule,
     ComponentsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule
   ],
   declarations: [HomePage, UserListComponent]
 })

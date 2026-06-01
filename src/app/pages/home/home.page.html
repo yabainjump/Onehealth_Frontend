@@ -1,6 +1,6 @@
 <ion-header class="title-header">
   <ion-toolbar color="success">
-    <ion-title>OneHealth Chat</ion-title>
+    <ion-title>{{ 'HOME.TITLE' | translate }}</ion-title>
     <!-- <ion-buttons slot="end">
       <ion-button fill="clear" id="popover">
         <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
@@ -18,13 +18,13 @@
   </ion-toolbar>
   <ion-segment [value]="segment" mode="md" (ionChange)="onSegmentChanged($event)">
     <ion-segment-button value="I-edna">
-      <ion-label>Groups</ion-label>
+      <ion-label>{{ 'HOME.GROUPS' | translate }}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="chats">
-      <ion-label>Chats</ion-label>
+      <ion-label>{{ 'HOME.CHATS' | translate }}</ion-label>
     </ion-segment-button>
     <ion-segment-button value="calls">
-      <ion-label>Calls</ion-label>
+      <ion-label>{{ 'HOME.CALLS' | translate }}</ion-label>
     </ion-segment-button>
   </ion-segment>
 </ion-header>
@@ -39,7 +39,7 @@
     <ion-list *ngIf="rooms?.length > 0">
 
       <ion-list-header class="ion-padding-bottom" color="light">
-        RECENT CHATS
+        {{ 'HOME.RECENT_CHATS' | translate }}
       </ion-list-header>
 
       <ion-item *ngFor="let item of rooms; trackBy: trackByRoomId" (click)="getChat(item)" [detail]="true">
@@ -111,15 +111,15 @@
     <ng-template>
       <ion-header>
         <ion-toolbar color="light">
-          <ion-title>New conversation</ion-title>
+          <ion-title>{{ 'HOME.NEW_CONVERSATION' | translate }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="cancel()">Close</ion-button>
+            <ion-button (click)="cancel()">{{ 'COMMON.CLOSE' | translate }}</ion-button>
           </ion-buttons>
         </ion-toolbar>
 
         <!-- plus de select de spécialité -->
         <ion-searchbar (ionInput)="searchUsers($event)" show-clear-button="always"
-          placeholder="Search for a user">
+          [placeholder]="'HOME.SEARCH_USER' | translate">
         </ion-searchbar>
       </ion-header>
 

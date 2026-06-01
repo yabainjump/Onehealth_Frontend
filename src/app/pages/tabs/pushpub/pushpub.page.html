@@ -1,18 +1,18 @@
 <ion-header>
   <ion-toolbar color="success">
-    <ion-title>Add Post</ion-title>
+    <ion-title>{{ 'PUSHPUB.TITLE' | translate }}</ion-title>
   </ion-toolbar>
   
 </ion-header>
 
 <ion-content>   
 <ion-item >
-    <ion-label class="box1" position="floating">What's on your mind?</ion-label>
+    <ion-label class="box1" position="floating">{{ 'PUSHPUB.PLACEHOLDER' | translate }}</ion-label>
     <ion-textarea [autoGrow]="true" class="box1" [(ngModel)]="content"></ion-textarea>
   </ion-item>
 
    <ion-item lines="none">
-    <ion-label>Ajouter media (images, video, PDF, PPT, DOC)</ion-label>
+    <ion-label>{{ 'PUSHPUB.ADD_MEDIA' | translate }}</ion-label>
     <ion-icon name="image-outline" (click)="fileInput.click()" style="cursor: pointer; font-size: 24px;"></ion-icon>
     <input
       type="file"
@@ -28,7 +28,7 @@
   <ion-grid *ngIf="previewUrls.length">
     <ion-row>
       <ion-col size="4" *ngFor="let url of previewUrls; trackBy: trackByPreviewUrl">
-        <img [src]="url" alt="Prévisualisation image" loading="lazy" decoding="async" />
+        <img [src]="url" [alt]="'PUSHPUB.IMAGE_ALT' | translate" loading="lazy" decoding="async" />
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -48,7 +48,7 @@
     <ion-icon name="document-text-outline"></ion-icon>
     <div>
       <p class="media-name">{{ attachmentFile.name }}</p>
-      <small>Document pret a publier</small>
+      <small>{{ 'PUSHPUB.DOC_READY' | translate }}</small>
     </div>
   </div>
 
@@ -57,7 +57,7 @@
             [disabled]="isPublishing"
             (click)="addPost()">
   <ion-spinner name="crescent" *ngIf="isPublishing" style="margin-right:8px"></ion-spinner>
-  {{ isPublishing ? 'Publication…' : 'Post' }}
+  {{ (isPublishing ? 'PUSHPUB.PUBLISHING' : 'PUSHPUB.SUBMIT') | translate }}
 </ion-button>
 
 

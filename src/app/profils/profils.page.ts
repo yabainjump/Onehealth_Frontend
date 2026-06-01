@@ -7,6 +7,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { UploadService } from '../core/services/upload.service';
 import { UsersService } from '../core/services/users.service';
 import { ShareLinkService } from '../core/services/share-link.service';
+import { AppLanguage, LanguageService } from '../core/services/language.service';
 import { resolveMediaUrl } from '../core/utils/media-url.util';
 import { AuthService } from '../services/auth/auth.service';
 import { ChatService } from '../services/chat/chat.service';
@@ -48,8 +49,18 @@ export class ProfilsPage implements OnInit {
     public chatService: ChatService,
     private router: Router,
     private route: ActivatedRoute,
-    private publishService: PublishService
+    private publishService: PublishService,
+    private readonly languageService: LanguageService
   ) { }
+
+  get currentAppLanguage(): AppLanguage {
+    return this.languageService.getCurrentLanguage();
+  }
+
+  async setAppLanguage(language: AppLanguage) {
+    this.languageService.setLanguage(language);
+    await this.popover?.dismiss();
+  }
 
   ngOnInit() {
     combineLatest([this.authService.getAuthState(), this.route.paramMap]).subscribe({

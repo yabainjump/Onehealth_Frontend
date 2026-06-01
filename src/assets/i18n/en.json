@@ -1,0 +1,175 @@
+{
+  "COMMON": {
+    "APP_NAME": "One Health Network",
+    "EMAIL": "Email address",
+    "PASSWORD": "Password",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "OK": "OK",
+    "CLOSE": "Close",
+    "OPEN": "Open",
+    "SEND": "Send",
+    "SEARCH": "Search",
+    "LOADING": "Loading…",
+    "RETRY": "Retry",
+    "ALERT": "Alert",
+    "SHOW": "Show",
+    "HIDE": "Hide",
+    "CONTINUE": "Continue"
+  },
+  "LOGIN": {
+    "WELCOME_BACK": "Welcome back,",
+    "TITLE": "Log In!",
+    "EMAIL_PLACEHOLDER": "Enter Email Address",
+    "EMAIL_ERROR": "*Please enter proper Email Address",
+    "PASSWORD_PLACEHOLDER": "Enter Password",
+    "PASSWORD_REQUIRED": "*Please enter your Password",
+    "PASSWORD_MINLENGTH": "*Password must be at least 8 characters",
+    "REMEMBER_ME": "Remember me",
+    "FORGOT_PASSWORD": "Forgot password?",
+    "SUBMIT": "Log In",
+    "NO_ACCOUNT": "Not a member yet?",
+    "SIGN_UP": "Sign Up"
+  },
+  "SIGNUP": {
+    "HELLO": "Hello Dr,",
+    "TITLE": "Sign Up!",
+    "FIRST_NAME_PLACEHOLDER": "Enter First Name",
+    "FIRST_NAME_ERROR": "*Please enter First Name (min 2 characters)",
+    "LAST_NAME_PLACEHOLDER": "Enter Last Name",
+    "LAST_NAME_ERROR": "*Please enter Last Name (min 2 characters)",
+    "EMAIL_PLACEHOLDER": "Enter Email Address",
+    "EMAIL_ERROR": "*Please enter proper Email Address",
+    "PASSWORD_PLACEHOLDER": "Enter Password",
+    "PASSWORD_REQUIRED": "*Please enter your Password",
+    "PASSWORD_MINLENGTH": "*Password must be at least 8 characters",
+    "PROFILE_HINT": "You can complete your profile (institution, specialty, location, photo…) right after signing up.",
+    "ACCEPT_TERMS": "I accept the policy and terms",
+    "SUBMIT": "Sign Up",
+    "ERROR_GENERIC": "Could not sign you up, please try again.",
+    "ERROR_EMAIL_IN_USE": "Email already in use"
+  },
+  "FORGOT": {
+    "TITLE_BAR": "Forgot password",
+    "TITLE": "Reset your password",
+    "SUBTITLE": "Enter your email address. If the account exists, you will receive instructions.",
+    "EMAIL_PLACEHOLDER": "Email address",
+    "EMAIL_ERROR": "Enter a valid email address.",
+    "SUBMIT": "Send",
+    "DEV_TITLE": "Local mode (development)",
+    "COPY_TOKEN": "Copy token"
+  },
+  "RESET": {
+    "TITLE_BAR": "New password",
+    "TITLE": "Choose a new password",
+    "SUBTITLE": "Paste the token you received then set a new password.",
+    "TOKEN_PLACEHOLDER": "Reset token",
+    "TOKEN_REQUIRED": "The token is required.",
+    "PASSWORD_PLACEHOLDER": "New password",
+    "PASSWORD_ERROR": "Password must be at least 8 characters.",
+    "CONFIRM_PLACEHOLDER": "Confirm password",
+    "MISMATCH": "Passwords do not match.",
+    "SUBMIT": "Reset"
+  },
+  "NOTFOUND": {
+    "TITLE": "Page not found",
+    "SUBTITLE": "The link appears invalid or expired.",
+    "HOME": "Back to home"
+  },
+  "TABS": {
+    "HOME": "Home",
+    "PUBLISH": "Publish",
+    "MESSAGES": "Messages",
+    "PROFILE": "Profile"
+  },
+  "DASHBOARD": {
+    "SEARCH_PLACEHOLDER": "Search for a publication, author, institution…",
+    "BANNER_TITLE": "Complete your profile",
+    "BANNER_TEXT": "Add your institution, specialty, location and photo to better connect with the network.",
+    "BANNER_CTA": "Complete",
+    "USER_DESCRIPTION": "OneHealth member",
+    "SHOW_MORE": "Show more",
+    "SHOW_LESS": "Show less",
+    "OPEN": "Open",
+    "LIKES": "Likes",
+    "COMMENT": "Comment",
+    "SHARE": "Share",
+    "VIEW_COMMENTS": "View comments ({{count}})",
+    "COMMENT_PLACEHOLDER": "Write a comment…",
+    "COMMENT_AUTHOR_FALLBACK": "User",
+    "LOADING": "Loading…"
+  },
+  "PUSHPUB": {
+    "TITLE": "Add Post",
+    "PLACEHOLDER": "What's on your mind?",
+    "ADD_MEDIA": "Add media (images, video, PDF, PPT, DOC)",
+    "IMAGE_ALT": "Image preview",
+    "DOC_READY": "Document ready to publish",
+    "PUBLISHING": "Publishing…",
+    "SUBMIT": "Post"
+  },
+  "EDIT_PROFILE": {
+    "TITLE": "Edit profile",
+    "DEFAULT_FIRST": "Your",
+    "DEFAULT_LAST": "profile",
+    "TAP_PHOTO": "Tap the photo to change it",
+    "SECTION_BASIC": "Basic information",
+    "FIRST_NAME": "First name",
+    "LAST_NAME": "Last name",
+    "USERNAME": "Username",
+    "INSTITUTION": "Institution",
+    "SPECIALTY": "Specialty",
+    "SECTION_CONTACT": "Contact details",
+    "COUNTRY": "Country",
+    "CITY": "City",
+    "PHONE_PLACEHOLDER": "Phone number",
+    "SECTION_BIO": "Profile description",
+    "BIO": "Bio",
+    "BIO_PLACEHOLDER": "Tell us a bit about yourself…",
+    "SAVING": "Saving…",
+    "LOADING": "Loading profile…"
+  },
+  "PROFILE": {
+    "COVER": "Cover photo",
+    "COVER_UPLOADING": "Uploading…",
+    "EDIT": "Edit profile",
+    "MESSAGE": "Message",
+    "LOGOUT": "Logout",
+    "FOLLOW": "Follow",
+    "FOLLOWING": "Following",
+    "SHARE": "Share",
+    "POSTS": "Posts",
+    "FOLLOWERS": "Followers",
+    "FOLLOWING_LABEL": "Following",
+    "RECENT_POSTS": "Recent Posts",
+    "FILTER": "Filter",
+    "NO_POSTS": "No posts yet."
+  },
+  "HOME": {
+    "TITLE": "OneHealth Chat",
+    "GROUPS": "Groups",
+    "CHATS": "Chats",
+    "CALLS": "Calls",
+    "RECENT_CHATS": "Recent chats",
+    "NEW_CONVERSATION": "New conversation",
+    "SEARCH_USER": "Search for a user"
+  },
+  "CHAT": {
+    "DOCUMENT": "Document",
+    "MESSAGE_PLACEHOLDER": "Message"
+  },
+  "POSTDETAIL": {
+    "TITLE": "Post detail",
+    "NO_POST": "No post to display or loading…",
+    "COMMENTS": "Comments"
+  },
+  "ITEMS": {
+    "CONTACT": "Contact",
+    "DESCRIPTION": "Description"
+  },
+  "SIGNUPD": {
+    "I_AM_DOCTOR": "I'm a Doctor",
+    "USERNAME_PLACEHOLDER": "Enter Username",
+    "USERNAME_ERROR": "*Please enter Username"
+  }
+}

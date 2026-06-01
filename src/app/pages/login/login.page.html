@@ -4,11 +4,11 @@
   <div class="circleBase type2 circle2"></div>
 
   <ion-label class="welcomeMessage">
-    <ion-text color="light">Welcome Back,</ion-text> 
+    <ion-text color="light">{{ 'LOGIN.WELCOME_BACK' | translate }}</ion-text>
     <ion-text color="light">
-      <p>Log In!</p>
+      <p>{{ 'LOGIN.TITLE' | translate }}</p>
     </ion-text>
-  </ion-label> 
+  </ion-label>
 
   <div class="login-logo-wrapper">
     <img
@@ -24,46 +24,46 @@
   <form [formGroup]="form">
     <ion-list lines="none" class="ion-margin ion-padding ion-text-center">
       <ion-item class="ion-margin-vertical">
-        <ion-icon 
+        <ion-icon
           name="mail-outline" slot="end" color="medium">
         </ion-icon>
-        <ion-input 
-          formControlName="email" 
-          placeholder="Enter Email Address">
+        <ion-input
+          formControlName="email"
+          [placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate">
         </ion-input>
       </ion-item>
-      <ion-text 
+      <ion-text
         class="ion-text-left"
         color="danger"
         *ngIf="!form.get('email').valid && form.get('email').touched">
-        <p class="error">*Please enter proper Email Address</p>
+        <p class="error">{{ 'LOGIN.EMAIL_ERROR' | translate }}</p>
       </ion-text>
 
       <ion-item class="ion-margin-vertical">
         <ion-icon (click)="onChange()"
-          [name]="isTypePassword ? 'lock-closed-outline' : 'lock-open-outline'" 
-          slot="end" 
+          [name]="isTypePassword ? 'lock-closed-outline' : 'lock-open-outline'"
+          slot="end"
           [color]="isTypePassword ? 'medium' : 'primary'">
         </ion-icon>
-        <ion-input 
-          formControlName="password" 
+        <ion-input
+          formControlName="password"
           [type]="isTypePassword ? 'password' : 'text'"
-          placeholder="Enter Password">
+          [placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate">
         </ion-input>
       </ion-item>
-      <ion-text 
+      <ion-text
         class="ion-text-left"
         color="danger"
         *ngIf="!form.get('password').valid && form.get('password').touched">
-        <p 
-          class="error" 
+        <p
+          class="error"
           *ngIf="form.get('password').invalid && form.get('password').errors['required']">
-          *Please enter your Password
+          {{ 'LOGIN.PASSWORD_REQUIRED' | translate }}
         </p>
-        <p 
-          class="error" 
+        <p
+          class="error"
           *ngIf="form.get('password').dirty">
-          *Password must be of atleast 8 characters
+          {{ 'LOGIN.PASSWORD_MINLENGTH' | translate }}
         </p>
       </ion-text>
 
@@ -71,23 +71,22 @@
         <ion-col size="6" class="alignItems">
           <div align=left>
             <ion-checkbox></ion-checkbox>
-            <ion-note>Remember me</ion-note>
+            <ion-note>{{ 'LOGIN.REMEMBER_ME' | translate }}</ion-note>
           </div>
         </ion-col>
         <ion-col size="6">
           <div align=right>
-            <ion-note fill="clear" routerLink="/forgot-password">Forgot password?</ion-note>
+            <ion-note fill="clear" routerLink="/forgot-password">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</ion-note>
           </div>
         </ion-col>
       </ion-row>
-      <!-- <ion-button color="primary" shape="round" (click)="onSubmit()">Log In</ion-button> -->
-      <ion-button *ngIf="!isLogin" color="primary" shape="round" (click)="onSubmit()">Log In</ion-button>
+      <ion-button *ngIf="!isLogin" color="primary" shape="round" (click)="onSubmit()">{{ 'LOGIN.SUBMIT' | translate }}</ion-button>
       <ion-button fill="clear" *ngIf="isLogin">
         <ion-spinner name="crescent" color="primary"></ion-spinner>
       </ion-button>
       <p class="signup">
         <ion-note>
-          Not a member yet ? <ion-text (click)="navigateToSignup()" color="primary">Sign Up</ion-text>
+          {{ 'LOGIN.NO_ACCOUNT' | translate }} <ion-text (click)="navigateToSignup()" color="primary">{{ 'LOGIN.SIGN_UP' | translate }}</ion-text>
         </ion-note>
       </p>
     </ion-list>

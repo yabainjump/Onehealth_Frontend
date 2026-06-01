@@ -61,7 +61,7 @@
             (click)="openAttachment(m)">
             <ion-icon name="document-text-outline"></ion-icon>
             <div class="doc-meta">
-              <strong>{{ m.fileName || 'Document' }}</strong>
+              <strong>{{ m.fileName || ('CHAT.DOCUMENT' | translate) }}</strong>
               <span>{{ formatFileSize(m.fileSize) }}</span>
             </div>
           </button>
@@ -113,7 +113,7 @@
         <ion-textarea
           autoGrow
           rows="1"
-          placeholder="Message"
+          [placeholder]="'CHAT.MESSAGE_PLACEHOLDER' | translate"
           [(ngModel)]="message">
         </ion-textarea>
       </div>

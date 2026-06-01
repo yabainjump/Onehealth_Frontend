@@ -4,9 +4,9 @@
   <div class="circleBase type2 circle2"></div>
 
   <ion-label class="welcomeMessage">
-    <ion-text color="light">Hello Dr,</ion-text>
+    <ion-text color="light">{{ 'SIGNUP.HELLO' | translate }}</ion-text>
     <ion-text color="light">
-      <p>Sign Up!</p>
+      <p>{{ 'SIGNUP.TITLE' | translate }}</p>
     </ion-text>
   </ion-label>
 
@@ -17,34 +17,34 @@
     <ion-list lines="none" class="ion-margin ion-padding ion-text-center">
       <ion-item class="ion-margin-vertical">
         <ion-icon name="person-outline" slot="end" color="medium"></ion-icon>
-        <ion-input formControlName="firstName" placeholder="Enter First Name"></ion-input>
+        <ion-input formControlName="firstName" [placeholder]="'SIGNUP.FIRST_NAME_PLACEHOLDER' | translate"></ion-input>
       </ion-item>
       <ion-text
         class="ion-text-left"
         color="danger"
         *ngIf="!signupForm.get('firstName').valid && signupForm.get('firstName').touched"
       >
-        <p class="error">*Please enter First Name (min 2 characters)</p>
+        <p class="error">{{ 'SIGNUP.FIRST_NAME_ERROR' | translate }}</p>
       </ion-text>
 
       <ion-item class="ion-margin-vertical">
         <ion-icon name="person-outline" slot="end" color="medium"></ion-icon>
-        <ion-input formControlName="lastName" placeholder="Enter Last Name"></ion-input>
+        <ion-input formControlName="lastName" [placeholder]="'SIGNUP.LAST_NAME_PLACEHOLDER' | translate"></ion-input>
       </ion-item>
       <ion-text
         class="ion-text-left"
         color="danger"
         *ngIf="!signupForm.get('lastName').valid && signupForm.get('lastName').touched"
       >
-        <p class="error">*Please enter Last Name (min 2 characters)</p>
+        <p class="error">{{ 'SIGNUP.LAST_NAME_ERROR' | translate }}</p>
       </ion-text>
 
       <ion-item class="ion-margin-vertical">
         <ion-icon name="mail-outline" slot="end" color="medium"></ion-icon>
-        <ion-input formControlName="email" type="email" placeholder="Enter Email Address"></ion-input>
+        <ion-input formControlName="email" type="email" [placeholder]="'SIGNUP.EMAIL_PLACEHOLDER' | translate"></ion-input>
       </ion-item>
       <ion-text class="ion-text-left" color="danger" *ngIf="!signupForm.get('email').valid && signupForm.get('email').touched">
-        <p class="error">*Please enter proper Email Address</p>
+        <p class="error">{{ 'SIGNUP.EMAIL_ERROR' | translate }}</p>
       </ion-text>
 
       <ion-item class="ion-margin-vertical">
@@ -55,32 +55,32 @@
           [color]="isTypePassword ? 'medium' : 'primary'"
         >
         </ion-icon>
-        <ion-input formControlName="password" [type]="isTypePassword ? 'password' : 'text'" placeholder="Enter Password">
+        <ion-input formControlName="password" [type]="isTypePassword ? 'password' : 'text'" [placeholder]="'SIGNUP.PASSWORD_PLACEHOLDER' | translate">
         </ion-input>
       </ion-item>
       <ion-text class="ion-text-left" color="danger" *ngIf="!signupForm.get('password').valid && signupForm.get('password').touched">
         <p class="error" *ngIf="signupForm.get('password').errors?.['required']">
-          *Please enter your Password
+          {{ 'SIGNUP.PASSWORD_REQUIRED' | translate }}
         </p>
         <p class="error" *ngIf="signupForm.get('password').errors?.['minlength']">
-          *Password must be at least 8 characters
+          {{ 'SIGNUP.PASSWORD_MINLENGTH' | translate }}
         </p>
       </ion-text>
 
       <ion-note class="profile-hint">
-        You can complete your profile (institution, specialty, location, photo…) right after signing up.
+        {{ 'SIGNUP.PROFILE_HINT' | translate }}
       </ion-note>
 
       <ion-row class="ion-margin-vertical">
         <ion-col size="12" class="alignItems">
           <div align="left">
             <ion-checkbox></ion-checkbox>
-            <ion-note>I accept the policy and terms</ion-note>
+            <ion-note>{{ 'SIGNUP.ACCEPT_TERMS' | translate }}</ion-note>
           </div>
         </ion-col>
       </ion-row>
 
-      <ion-button *ngIf="!isLoading" color="primary" shape="round" (click)="onSubmit()">Sign Up</ion-button>
+      <ion-button *ngIf="!isLoading" color="primary" shape="round" (click)="onSubmit()">{{ 'SIGNUP.SUBMIT' | translate }}</ion-button>
       <ion-button fill="clear" *ngIf="isLoading">
         <ion-spinner name="crescent" color="light"></ion-spinner>
       </ion-button>

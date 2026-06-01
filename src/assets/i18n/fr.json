@@ -1,0 +1,175 @@
+{
+  "COMMON": {
+    "APP_NAME": "One Health Network",
+    "EMAIL": "Adresse e-mail",
+    "PASSWORD": "Mot de passe",
+    "SAVE": "Enregistrer",
+    "CANCEL": "Annuler",
+    "OK": "OK",
+    "CLOSE": "Fermer",
+    "OPEN": "Ouvrir",
+    "SEND": "Envoyer",
+    "SEARCH": "Rechercher",
+    "LOADING": "Chargement…",
+    "RETRY": "Réessayer",
+    "ALERT": "Alerte",
+    "SHOW": "Voir",
+    "HIDE": "Masquer",
+    "CONTINUE": "Continuer"
+  },
+  "LOGIN": {
+    "WELCOME_BACK": "Bon retour,",
+    "TITLE": "Connexion !",
+    "EMAIL_PLACEHOLDER": "Entrez votre e-mail",
+    "EMAIL_ERROR": "*Veuillez saisir une adresse e-mail valide",
+    "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
+    "PASSWORD_REQUIRED": "*Veuillez saisir votre mot de passe",
+    "PASSWORD_MINLENGTH": "*Le mot de passe doit contenir au moins 8 caractères",
+    "REMEMBER_ME": "Se souvenir de moi",
+    "FORGOT_PASSWORD": "Mot de passe oublié ?",
+    "SUBMIT": "Se connecter",
+    "NO_ACCOUNT": "Pas encore membre ?",
+    "SIGN_UP": "S'inscrire"
+  },
+  "SIGNUP": {
+    "HELLO": "Bonjour Dr,",
+    "TITLE": "Inscription !",
+    "FIRST_NAME_PLACEHOLDER": "Entrez votre prénom",
+    "FIRST_NAME_ERROR": "*Veuillez saisir votre prénom (min. 2 caractères)",
+    "LAST_NAME_PLACEHOLDER": "Entrez votre nom",
+    "LAST_NAME_ERROR": "*Veuillez saisir votre nom (min. 2 caractères)",
+    "EMAIL_PLACEHOLDER": "Entrez votre e-mail",
+    "EMAIL_ERROR": "*Veuillez saisir une adresse e-mail valide",
+    "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
+    "PASSWORD_REQUIRED": "*Veuillez saisir votre mot de passe",
+    "PASSWORD_MINLENGTH": "*Le mot de passe doit contenir au moins 8 caractères",
+    "PROFILE_HINT": "Vous pourrez compléter votre profil (institution, spécialité, localisation, photo…) juste après l'inscription.",
+    "ACCEPT_TERMS": "J'accepte la politique et les conditions",
+    "SUBMIT": "S'inscrire",
+    "ERROR_GENERIC": "Impossible de créer le compte, veuillez réessayer.",
+    "ERROR_EMAIL_IN_USE": "Adresse e-mail déjà utilisée"
+  },
+  "FORGOT": {
+    "TITLE_BAR": "Mot de passe oublié",
+    "TITLE": "Réinitialiser le mot de passe",
+    "SUBTITLE": "Entrez votre adresse e-mail. Si le compte existe, vous recevrez les instructions.",
+    "EMAIL_PLACEHOLDER": "Adresse e-mail",
+    "EMAIL_ERROR": "Entrez une adresse e-mail valide.",
+    "SUBMIT": "Envoyer",
+    "DEV_TITLE": "Mode local (développement)",
+    "COPY_TOKEN": "Copier le token"
+  },
+  "RESET": {
+    "TITLE_BAR": "Nouveau mot de passe",
+    "TITLE": "Choisir un nouveau mot de passe",
+    "SUBTITLE": "Collez le token reçu puis définissez un nouveau mot de passe.",
+    "TOKEN_PLACEHOLDER": "Token de réinitialisation",
+    "TOKEN_REQUIRED": "Le token est requis.",
+    "PASSWORD_PLACEHOLDER": "Nouveau mot de passe",
+    "PASSWORD_ERROR": "Le mot de passe doit contenir au moins 8 caractères.",
+    "CONFIRM_PLACEHOLDER": "Confirmer le mot de passe",
+    "MISMATCH": "Les mots de passe ne correspondent pas.",
+    "SUBMIT": "Réinitialiser"
+  },
+  "NOTFOUND": {
+    "TITLE": "Page introuvable",
+    "SUBTITLE": "Le lien semble invalide ou expiré.",
+    "HOME": "Retourner à l'accueil"
+  },
+  "TABS": {
+    "HOME": "Accueil",
+    "PUBLISH": "Publier",
+    "MESSAGES": "Messages",
+    "PROFILE": "Profil"
+  },
+  "DASHBOARD": {
+    "SEARCH_PLACEHOLDER": "Rechercher une publication, un auteur, une institution…",
+    "BANNER_TITLE": "Complétez votre profil",
+    "BANNER_TEXT": "Ajoutez votre institution, spécialité, localisation et photo pour mieux vous connecter au réseau.",
+    "BANNER_CTA": "Compléter",
+    "USER_DESCRIPTION": "Membre OneHealth",
+    "SHOW_MORE": "Afficher plus",
+    "SHOW_LESS": "Afficher moins",
+    "OPEN": "Ouvrir",
+    "LIKES": "J'aime",
+    "COMMENT": "Commenter",
+    "SHARE": "Partager",
+    "VIEW_COMMENTS": "Voir les commentaires ({{count}})",
+    "COMMENT_PLACEHOLDER": "Écrivez un commentaire…",
+    "COMMENT_AUTHOR_FALLBACK": "Utilisateur",
+    "LOADING": "Chargement…"
+  },
+  "PUSHPUB": {
+    "TITLE": "Nouvelle publication",
+    "PLACEHOLDER": "Quoi de neuf ?",
+    "ADD_MEDIA": "Ajouter un média (images, vidéo, PDF, PPT, DOC)",
+    "IMAGE_ALT": "Aperçu de l'image",
+    "DOC_READY": "Document prêt à publier",
+    "PUBLISHING": "Publication…",
+    "SUBMIT": "Publier"
+  },
+  "EDIT_PROFILE": {
+    "TITLE": "Modifier le profil",
+    "DEFAULT_FIRST": "Votre",
+    "DEFAULT_LAST": "profil",
+    "TAP_PHOTO": "Appuyez sur la photo pour la modifier",
+    "SECTION_BASIC": "Informations de base",
+    "FIRST_NAME": "Prénom",
+    "LAST_NAME": "Nom",
+    "USERNAME": "Nom d'utilisateur",
+    "INSTITUTION": "Institution",
+    "SPECIALTY": "Spécialité",
+    "SECTION_CONTACT": "Coordonnées",
+    "COUNTRY": "Pays",
+    "CITY": "Ville",
+    "PHONE_PLACEHOLDER": "Numéro de téléphone",
+    "SECTION_BIO": "Description du profil",
+    "BIO": "Bio",
+    "BIO_PLACEHOLDER": "Parlez un peu de vous…",
+    "SAVING": "Enregistrement…",
+    "LOADING": "Chargement du profil…"
+  },
+  "PROFILE": {
+    "COVER": "Photo de mur",
+    "COVER_UPLOADING": "Envoi…",
+    "EDIT": "Modifier le profil",
+    "MESSAGE": "Message",
+    "LOGOUT": "Déconnexion",
+    "FOLLOW": "Suivre",
+    "FOLLOWING": "Suivi(e)",
+    "SHARE": "Partager",
+    "POSTS": "Publications",
+    "FOLLOWERS": "Abonnés",
+    "FOLLOWING_LABEL": "Abonnements",
+    "RECENT_POSTS": "Publications récentes",
+    "FILTER": "Filtrer",
+    "NO_POSTS": "Aucune publication pour le moment."
+  },
+  "HOME": {
+    "TITLE": "OneHealth Chat",
+    "GROUPS": "Groupes",
+    "CHATS": "Discussions",
+    "CALLS": "Appels",
+    "RECENT_CHATS": "Discussions récentes",
+    "NEW_CONVERSATION": "Nouvelle conversation",
+    "SEARCH_USER": "Rechercher un utilisateur"
+  },
+  "CHAT": {
+    "DOCUMENT": "Document",
+    "MESSAGE_PLACEHOLDER": "Message"
+  },
+  "POSTDETAIL": {
+    "TITLE": "Détail de la publication",
+    "NO_POST": "Aucune publication à afficher ou en chargement…",
+    "COMMENTS": "Commentaires"
+  },
+  "ITEMS": {
+    "CONTACT": "Contact",
+    "DESCRIPTION": "Description"
+  },
+  "SIGNUPD": {
+    "I_AM_DOCTOR": "Je suis médecin",
+    "USERNAME_PLACEHOLDER": "Entrez un nom d'utilisateur",
+    "USERNAME_ERROR": "*Veuillez saisir un nom d'utilisateur"
+  }
+}

@@ -5,6 +5,8 @@ import { RouteReuseStrategy } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -18,6 +20,13 @@ import { environment } from '../environments/environment';
     IonicModule.forRoot(),
     HttpClientModule,
     AppRoutingModule,
+    TranslateModule.forRoot({
+      fallbackLang: 'fr',
+      loader: provideTranslateHttpLoader({
+        prefix: './assets/i18n/',
+        suffix: '.json',
+      }),
+    }),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Delay registration so the first render is not blocked on constrained devices.

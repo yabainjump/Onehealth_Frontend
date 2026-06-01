@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PushpubPageRoutingModule } from './pushpub-routing.module';
 
@@ -14,7 +15,8 @@ import { PushpubPage } from './pushpub.page';
     FormsModule,
     IonicModule,
     PushpubPageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule
   ],
   declarations: [PushpubPage]
 })

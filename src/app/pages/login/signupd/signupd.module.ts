@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { SignupdPageRoutingModule } from './signupd-routing.module';
 
@@ -14,7 +15,8 @@ import { SignupdPage } from './signupd.page';
     FormsModule,
     IonicModule,
     SignupdPageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule
   ],
   declarations: [SignupdPage]
 })

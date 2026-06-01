@@ -7,7 +7,7 @@
 
     <!-- Barre de recherche -->
     <ion-searchbar
-      placeholder="Search for a publication, author, institution..."
+      [placeholder]="'DASHBOARD.SEARCH_PLACEHOLDER' | translate"
       [debounce]="200"
       show-clear-button="focus"
       [(ngModel)]="searchQuery"
@@ -34,10 +34,10 @@
   <div class="profile-complete-banner" *ngIf="showProfileBanner">
     <ion-icon name="person-circle-outline" class="pcb-icon"></ion-icon>
     <div class="pcb-text">
-      <strong>Complétez votre profil</strong>
-      <p>Ajoutez votre institution, spécialité, localisation et photo pour mieux vous connecter au réseau.</p>
+      <strong>{{ 'DASHBOARD.BANNER_TITLE' | translate }}</strong>
+      <p>{{ 'DASHBOARD.BANNER_TEXT' | translate }}</p>
     </div>
-    <ion-button size="small" (click)="completeProfile()">Compléter</ion-button>
+    <ion-button size="small" (click)="completeProfile()">{{ 'DASHBOARD.BANNER_CTA' | translate }}</ion-button>
     <ion-icon name="close-outline" class="pcb-close" (click)="dismissProfileBanner()"></ion-icon>
   </div>
 
@@ -65,7 +65,7 @@
 
       <div (click)="openPostDetail(post)" class="post-author-details">
         <h3 class="law">{{ post.author?.firstName }} {{ post.author?.lastName }}</h3>
-        <p>{{ post.author?.institution || 'User Description' }}</p>
+        <p>{{ post.author?.institution || ('DASHBOARD.USER_DESCRIPTION' | translate) }}</p>
         <span>{{ post.timestamp | date: 'short' }}</span>
       </div>
 
@@ -89,7 +89,7 @@
         size="small"
         class="show-more"
         (click)="toggleExpand(post.id)">
-        {{ expanded[post.id] ? 'Afficher moins' : 'Afficher plus' }}
+        {{ (expanded[post.id] ? 'DASHBOARD.SHOW_LESS' : 'DASHBOARD.SHOW_MORE') | translate }}
       </ion-button>
     </div>
 
@@ -128,7 +128,7 @@
           <small>{{ formatBytes(post.attachment?.size) }}</small>
         </div>
         <ion-button fill="clear" size="small" (click)="openAttachment(post, $event)">
-          Ouvrir
+          {{ 'DASHBOARD.OPEN' | translate }}
         </ion-button>
       </div>
     </div>
@@ -140,17 +140,17 @@
           class="like-btn"
           [class.liked]="post.userHasLiked"
           (click)="likePost(post)">
-          {{ post.userHasLiked ? '❤️' : '🤍' }} {{ post.likes || 0 }} Likes
+          {{ post.userHasLiked ? '❤️' : '🤍' }} {{ post.likes || 0 }} {{ 'DASHBOARD.LIKES' | translate }}
         </ion-button>
-        <ion-button fill="clear" (click)="addComment(post)">💬 Comment</ion-button>
+        <ion-button fill="clear" (click)="addComment(post)">💬 {{ 'DASHBOARD.COMMENT' | translate }}</ion-button>
         <ion-button fill="clear" [disabled]="!canShare" (click)="sharePost(post)">
-          🔗 Share
+          🔗 {{ 'DASHBOARD.SHARE' | translate }}
         </ion-button>
       </div>
 
       <div class="comment-summary" *ngIf="(post.comments?.length || 0) > 0">
         <button type="button" class="comment-toggle" (click)="addComment(post)">
-          Voir les commentaires ({{ post.comments?.length || 0 }})
+          {{ 'DASHBOARD.VIEW_COMMENTS' | translate:{ count: post.comments?.length || 0 } }}
         </button>
       </div>
 
@@ -165,7 +165,7 @@
               decoding="async"
             />
             <div class="comment-bubble">
-              <p class="comment-author">{{ comment.userName || 'Utilisateur' }}</p>
+              <p class="comment-author">{{ comment.userName || ('DASHBOARD.COMMENT_AUTHOR_FALLBACK' | translate) }}</p>
               <p class="comment-text">{{ comment.comment }}</p>
               <button
                 type="button"
@@ -182,7 +182,7 @@
           <img class="comment-avatar" [src]="userPhoto || 'assets/default-profile.png'" alt="avatar" loading="lazy" decoding="async" />
           <ion-input
             class="comment-input"
-            placeholder="Écrivez un commentaire..."
+            [placeholder]="'DASHBOARD.COMMENT_PLACEHOLDER' | translate"
             [(ngModel)]="commentDrafts[post.id]"
             (keyup.enter)="submitInlineComment(post)"
           ></ion-input>
@@ -218,7 +218,7 @@
     [disabled]="!hasMorePosts || isLoadingFeed"
     (ionInfinite)="loadMorePosts($event)"
   >
-    <ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Chargement...">
+    <ion-infinite-scroll-content loadingSpinner="crescent" [loadingText]="'DASHBOARD.LOADING' | translate">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 

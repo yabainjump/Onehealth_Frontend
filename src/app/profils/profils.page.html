@@ -22,7 +22,7 @@
       (click)="coverInput.click()"
     >
       <ion-icon name="camera-outline"></ion-icon>
-      <span>{{ uploadingCover ? 'Upload...' : 'Photo de mur' }}</span>
+      <span>{{ (uploadingCover ? 'PROFILE.COVER_UPLOADING' : 'PROFILE.COVER') | translate }}</span>
     </button>
     <input #coverInput type="file" hidden accept="image/*" (change)="onCoverSelected($event)" />
   </section>
@@ -38,13 +38,21 @@
       <ion-content class="ion-padding">
         <ion-list lines="none">
           <ion-item button (click)="editProfile()">
-            <ion-label color="primary">Modifier Le Profil</ion-label>
+            <ion-label color="primary">{{ 'PROFILE.EDIT' | translate }}</ion-label>
           </ion-item>
           <ion-item button *ngIf="!isOwnProfile" (click)="openMessage()">
-            <ion-label color="primary">Message</ion-label>
+            <ion-label color="primary">{{ 'PROFILE.MESSAGE' | translate }}</ion-label>
+          </ion-item>
+          <ion-item button (click)="setAppLanguage('fr')">
+            <ion-label>Français</ion-label>
+            <ion-icon *ngIf="currentAppLanguage === 'fr'" name="checkmark-outline" slot="end" color="primary"></ion-icon>
+          </ion-item>
+          <ion-item button (click)="setAppLanguage('en')">
+            <ion-label>English</ion-label>
+            <ion-icon *ngIf="currentAppLanguage === 'en'" name="checkmark-outline" slot="end" color="primary"></ion-icon>
           </ion-item>
           <ion-item button (click)="logout()">
-            <ion-label color="danger">Logout</ion-label>
+            <ion-label color="danger">{{ 'PROFILE.LOGOUT' | translate }}</ion-label>
           </ion-item>
         </ion-list>
       </ion-content>
@@ -72,16 +80,16 @@
         [disabled]="followProcessing"
         (click)="toggleFollow()"
       >
-        {{ followProcessing ? '...' : followButtonLabel }}
+        {{ followProcessing ? '...' : ((isFollowingUser ? 'PROFILE.FOLLOWING' : 'PROFILE.FOLLOW') | translate) }}
       </button>
       <button class="btn btn-outline" type="button" *ngIf="!isOwnProfile" (click)="openMessage()">
-        Message
+        {{ 'PROFILE.MESSAGE' | translate }}
       </button>
       <button class="btn btn-primary" type="button" *ngIf="isOwnProfile" (click)="editProfile()">
-        Edit Profile
+        {{ 'PROFILE.EDIT' | translate }}
       </button>
       <button class="btn btn-outline" type="button" (click)="shareProfile($event)">
-        Share
+        {{ 'PROFILE.SHARE' | translate }}
       </button>
     </div>
 
@@ -90,22 +98,22 @@
     <div class="stats-row">
       <div class="stat-col">
         <strong>{{ postsCount }}</strong>
-        <span>Posts</span>
+        <span>{{ 'PROFILE.POSTS' | translate }}</span>
       </div>
       <div class="stat-col">
         <strong>{{ followersCount }}</strong>
-        <span>Followers</span>
+        <span>{{ 'PROFILE.FOLLOWERS' | translate }}</span>
       </div>
       <div class="stat-col">
         <strong>{{ followingCount }}</strong>
-        <span>Following</span>
+        <span>{{ 'PROFILE.FOLLOWING_LABEL' | translate }}</span>
       </div>
     </div>
 
     <div class="section-header">
-      <h2>Recent Posts</h2>
+      <h2>{{ 'PROFILE.RECENT_POSTS' | translate }}</h2>
       <button class="filter-btn" type="button">
-        Filter
+        {{ 'PROFILE.FILTER' | translate }}
         <ion-icon name="options-outline"></ion-icon>
       </button>
     </div>
@@ -147,7 +155,7 @@
           type="button"
           (click)="toggleExpand(p.id, $event)"
         >
-          {{ expanded[p.id] ? 'Afficher moins' : 'Afficher plus' }}
+          {{ (expanded[p.id] ? 'DASHBOARD.SHOW_LESS' : 'DASHBOARD.SHOW_MORE') | translate }}
         </button>
 
         <img
@@ -185,7 +193,7 @@
             <div class="doc-meta">
               <strong>{{ p.attachment?.fileName }}</strong>
             </div>
-            <button type="button" class="doc-open" (click)="openAttachment(p, $event)">Ouvrir</button>
+            <button type="button" class="doc-open" (click)="openAttachment(p, $event)">{{ 'DASHBOARD.OPEN' | translate }}</button>
           </div>
         </div>
 
@@ -199,7 +207,7 @@
       </article>
 
       <p class="empty-state" *ngIf="!feed.length && !loadingPosts">
-        Aucune publication pour le moment.
+        {{ 'PROFILE.NO_POSTS' | translate }}
       </p>
     </div>
   </section>

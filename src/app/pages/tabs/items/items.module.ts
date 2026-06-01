@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { ItemsPageRoutingModule } from './items-routing.module';
 
@@ -13,7 +14,8 @@ import { ItemsPage } from './items.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    ItemsPageRoutingModule
+    ItemsPageRoutingModule,
+    TranslateModule
   ],
   declarations: [ItemsPage]
 })

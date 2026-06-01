@@ -5,7 +5,7 @@
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Modifier Le Profil</ion-title>
+    <ion-title>{{ 'EDIT_PROFILE.TITLE' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -21,34 +21,34 @@
             <ion-icon name="camera-outline"></ion-icon>
           </span>
         </button>
-        <h2>{{ user.firstName || 'Votre' }} {{ user.lastName || 'Profil' }}</h2>
-        <p>Appuyez sur la photo pour la modifier</p>
+        <h2>{{ user.firstName || ('EDIT_PROFILE.DEFAULT_FIRST' | translate) }} {{ user.lastName || ('EDIT_PROFILE.DEFAULT_LAST' | translate) }}</h2>
+        <p>{{ 'EDIT_PROFILE.TAP_PHOTO' | translate }}</p>
       </section>
 
       <section class="form-card">
-        <h3>Informations de base</h3>
+        <h3>{{ 'EDIT_PROFILE.SECTION_BASIC' | translate }}</h3>
         <ion-item lines="none">
-          <ion-label position="stacked">Prenom</ion-label>
+          <ion-label position="stacked">{{ 'EDIT_PROFILE.FIRST_NAME' | translate }}</ion-label>
           <ion-input [(ngModel)]="user.firstName" name="firstName" required></ion-input>
         </ion-item>
 
         <ion-item lines="none">
-          <ion-label position="stacked">Nom</ion-label>
+          <ion-label position="stacked">{{ 'EDIT_PROFILE.LAST_NAME' | translate }}</ion-label>
           <ion-input [(ngModel)]="user.lastName" name="lastName" required></ion-input>
         </ion-item>
 
         <ion-item lines="none">
-          <ion-label position="stacked">Nom d'utilisateur</ion-label>
+          <ion-label position="stacked">{{ 'EDIT_PROFILE.USERNAME' | translate }}</ion-label>
           <ion-input [(ngModel)]="user.username" name="username" required></ion-input>
         </ion-item>
 
         <ion-item lines="none">
-          <ion-label position="stacked">Institution</ion-label>
+          <ion-label position="stacked">{{ 'EDIT_PROFILE.INSTITUTION' | translate }}</ion-label>
           <ion-input [(ngModel)]="user.institution" name="institution"></ion-input>
         </ion-item>
 
         <ion-item lines="none">
-          <ion-label position="stacked">Specialite</ion-label>
+          <ion-label position="stacked">{{ 'EDIT_PROFILE.SPECIALTY' | translate }}</ion-label>
           <ion-select [(ngModel)]="user.typeMedecin" name="typeMedecin" interface="popover">
             <ion-select-option *ngFor="let option of typeMedecinOptions" [value]="option">
               {{ option }}
@@ -58,9 +58,9 @@
       </section>
 
       <section class="form-card">
-        <h3>Coordonnees</h3>
+        <h3>{{ 'EDIT_PROFILE.SECTION_CONTACT' | translate }}</h3>
         <ion-item lines="none">
-          <ion-label position="stacked">Pays</ion-label>
+          <ion-label position="stacked">{{ 'EDIT_PROFILE.COUNTRY' | translate }}</ion-label>
           <ion-select
             [(ngModel)]="user.country"
             name="country"
@@ -77,7 +77,7 @@
         </ion-item>
 
         <ion-item lines="none">
-          <ion-label position="stacked">Ville</ion-label>
+          <ion-label position="stacked">{{ 'EDIT_PROFILE.CITY' | translate }}</ion-label>
           <ion-select
             [(ngModel)]="user.city"
             name="city"
@@ -106,21 +106,21 @@
             [(ngModel)]="localPhone"
             name="phone"
             type="tel"
-            placeholder="Numero de telephone"
+            [placeholder]="'EDIT_PROFILE.PHONE_PLACEHOLDER' | translate"
           ></ion-input>
         </ion-item>
       </section>
 
       <section class="form-card">
-        <h3>Description Du Profil</h3>
+        <h3>{{ 'EDIT_PROFILE.SECTION_BIO' | translate }}</h3>
         <ion-item lines="none">
-          <ion-label position="stacked">Bio</ion-label>
+          <ion-label position="stacked">{{ 'EDIT_PROFILE.BIO' | translate }}</ion-label>
           <ion-textarea
             [(ngModel)]="user.bio"
             name="bio"
             autoGrow="true"
             [maxlength]="bioMaxLength"
-            placeholder="Parlez un peu de vous..."
+            [placeholder]="'EDIT_PROFILE.BIO_PLACEHOLDER' | translate"
           ></ion-textarea>
         </ion-item>
         <p class="counter">{{ bioLength }}/{{ bioMaxLength }}</p>
@@ -128,10 +128,10 @@
 
       <div class="actions">
         <ion-button type="submit" expand="block" [disabled]="savingProfile">
-          {{ savingProfile ? 'Enregistrement...' : 'Enregistrer' }}
+          {{ (savingProfile ? 'EDIT_PROFILE.SAVING' : 'COMMON.SAVE') | translate }}
         </ion-button>
         <ion-button type="button" expand="block" fill="outline" (click)="cancel()">
-          Annuler
+          {{ 'COMMON.CANCEL' | translate }}
         </ion-button>
       </div>
     </form>
@@ -140,7 +140,7 @@
   <ng-template #loading>
     <div class="loading-wrap">
       <ion-spinner></ion-spinner>
-      <p>Chargement du profil...</p>
+      <p>{{ 'EDIT_PROFILE.LOADING' | translate }}</p>
     </div>
   </ng-template>
 </ion-content>
