@@ -11,6 +11,13 @@ const BACKEND_ORIGIN = (environment.apiBaseUrl || '')
 /** Base de l'API (avec le suffixe /api), utilisee pour les endpoints media. */
 const API_BASE = (environment.apiBaseUrl || '').replace(/\/+$/, '');
 
+/**
+ * Version des URLs media. Sert de "cache-buster" : l'incrementer cree une
+ * nouvelle cle d'URL cote proxy/CDN (LiteSpeed) -> contourne tout 404 fige en
+ * cache. A incrementer si le cache edge se re-empoisonne un jour.
+ */
+const MEDIA_URL_VERSION = '2';
+
 /** Extrait la portion `/uploads/...` d'une URL, ou '' si absente. */
 function uploadsPath(rawUrl?: string | null): string {
   const value = `${rawUrl ?? ''}`.trim();
@@ -69,7 +76,7 @@ export function mediaThumbUrl(rawUrl?: string | null, width = 800): string {
     return resolveMediaUrl(value);
   }
 
-  return `${API_BASE}/media/thumb?path=${encodeURIComponent(path)}&w=${width}`;
+  return `${API_BASE}/media/thumb?path=${encodeURIComponent(path)}&w=${width}&v=${MEDIA_URL_VERSION}`;
 }
 
 /**
@@ -82,5 +89,5 @@ export function mediaPosterUrl(rawUrl?: string | null): string {
     return '';
   }
 
-  return `${API_BASE}/media/poster?path=${encodeURIComponent(path)}`;
+  return `${API_BASE}/media/poster?path=${encodeURIComponent(path)}&v=${MEDIA_URL_VERSION}`;
 }
