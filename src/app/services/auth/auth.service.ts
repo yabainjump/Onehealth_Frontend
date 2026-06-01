@@ -159,8 +159,15 @@ export class AuthService {
     return this.user$;
   }
 
+  // Cache-buster : empeche tout proxy/CDN (LiteSpeed) de servir une reponse
+  // d'identite mise en cache pour un AUTRE utilisateur (fuite d'identite entre comptes).
+  private noCache(path: string): string {
+    const separator = path.includes('?') ? '&' : '?';
+    return `${path}${separator}_=${Date.now()}`;
+  }
+
   async getUserData(id: string): Promise<any> {
-    const user = await firstValueFrom(this.api.get<any>(`/users/${id}`));
+    const user = await firstValueFrom(this.api.get<any>(this.noCache(`/users/${id}`)));
     if (user && typeof user === 'object') {
       if (user.photoURL) {
         user.photoURL = resolveMediaUrl(user.photoURL);
@@ -186,7 +193,7 @@ export class AuthService {
 
     let user: any = null;
     try {
-      user = await firstValueFrom(this.api.get<any>('/auth/me'));
+      user = await firstValueFrom(this.api.get<any>(this.noCache('/auth/me')));
     } catch (error) {
       const status = (error as HttpErrorResponse)?.status ?? 0;
       // 401/403 = token invalide/expire -> deconnexion.
@@ -249,7 +256,7 @@ export class AuthService {
     }
 
     const user = await firstValueFrom(
-      this.api.get<any>('/auth/me').pipe(catchError(() => of(null))),
+      this.api.get<any>(this.noCache('/auth/me')).pipe(catchError(() => of(null))),
     );
 
     if (!user) {

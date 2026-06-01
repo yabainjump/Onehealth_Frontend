@@ -9,7 +9,7 @@ export class UsersService {
   private readonly api = inject(ApiService);
 
   getMe(): Observable<PublicUser> {
-    return this.api.get<PublicUser>('/users/me');
+    return this.api.get<PublicUser>(`/users/me?_=${Date.now()}`);
   }
 
   updateMe(payload: UpdateProfileRequest): Observable<PublicUser> {
@@ -22,7 +22,7 @@ export class UsersService {
   }
 
   getUserById(userId: string): Observable<PublicUser> {
-    return this.api.get<PublicUser>(`/users/${userId}`);
+    return this.api.get<PublicUser>(`/users/${userId}?_=${Date.now()}`);
   }
 
   followUser(userId: string): Observable<PublicUser> {
