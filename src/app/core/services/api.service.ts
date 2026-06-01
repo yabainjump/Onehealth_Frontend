@@ -12,7 +12,10 @@ export class ApiService {
   private readonly apiBaseUrl = environment.apiBaseUrl.replace(/\/+$/, '');
 
   get<T>(endpoint: string, params?: HttpParams): Observable<T> {
-    return this.http.get<T>(this.buildUrl(endpoint), { params });
+    // Cache-buster sur TOUS les GET : URL unique a chaque appel -> aucun
+    // proxy/CDN (LiteSpeed) ne peut servir une reponse perimee (chat, fil, etc.).
+    const bustedParams = (params ?? new HttpParams()).set('_', `${Date.now()}`);
+    return this.http.get<T>(this.buildUrl(endpoint), { params: bustedParams });
   }
 
   post<T, B = unknown>(endpoint: string, body: B): Observable<T> {
