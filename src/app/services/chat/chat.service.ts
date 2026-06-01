@@ -24,7 +24,13 @@ export class ChatService {
   currentUserId = '';
   public users: Observable<any> = of([]);
   public searchs: Observable<any> = of([]);
-  public chatRooms: Observable<any> = of([]);
+  private readonly chatRoomsSubject = new BehaviorSubject<any[]>([]);
+  // Observable STABLE : on ne le remplace jamais -> pas de re-abonnement,
+  // donc pas de clignotement de la liste pendant le polling.
+  public chatRooms: Observable<any[]> = this.chatRoomsSubject.asObservable();
+  private chatRoomsSub?: Subscription;
+  private lastRoomsSignature = '';
+  private lastMessagesSignature = '';
   private readonly selectedChatRoomMessagesSubject = new BehaviorSubject<any[]>(
     [],
   );
@@ -92,32 +98,51 @@ export class ChatService {
   }
 
   getChatRooms() {
-    this.chatRooms = this.coreChat.listRooms().pipe(
-      map((rooms) =>
-        rooms.map((room) => ({
-          id: room.id,
-          members: room.members || [],
-          updatedAt: room.updatedAt,
-          user: of(this.toLegacyUser(room.otherUser)),
-          lastMsg: of(
-            room.lastMessage
-              ? {
-                  message: room.lastMessage,
-                  sender: '',
-                  createdAt: room.updatedAt,
-                }
-              : null,
-          ),
-          unread: {
-            [this.currentUserId]: room.unreadCount || 0,
-          },
-          lastMessage: room.lastMessage || '',
-        })),
-      ),
-    );
+    this.chatRoomsSub?.unsubscribe();
+    this.chatRoomsSub = this.coreChat.listRooms().subscribe((rooms) => {
+      const list = rooms || [];
+
+      // Signature des donnees pertinentes : on ne met a jour l'UI QUE si quelque
+      // chose a change (nouveau message, non-lus, ordre). Sinon, liste stable.
+      const signature = list
+        .map(
+          (room) =>
+            `${room.id}:${room.lastMessage || ''}:${room.unreadCount || 0}:${room.updatedAt || ''}`,
+        )
+        .join('|');
+      if (signature === this.lastRoomsSignature) {
+        return;
+      }
+      this.lastRoomsSignature = signature;
+
+      const mapped = list.map((room) => ({
+        id: room.id,
+        members: room.members || [],
+        updatedAt: room.updatedAt,
+        user: of(this.toLegacyUser(room.otherUser)),
+        lastMsg: of(
+          room.lastMessage
+            ? {
+                message: room.lastMessage,
+                sender: '',
+                createdAt: room.updatedAt,
+              }
+            : null,
+        ),
+        unread: {
+          [this.currentUserId]: room.unreadCount || 0,
+        },
+        lastMessage: room.lastMessage || '',
+      }));
+
+      this.chatRoomsSubject.next(mapped);
+    });
   }
 
   getChatRoomMessages(chatRoomId: string) {
+    if (chatRoomId !== this.selectedRoomId) {
+      this.lastMessagesSignature = '';
+    }
     this.selectedRoomId = chatRoomId;
     this.selectedRoomMessagesSub?.unsubscribe();
     this.selectedRoomMessagesSub = this.coreChat
@@ -143,6 +168,13 @@ export class ChatService {
         }),
       )
       .subscribe((messages) => {
+        const signature =
+          `${messages.length}:` +
+          messages.map((m) => `${m.id}:${m.isRead ? 1 : 0}`).join('|');
+        if (signature === this.lastMessagesSignature) {
+          return;
+        }
+        this.lastMessagesSignature = signature;
         this.selectedChatRoomMessagesSubject.next(messages);
       });
   }

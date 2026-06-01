@@ -218,6 +218,10 @@ export class ChatPage implements OnInit, OnDestroy {
     await this.navCtrl.navigateForward(`/tabs/profils/${this.otherUid}`);
   }
 
+  trackByMessageId(_index: number, message: any): string {
+    return `${message?.id || _index}`;
+  }
+
   isDocumentMessage(message: any) {
     return !!message?.fileUrl && !this.isImageMessage(message);
   }

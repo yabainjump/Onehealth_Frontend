@@ -33,7 +33,7 @@
 
   <ng-container *ngIf="(chats | async) as chat$">
     <div class="messages">
-      <div class="msg" *ngFor="let m of chat$" [ngClass]="{ mine: m.sender === chatService.currentUserId }">
+      <div class="msg" *ngFor="let m of chat$; trackBy: trackByMessageId" [ngClass]="{ mine: m.sender === chatService.currentUserId }">
 
         <!-- Avatar de l’autre à gauche -->
         <img
