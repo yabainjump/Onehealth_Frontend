@@ -126,23 +126,43 @@
     </div>
 
     <div class="post-footer">
-      <div class="post-actions">
-        <ion-button
-          fill="clear"
-          class="like-btn"
-          [class.liked]="post.userHasLiked"
-          (click)="likePost(post)">
-          {{ post.userHasLiked ? '❤️' : '🤍' }} {{ post.likes || 0 }} {{ 'DASHBOARD.LIKES' | translate }}
-        </ion-button>
-        <ion-button fill="clear" (click)="addComment(post)">💬 {{ 'DASHBOARD.COMMENT' | translate }}</ion-button>
-        <ion-button fill="clear" [disabled]="!canShare" (click)="sharePost(post)">
-          🔗 {{ 'DASHBOARD.SHARE' | translate }}
-        </ion-button>
+      <!-- Ligne de stats facon LinkedIn : j'aime + commentaires -->
+      <div
+        class="post-stats"
+        *ngIf="(post.likes || 0) > 0 || (post.comments?.length || 0) > 0">
+        <span class="stats-likes" *ngIf="(post.likes || 0) > 0">
+          <ion-icon name="thumbs-up" class="stats-reaction"></ion-icon>
+          {{ post.likes }}
+        </span>
+        <button
+          type="button"
+          class="stats-comments"
+          *ngIf="(post.comments?.length || 0) > 0"
+          (click)="addComment(post)">
+          {{ ((post.comments?.length || 0) > 1 ? 'DASHBOARD.COMMENTS_COUNT_MANY' : 'DASHBOARD.COMMENTS_COUNT_ONE') | translate:{ count: post.comments?.length || 0 } }}
+        </button>
       </div>
 
-      <div class="comment-summary" *ngIf="(post.comments?.length || 0) > 0">
-        <button type="button" class="comment-toggle" (click)="addComment(post)">
-          {{ 'DASHBOARD.VIEW_COMMENTS' | translate:{ count: post.comments?.length || 0 } }}
+      <div class="post-actions">
+        <button
+          type="button"
+          class="action-btn"
+          [class.liked]="post.userHasLiked"
+          (click)="likePost(post)">
+          <ion-icon [name]="post.userHasLiked ? 'thumbs-up' : 'thumbs-up-outline'"></ion-icon>
+          <span>{{ 'DASHBOARD.LIKE' | translate }}</span>
+        </button>
+        <button type="button" class="action-btn" (click)="addComment(post)">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+          <span>{{ 'DASHBOARD.COMMENT' | translate }}</span>
+        </button>
+        <button
+          type="button"
+          class="action-btn"
+          [disabled]="!canShare"
+          (click)="sharePost(post)">
+          <ion-icon name="paper-plane-outline"></ion-icon>
+          <span>{{ 'DASHBOARD.SEND' | translate }}</span>
         </button>
       </div>
 

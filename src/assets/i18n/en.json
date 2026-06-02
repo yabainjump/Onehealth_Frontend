@@ -15,7 +15,10 @@
     "ALERT": "Alert",
     "SHOW": "Show",
     "HIDE": "Hide",
-    "CONTINUE": "Continue"
+    "CONTINUE": "Continue",
+    "DELETE": "Delete",
+    "LINK_COPIED": "Link copied",
+    "SHARE_FAILED": "Sharing failed"
   },
   "LOGIN": {
     "WELCOME_BACK": "Welcome back,",
@@ -29,7 +32,10 @@
     "FORGOT_PASSWORD": "Forgot password?",
     "SUBMIT": "Log In",
     "NO_ACCOUNT": "Not a member yet?",
-    "SIGN_UP": "Sign Up"
+    "SIGN_UP": "Sign Up",
+    "ERROR_GENERIC": "Could not sign you in, please try again.",
+    "ERROR_USER_NOT_FOUND": "E-mail address could not be found.",
+    "ERROR_WRONG_PASSWORD": "Please enter a correct password."
   },
   "SIGNUP": {
     "HELLO": "Hello Dr,",
@@ -57,7 +63,9 @@
     "EMAIL_ERROR": "Enter a valid email address.",
     "SUBMIT": "Send",
     "DEV_TITLE": "Local mode (development)",
-    "COPY_TOKEN": "Copy token"
+    "COPY_TOKEN": "Copy token",
+    "SEND_ERROR": "Could not send the request right now. Check your connection and try again.",
+    "TOKEN_COPIED": "Token copied."
   },
   "RESET": {
     "TITLE_BAR": "New password",
@@ -69,7 +77,9 @@
     "PASSWORD_ERROR": "Password must be at least 8 characters.",
     "CONFIRM_PLACEHOLDER": "Confirm password",
     "MISMATCH": "Passwords do not match.",
-    "SUBMIT": "Reset"
+    "SUBMIT": "Reset",
+    "SUCCESS": "Password changed. You can now sign in.",
+    "INVALID_TOKEN": "Invalid or expired link/token. Please restart the forgot-password process."
   },
   "NOTFOUND": {
     "TITLE": "Page not found",
@@ -94,10 +104,19 @@
     "LIKES": "Likes",
     "COMMENT": "Comment",
     "SHARE": "Share",
+    "SEND": "Send",
+    "LIKE": "Like",
+    "COMMENTS_COUNT_ONE": "{{count}} comment",
+    "COMMENTS_COUNT_MANY": "{{count}} comments",
     "VIEW_COMMENTS": "View comments ({{count}})",
     "COMMENT_PLACEHOLDER": "Write a comment…",
     "COMMENT_AUTHOR_FALLBACK": "User",
-    "LOADING": "Loading…"
+    "LOADING": "Loading…",
+    "POST_ACTIONS_HEADER": "Post",
+    "DELETE_CONFIRM_TITLE": "Delete?",
+    "DELETE_CONFIRM_MESSAGE": "This action is permanent.",
+    "POST_DELETED": "Post deleted",
+    "DELETE_FAILED": "Could not delete"
   },
   "PUSHPUB": {
     "TITLE": "Add Post",
@@ -106,7 +125,15 @@
     "IMAGE_ALT": "Image preview",
     "DOC_READY": "Document ready to publish",
     "PUBLISHING": "Publishing…",
-    "SUBMIT": "Post"
+    "SUBMIT": "Post",
+    "FILE_TOO_LARGE": "File too large. Max size: 50 MB.",
+    "MIX_ERROR": "Choose either images or a single video/document file.",
+    "ONE_ATTACHMENT": "Only one video/document file is allowed per post.",
+    "UNSUPPORTED_TYPE": "Unsupported type. Use video, PDF, PPT, PPTX, DOC or DOCX.",
+    "EMPTY": "Add text or media before posting.",
+    "PUBLISHING_PROGRESS": "Publishing…",
+    "PUBLISHED": "Published ✅",
+    "PUBLISH_ERROR": "Error while publishing"
   },
   "EDIT_PROFILE": {
     "TITLE": "Edit profile",
@@ -127,7 +154,11 @@
     "BIO": "Bio",
     "BIO_PLACEHOLDER": "Tell us a bit about yourself…",
     "SAVING": "Saving…",
-    "LOADING": "Loading profile…"
+    "LOADING": "Loading profile…",
+    "INVALID_IMAGE": "Please choose a valid image.",
+    "INVALID_PHONE": "Please enter a valid number.",
+    "UPDATE_SUCCESS": "Profile updated successfully.",
+    "UPDATE_ERROR": "Could not update the profile."
   },
   "PROFILE": {
     "COVER": "Cover photo",
@@ -152,16 +183,31 @@
     "CALLS": "Calls",
     "RECENT_CHATS": "Recent chats",
     "NEW_CONVERSATION": "New conversation",
-    "SEARCH_USER": "Search for a user"
+    "SEARCH_USER": "Search for a user",
+    "EMPTY_TITLE": "No conversations",
+    "YOU_PREFIX": "You: ",
+    "PHOTO_PREVIEW": "📷 Photo",
+    "START_CONVERSATION": "Start the conversation",
+    "YESTERDAY": "Yesterday"
   },
   "CHAT": {
     "DOCUMENT": "Document",
-    "MESSAGE_PLACEHOLDER": "Message"
+    "MESSAGE_PLACEHOLDER": "Message",
+    "EMPTY_TITLE": "No conversation",
+    "FILE_TOO_LARGE": "File too large. Choose a smaller file (max 50 MB).",
+    "FILE_SEND_ERROR": "Could not send this file right now.",
+    "MESSAGE_SEND_ERROR": "Could not send the message.",
+    "SETTINGS_SOON": "Chat settings coming soon.",
+    "PROFILE_UNAVAILABLE": "User profile unavailable.",
+    "ROOM_RESTORED": "Conversation restored successfully.",
+    "ROOM_NOT_FOUND": "Conversation not found. Open it from the chats list.",
+    "ROOM_UNAVAILABLE": "Conversation unavailable right now."
   },
   "POSTDETAIL": {
     "TITLE": "Post detail",
     "NO_POST": "No post to display or loading…",
-    "COMMENTS": "Comments"
+    "COMMENTS": "Comments",
+    "COMMENT_FAILED": "Could not add the comment."
   },
   "ITEMS": {
     "CONTACT": "Contact",
@@ -170,6 +216,8 @@
   "SIGNUPD": {
     "I_AM_DOCTOR": "I'm a Doctor",
     "USERNAME_PLACEHOLDER": "Enter Username",
-    "USERNAME_ERROR": "*Please enter Username"
+    "USERNAME_ERROR": "*Please enter Username",
+    "ERROR_GENERIC": "Could not sign you up, please try again.",
+    "ERROR_EMAIL_IN_USE": "Email already in use."
   }
 }

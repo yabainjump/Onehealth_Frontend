@@ -110,3 +110,104 @@
   border: 0;
   background: #fff;
 }
+
+/* Bas de post facon LinkedIn */
+.post-footer {
+  border-top: 1px solid #eee;
+  padding-top: 6px;
+  margin-top: 12px;
+}
+
+.post-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px 8px;
+  font-size: 13px;
+  color: #65676b;
+}
+
+.stats-likes {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stats-reaction {
+  font-size: 16px;
+  color: #0a66c2;
+}
+
+.stats-comments {
+  border: 0;
+  background: transparent;
+  color: #65676b;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.post-actions {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid #eef0f2;
+  padding-top: 4px;
+}
+
+.action-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  padding: 9px 4px;
+  border-radius: 8px;
+  color: #5f6368;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  &:hover {
+    background: #f2f3f5;
+  }
+
+  &.liked {
+    color: #0a66c2;
+
+    ion-icon {
+      color: #0a66c2;
+    }
+  }
+}
+
+.comment-composer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 4px;
+}
+
+.comment-input {
+  --background: #f0f2f5;
+  --border-radius: 16px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --min-height: 38px;
+  flex: 1;
+  border-radius: 16px;
+}
+
+.comment-send {
+  margin: 0;
+}

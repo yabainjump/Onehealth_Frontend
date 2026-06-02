@@ -4,6 +4,7 @@ import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/co
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, NavController, ToastController } from '@ionic/angular';
 import { firstValueFrom, Observable, take } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-chat',
@@ -37,7 +38,7 @@ export class ChatPage implements OnInit, OnDestroy {
   isLoading: boolean;
   model = {
     icon: 'chatbubble-ellipses-outline',
-    title: 'No Conversation',
+    title: '',
     color: 'dark',
   };
 
@@ -46,7 +47,8 @@ export class ChatPage implements OnInit, OnDestroy {
     private router: Router,
     private navCtrl: NavController,
     private toastCtrl: ToastController,
-    public chatService: ChatService
+    public chatService: ChatService,
+    private translate: TranslateService
   ) {}
 
   private pickPhoto(u: any): string {
@@ -60,6 +62,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    this.translate.get('CHAT.EMPTY_TITLE').subscribe((t) => (this.model.title = t));
     const data: any = this.route.snapshot.queryParams;
     const wasRecovered = `${data?.recovered || ''}` === '1';
     if (data?.name) {
@@ -111,7 +114,7 @@ export class ChatPage implements OnInit, OnDestroy {
       console.warn('roomInfo error:', e);
     }
     if (wasRecovered) {
-      await this.presentToast('Conversation restaurée avec succès.', 'success');
+      await this.presentToast(this.translate.instant('CHAT.ROOM_RESTORED'), 'success');
     }
   }
 
@@ -125,7 +128,7 @@ export class ChatPage implements OnInit, OnDestroy {
     if (!file) return;
     if (file.size > ChatPage.MAX_ATTACHMENT_BYTES) {
       await this.presentToast(
-        'Fichier trop lourd. Choisis un fichier moins lourd (max 50 MB).',
+        this.translate.instant('CHAT.FILE_TOO_LARGE'),
       );
       input.value = '';
       return;
@@ -141,10 +144,10 @@ export class ChatPage implements OnInit, OnDestroy {
         `${error?.error?.message || ''}`.toLowerCase().includes('file too large')
       ) {
         await this.presentToast(
-          'Fichier trop lourd. Choisis un fichier moins lourd (max 50 MB).',
+          this.translate.instant('CHAT.FILE_TOO_LARGE'),
         );
       } else {
-        await this.presentToast('Impossible d’envoyer ce fichier pour le moment.');
+        await this.presentToast(this.translate.instant('CHAT.FILE_SEND_ERROR'));
       }
     } finally {
       this.isLoading = false;
@@ -201,18 +204,18 @@ export class ChatPage implements OnInit, OnDestroy {
     } catch (e) {
       this.isLoading = false;
       console.log(e);
-      await this.presentToast('Impossible d’envoyer le message.');
+      await this.presentToast(this.translate.instant('CHAT.MESSAGE_SEND_ERROR'));
       // this.global.errorToast();
     }
   }
 
   async openOptionsMenu() {
-    await this.presentToast('Paramètres de discussion bientôt disponibles.');
+    await this.presentToast(this.translate.instant('CHAT.SETTINGS_SOON'));
   }
 
   async openOtherUserProfile() {
     if (!this.otherUid) {
-      await this.presentToast('Profil utilisateur indisponible.');
+      await this.presentToast(this.translate.instant('CHAT.PROFILE_UNAVAILABLE'));
       return;
     }
     await this.navCtrl.navigateForward(`/tabs/profils/${this.otherUid}`);
@@ -319,7 +322,7 @@ export class ChatPage implements OnInit, OnDestroy {
 
     const targetUid = this.participantUid?.trim();
     if (!targetUid) {
-      await this.presentToast('Discussion introuvable. Ouvre-la depuis la liste de chats.');
+      await this.presentToast(this.translate.instant('CHAT.ROOM_NOT_FOUND'));
       this.navCtrl.back();
       return true;
     }
@@ -343,7 +346,7 @@ export class ChatPage implements OnInit, OnDestroy {
       return true;
     } catch (recoveryError) {
       console.error('Room recovery error:', recoveryError);
-      await this.presentToast('Discussion indisponible pour le moment.');
+      await this.presentToast(this.translate.instant('CHAT.ROOM_UNAVAILABLE'));
       this.navCtrl.back();
       return true;
     } finally {

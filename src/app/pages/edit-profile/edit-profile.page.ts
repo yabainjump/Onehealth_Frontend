@@ -12,6 +12,7 @@ import {
   LocationCountry,
   LocationService,
 } from 'src/app/services/location/location.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-edit-profile',
@@ -53,6 +54,7 @@ export class EditProfilePage implements OnInit {
     private readonly locationService: LocationService,
     private readonly router: Router,
     private readonly toastController: ToastController,
+    private readonly translate: TranslateService,
   ) {
     this.countries = this.locationService.country();
   }
@@ -114,7 +116,7 @@ export class EditProfilePage implements OnInit {
         return;
       }
       if (!file.type?.startsWith('image/')) {
-        await this.presentToast('Veuillez choisir une image valide.', 'warning');
+        await this.presentToast(this.translate.instant('EDIT_PROFILE.INVALID_IMAGE'), 'warning');
         return;
       }
 
@@ -133,7 +135,7 @@ export class EditProfilePage implements OnInit {
       this.localPhone &&
       !this.phonePattern.test(this.localPhone)
     ) {
-      await this.presentToast('Veuillez entrer un numero valide.', 'warning');
+      await this.presentToast(this.translate.instant('EDIT_PROFILE.INVALID_PHONE'), 'warning');
       this.savingProfile = false;
       return;
     }
@@ -153,11 +155,11 @@ export class EditProfilePage implements OnInit {
 
     try {
       await firstValueFrom(this.usersService.updateMe(payload));
-      await this.presentToast('Profil mis a jour avec succes.', 'success');
+      await this.presentToast(this.translate.instant('EDIT_PROFILE.UPDATE_SUCCESS'), 'success');
       await this.router.navigate(['/tabs/profils']);
     } catch (error) {
       console.error(error);
-      await this.presentToast('Impossible de mettre a jour le profil.', 'danger');
+      await this.presentToast(this.translate.instant('EDIT_PROFILE.UPDATE_ERROR'), 'danger');
     } finally {
       this.savingProfile = false;
     }

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Post, PostAttachment, PublishService } from '../services/publish/publish.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CommentData, Post, PostAttachment, PublishService } from '../services/publish/publish.service';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { ToastController } from '@ionic/angular';
+import { IonInput, ToastController } from '@ionic/angular';
 import { ShareLinkService } from '../core/services/share-link.service';
+import { AuthService } from '../services/auth/auth.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-post-detail',
@@ -22,12 +24,17 @@ longPost:   Record<string, boolean> = {};
     username: string;
     userPhotoURL: string;
   }[] = [];
+  @ViewChild('commentInput') commentInput?: IonInput;
+  commentDraft = '';
+  commentSending = false;
   constructor(
     private route: ActivatedRoute,
     private publishService: PublishService,
     private sanitizer: DomSanitizer,
     private readonly toastController: ToastController,
     private readonly shareLinkService: ShareLinkService,
+    private readonly authService: AuthService,
+    private readonly translate: TranslateService,
   ) {}
 
   async ngOnInit() {
@@ -189,6 +196,80 @@ longPost:   Record<string, boolean> = {};
     return `${comment.username || 'user'}-${comment.text || ''}-${_index}`;
   }
 
+  async likePost(): Promise<void> {
+    if (!this.post?.id) {
+      return;
+    }
+    try {
+      const userId = await this.authService.getUserIdOrThrow();
+      if (this.post.userHasLiked) {
+        await this.publishService.unlikePost(this.post.id);
+        this.post.likes = Math.max(0, (this.post.likes ?? 0) - 1);
+        this.post.userHasLiked = false;
+      } else {
+        await this.publishService.likePost(this.post.id, userId);
+        this.post.likes = (this.post.likes ?? 0) + 1;
+        this.post.userHasLiked = true;
+      }
+    } catch (error) {
+      console.error('Erreur lors du like :', error);
+    }
+  }
+
+  focusComposer(): void {
+    setTimeout(() => {
+      void this.commentInput?.setFocus();
+    }, 50);
+  }
+
+  async submitComment(): Promise<void> {
+    const text = (this.commentDraft || '').trim();
+    if (!text || this.commentSending || !this.post?.id) {
+      return;
+    }
+
+    this.commentSending = true;
+    try {
+      const userId = await this.authService.getUserIdOrThrow();
+      const profile = await this.publishService.getUser(userId);
+      const commentData: CommentData = {
+        comment: text,
+        userId,
+        userName:
+          profile?.name ??
+          (profile?.firstName
+            ? `${profile.firstName} ${profile.lastName ?? ''}`.trim()
+            : undefined),
+        userPhoto: profile?.photo ?? profile?.photoURL,
+        likesCount: 0,
+        userHasLiked: false,
+        createdAt: new Date().toISOString(),
+      };
+
+      await this.publishService.addComment(this.post.id, commentData);
+
+      this.commentsWithUsers = [
+        ...this.commentsWithUsers,
+        {
+          text,
+          username: commentData.userName || 'Utilisateur',
+          userPhotoURL: commentData.userPhoto || 'assets/default-profile.png',
+        },
+      ];
+      this.commentDraft = '';
+    } catch (error) {
+      console.error('Erreur lors de l’ajout du commentaire :', error);
+      const toast = await this.toastController.create({
+        message: this.translate.instant('POSTDETAIL.COMMENT_FAILED'),
+        duration: 1800,
+        color: 'danger',
+      });
+      await toast.present();
+    } finally {
+      this.commentSending = false;
+    }
+  }
+
   async shareCurrentPost() {
     const postId = `${this.post?.id || ''}`.trim();
     if (!postId) {
@@ -212,14 +293,14 @@ longPost:   Record<string, boolean> = {};
     try {
       await navigator.clipboard.writeText([title, text, url].filter(Boolean).join('\n\n').trim());
       const toast = await this.toastController.create({
-        message: 'Lien copié',
+        message: this.translate.instant('COMMON.LINK_COPIED'),
         duration: 1500,
         icon: 'copy',
       });
       await toast.present();
     } catch {
       const toast = await this.toastController.create({
-        message: 'Partage impossible',
+        message: this.translate.instant('COMMON.SHARE_FAILED'),
         duration: 1500,
         color: 'danger',
       });

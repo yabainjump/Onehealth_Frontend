@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { LoadingController, PopoverController, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Post, PublishService } from 'src/app/services/publish/publish.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pushpub',
@@ -30,6 +31,7 @@ export class PushpubPage implements OnDestroy {
     private authService: AuthService,
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
+    private translate: TranslateService,
   ) {
     this.authService.getAuthState().subscribe((user) => {
       if (user) {
@@ -51,7 +53,7 @@ export class PushpubPage implements OnDestroy {
 
     const oversized = selectedFiles.find((file) => file.size > this.maxAttachmentBytes);
     if (oversized) {
-      this.presentToast('Fichier trop lourd. Taille max: 50 MB.', 'danger');
+      this.presentToast(this.translate.instant('PUSHPUB.FILE_TOO_LARGE'), 'danger');
       this.clearSelection();
       return;
     }
@@ -60,13 +62,13 @@ export class PushpubPage implements OnDestroy {
     const nonImageFiles = selectedFiles.filter((file) => !file.type.startsWith('image/'));
 
     if (imageFiles.length && nonImageFiles.length) {
-      this.presentToast('Choisissez soit des images, soit un seul fichier video/document.', 'danger');
+      this.presentToast(this.translate.instant('PUSHPUB.MIX_ERROR'), 'danger');
       this.clearSelection();
       return;
     }
 
     if (nonImageFiles.length > 1) {
-      this.presentToast('Un seul fichier video/document est autorise par publication.', 'danger');
+      this.presentToast(this.translate.instant('PUSHPUB.ONE_ATTACHMENT'), 'danger');
       this.clearSelection();
       return;
     }
@@ -81,7 +83,7 @@ export class PushpubPage implements OnDestroy {
     const file = nonImageFiles[0];
     const detectedType = this.getAttachmentType(file);
     if (!detectedType) {
-      this.presentToast('Type non supporte. Utilisez video, PDF, PPT, PPTX, DOC ou DOCX.', 'danger');
+      this.presentToast(this.translate.instant('PUSHPUB.UNSUPPORTED_TYPE'), 'danger');
       this.clearSelection();
       return;
     }
@@ -169,13 +171,13 @@ export class PushpubPage implements OnDestroy {
       (this.imageFiles?.length || 0) === 0 &&
       !this.attachmentFile
     ) {
-      await this.presentToast('Ajoutez du texte ou un media avant de publier.', 'danger');
+      await this.presentToast(this.translate.instant('PUSHPUB.EMPTY'), 'danger');
       this.isPublishing = false;
       return;
     }
 
     const loading = await this.loadingCtrl.create({
-      message: 'Publication en cours…',
+      message: this.translate.instant('PUSHPUB.PUBLISHING_PROGRESS'),
       spinner: 'crescent',
       backdropDismiss: false,
     });
@@ -219,13 +221,13 @@ export class PushpubPage implements OnDestroy {
       this.content = '';
       this.clearSelection();
 
-      await this.presentToast('Publié ✅', 'success');
+      await this.presentToast(this.translate.instant('PUSHPUB.PUBLISHED'), 'success');
 
       // 4) navigate si besoin
       this.router.navigate(['/', 'tabs', 'dashbord']); // adapte "dashbord" vs "dashboard"
     } catch (error) {
       console.error('Error uploading/adding post:', error);
-      await this.presentToast('Erreur lors de la publication', 'danger');
+      await this.presentToast(this.translate.instant('PUSHPUB.PUBLISH_ERROR'), 'danger');
     } finally {
       await loading.dismiss();
       this.isPublishing = false;

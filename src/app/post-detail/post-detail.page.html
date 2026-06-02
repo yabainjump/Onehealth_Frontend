@@ -78,6 +78,61 @@
     </div>
   </div>
 
+  <!-- Bas de post facon LinkedIn : stats + actions -->
+  <div class="post-footer">
+    <div
+      class="post-stats"
+      *ngIf="(post.likes || 0) > 0 || commentsWithUsers.length > 0">
+      <span class="stats-likes" *ngIf="(post.likes || 0) > 0">
+        <ion-icon name="thumbs-up" class="stats-reaction"></ion-icon>
+        {{ post.likes }}
+      </span>
+      <button
+        type="button"
+        class="stats-comments"
+        *ngIf="commentsWithUsers.length > 0"
+        (click)="focusComposer()">
+        {{ (commentsWithUsers.length > 1 ? 'DASHBOARD.COMMENTS_COUNT_MANY' : 'DASHBOARD.COMMENTS_COUNT_ONE') | translate:{ count: commentsWithUsers.length } }}
+      </button>
+    </div>
+
+    <div class="post-actions">
+      <button
+        type="button"
+        class="action-btn"
+        [class.liked]="post.userHasLiked"
+        (click)="likePost()">
+        <ion-icon [name]="post.userHasLiked ? 'thumbs-up' : 'thumbs-up-outline'"></ion-icon>
+        <span>{{ 'DASHBOARD.LIKE' | translate }}</span>
+      </button>
+      <button type="button" class="action-btn" (click)="focusComposer()">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+        <span>{{ 'DASHBOARD.COMMENT' | translate }}</span>
+      </button>
+      <button type="button" class="action-btn" (click)="shareCurrentPost()">
+        <ion-icon name="paper-plane-outline"></ion-icon>
+        <span>{{ 'DASHBOARD.SEND' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Champ de commentaire -->
+  <div class="comment-composer">
+    <ion-input
+      #commentInput
+      class="comment-input"
+      [placeholder]="'DASHBOARD.COMMENT_PLACEHOLDER' | translate"
+      [(ngModel)]="commentDraft"
+      (keyup.enter)="submitComment()"></ion-input>
+    <ion-button
+      fill="clear"
+      class="comment-send"
+      [disabled]="!commentDraft?.trim() || commentSending"
+      (click)="submitComment()">
+      <ion-icon name="send"></ion-icon>
+    </ion-button>
+  </div>
+
   <!-- Section commentaires -->
   <ion-list>
     <ion-list-header>{{ 'POSTDETAIL.COMMENTS' | translate }}</ion-list-header>

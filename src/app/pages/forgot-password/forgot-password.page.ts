@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-forgot-password',
@@ -25,6 +26,7 @@ export class ForgotPasswordPage {
     private readonly authService: AuthService,
     private readonly toastController: ToastController,
     private readonly router: Router,
+    private readonly translate: TranslateService,
   ) {}
 
   async onSubmit(): Promise<void> {
@@ -48,8 +50,7 @@ export class ForgotPasswordPage {
       this.devResetUrl = response.resetUrl ?? '';
     } catch {
       const toast = await this.toastController.create({
-        message:
-          'Impossible d’envoyer la demande maintenant. Vérifie la connexion et réessaie.',
+        message: this.translate.instant('FORGOT.SEND_ERROR'),
         duration: 3500,
         color: 'danger',
       });
@@ -73,7 +74,7 @@ export class ForgotPasswordPage {
 
     await navigator.clipboard.writeText(this.devResetToken.trim());
     const toast = await this.toastController.create({
-      message: 'Token copié.',
+      message: this.translate.instant('FORGOT.TOKEN_COPIED'),
       duration: 1800,
       color: 'success',
     });

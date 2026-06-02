@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { TranslateService } from '@ngx-translate/core';
 
 const passwordMatchValidator: ValidatorFn = (
   control: AbstractControl,
@@ -49,6 +50,7 @@ export class ResetPasswordPage {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly toastController: ToastController,
+    private readonly translate: TranslateService,
   ) {
     const initialToken = this.route.snapshot.queryParamMap.get('token') ?? '';
     if (initialToken.trim()) {
@@ -68,7 +70,7 @@ export class ResetPasswordPage {
       await this.authService.resetPassword(payload.token, payload.password);
 
       const toast = await this.toastController.create({
-        message: 'Mot de passe modifié. Tu peux maintenant te connecter.',
+        message: this.translate.instant('RESET.SUCCESS'),
         duration: 3000,
         color: 'success',
       });
@@ -77,8 +79,7 @@ export class ResetPasswordPage {
       void this.router.navigateByUrl('/login', { replaceUrl: true });
     } catch {
       const toast = await this.toastController.create({
-        message:
-          'Lien/token invalide ou expiré. Recommence la procédure mot de passe oublié.',
+        message: this.translate.instant('RESET.INVALID_TOKEN'),
         duration: 3800,
         color: 'danger',
       });

@@ -17,6 +17,7 @@ import {
 } from 'src/app/services/publish/publish.service';
 import { Capacitor } from '@capacitor/core';
 import { ShareLinkService } from 'src/app/core/services/share-link.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-dashbord',
@@ -58,6 +59,7 @@ export class DashbordPage implements OnInit {
     private actionSheetCtrl: ActionSheetController,
     private toastCtrl: ToastController,
     private readonly shareLinkService: ShareLinkService,
+    private readonly translate: TranslateService,
   ) {}
 
   private buildPostUrl(id: string): string {
@@ -518,7 +520,7 @@ export class DashbordPage implements OnInit {
           [payload.title, payload.text, payload.url].filter(Boolean).join('\n\n').trim(),
         );
         const t = await this.toastCtrl.create({
-          message: 'Lien copié',
+          message: this.translate.instant('COMMON.LINK_COPIED'),
           duration: 1500,
           icon: 'copy',
         });
@@ -534,16 +536,16 @@ export class DashbordPage implements OnInit {
     if (post.authorId !== this.currentUserId) return;
 
     const sheet = await this.actionSheetCtrl.create({
-      header: 'Publication',
+      header: this.translate.instant('DASHBOARD.POST_ACTIONS_HEADER'),
       buttons: [
         {
-          text: 'Supprimer',
+          text: this.translate.instant('COMMON.DELETE'),
           role: 'destructive',
           icon: 'trash',
           handler: () => this.confirmDelete(post),
         },
         {
-          text: 'Annuler',
+          text: this.translate.instant('COMMON.CANCEL'),
           role: 'cancel',
         },
       ],
@@ -553,12 +555,12 @@ export class DashbordPage implements OnInit {
 
   private async confirmDelete(post: Post) {
     const alert = await this.alertController.create({
-      header: 'Supprimer ?',
-      message: 'Cette action est définitive.',
+      header: this.translate.instant('DASHBOARD.DELETE_CONFIRM_TITLE'),
+      message: this.translate.instant('DASHBOARD.DELETE_CONFIRM_MESSAGE'),
       buttons: [
-        { text: 'Annuler', role: 'cancel' },
+        { text: this.translate.instant('COMMON.CANCEL'), role: 'cancel' },
         {
-          text: 'Supprimer',
+          text: this.translate.instant('COMMON.DELETE'),
           role: 'destructive',
           handler: () => this.deletePost(post),
         },
@@ -579,14 +581,14 @@ export class DashbordPage implements OnInit {
       this.filterPosts();
 
       const t = await this.toastCtrl.create({
-        message: 'Publication supprimée',
+        message: this.translate.instant('DASHBOARD.POST_DELETED'),
         duration: 1500,
       });
       await t.present();
     } catch (e) {
       console.error(e);
       const t = await this.toastCtrl.create({
-        message: 'Suppression impossible',
+        message: this.translate.instant('DASHBOARD.DELETE_FAILED'),
         duration: 1800,
         color: 'danger',
       });

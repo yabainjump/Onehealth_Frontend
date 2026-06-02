@@ -7,6 +7,7 @@ import { ApiService } from 'src/app/services/api/api.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { environment } from 'src/environments/environment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -32,7 +33,7 @@ export class HomePage implements OnInit, OnDestroy {
   message: string;
   model = {
     icon: 'chatbubble-ellipses-outline',
-    title: 'No Chat Rooms',
+    title: '',
     color: 'dark',
   };
 
@@ -41,7 +42,8 @@ export class HomePage implements OnInit, OnDestroy {
     public chatService: ChatService,
     private api: ApiService,
     private authService: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private translate: TranslateService
   ) {}
   
 
@@ -91,7 +93,7 @@ export class HomePage implements OnInit, OnDestroy {
         hour: '2-digit',
         minute: '2-digit',
       });
-    if (d.toDateString() === yest.toDateString()) return 'Hier';
+    if (d.toDateString() === yest.toDateString()) return this.translate.instant('HOME.YESTERDAY');
     return d.toLocaleDateString('fr-FR');
   }
   unreadCount(room: any): number {
@@ -104,16 +106,16 @@ export class HomePage implements OnInit, OnDestroy {
       const mine =
         last?.sender ===
         (this.chatService.currentUserId || this.authService._uid.getValue());
-      const prefix = mine ? 'Vous: ' : '';
+      const prefix = mine ? this.translate.instant('HOME.YOU_PREFIX') : '';
       const body = last?.message?.trim()
         ? last.message.trim().slice(0, 60)
         : last?.imageUrl
-        ? '📷 Photo'
+        ? this.translate.instant('HOME.PHOTO_PREVIEW')
         : '';
       if (body) return prefix + body;
     }
     // fallback: ancien champ room.lastMessage si présent, sinon phrase par défaut
-    return roomFallback?.lastMessage || 'Démarrer la conversation';
+    return roomFallback?.lastMessage || this.translate.instant('HOME.START_CONVERSATION');
   }
 
   isLoading = true;
@@ -123,6 +125,7 @@ export class HomePage implements OnInit, OnDestroy {
   
 
   ngOnInit() {
+    this.translate.get('HOME.EMPTY_TITLE').subscribe((t) => (this.model.title = t));
     this.getRooms();
     this.chatService
       .getCurrentUserProfil()

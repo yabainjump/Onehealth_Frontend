@@ -15,7 +15,10 @@
     "ALERT": "Alerte",
     "SHOW": "Voir",
     "HIDE": "Masquer",
-    "CONTINUE": "Continuer"
+    "CONTINUE": "Continuer",
+    "DELETE": "Supprimer",
+    "LINK_COPIED": "Lien copié",
+    "SHARE_FAILED": "Partage impossible"
   },
   "LOGIN": {
     "WELCOME_BACK": "Bon retour,",
@@ -29,7 +32,10 @@
     "FORGOT_PASSWORD": "Mot de passe oublié ?",
     "SUBMIT": "Se connecter",
     "NO_ACCOUNT": "Pas encore membre ?",
-    "SIGN_UP": "S'inscrire"
+    "SIGN_UP": "S'inscrire",
+    "ERROR_GENERIC": "Impossible de vous connecter, veuillez réessayer.",
+    "ERROR_USER_NOT_FOUND": "Adresse e-mail introuvable.",
+    "ERROR_WRONG_PASSWORD": "Veuillez saisir un mot de passe correct."
   },
   "SIGNUP": {
     "HELLO": "Bonjour Dr,",
@@ -57,7 +63,9 @@
     "EMAIL_ERROR": "Entrez une adresse e-mail valide.",
     "SUBMIT": "Envoyer",
     "DEV_TITLE": "Mode local (développement)",
-    "COPY_TOKEN": "Copier le token"
+    "COPY_TOKEN": "Copier le token",
+    "SEND_ERROR": "Impossible d'envoyer la demande maintenant. Vérifie la connexion et réessaie.",
+    "TOKEN_COPIED": "Token copié."
   },
   "RESET": {
     "TITLE_BAR": "Nouveau mot de passe",
@@ -69,7 +77,9 @@
     "PASSWORD_ERROR": "Le mot de passe doit contenir au moins 8 caractères.",
     "CONFIRM_PLACEHOLDER": "Confirmer le mot de passe",
     "MISMATCH": "Les mots de passe ne correspondent pas.",
-    "SUBMIT": "Réinitialiser"
+    "SUBMIT": "Réinitialiser",
+    "SUCCESS": "Mot de passe modifié. Tu peux maintenant te connecter.",
+    "INVALID_TOKEN": "Lien/token invalide ou expiré. Recommence la procédure mot de passe oublié."
   },
   "NOTFOUND": {
     "TITLE": "Page introuvable",
@@ -94,10 +104,19 @@
     "LIKES": "J'aime",
     "COMMENT": "Commenter",
     "SHARE": "Partager",
+    "SEND": "Envoyer",
+    "LIKE": "J'aime",
+    "COMMENTS_COUNT_ONE": "{{count}} commentaire",
+    "COMMENTS_COUNT_MANY": "{{count}} commentaires",
     "VIEW_COMMENTS": "Voir les commentaires ({{count}})",
     "COMMENT_PLACEHOLDER": "Écrivez un commentaire…",
     "COMMENT_AUTHOR_FALLBACK": "Utilisateur",
-    "LOADING": "Chargement…"
+    "LOADING": "Chargement…",
+    "POST_ACTIONS_HEADER": "Publication",
+    "DELETE_CONFIRM_TITLE": "Supprimer ?",
+    "DELETE_CONFIRM_MESSAGE": "Cette action est définitive.",
+    "POST_DELETED": "Publication supprimée",
+    "DELETE_FAILED": "Suppression impossible"
   },
   "PUSHPUB": {
     "TITLE": "Nouvelle publication",
@@ -106,7 +125,15 @@
     "IMAGE_ALT": "Aperçu de l'image",
     "DOC_READY": "Document prêt à publier",
     "PUBLISHING": "Publication…",
-    "SUBMIT": "Publier"
+    "SUBMIT": "Publier",
+    "FILE_TOO_LARGE": "Fichier trop lourd. Taille max : 50 Mo.",
+    "MIX_ERROR": "Choisissez soit des images, soit un seul fichier vidéo/document.",
+    "ONE_ATTACHMENT": "Un seul fichier vidéo/document est autorisé par publication.",
+    "UNSUPPORTED_TYPE": "Type non supporté. Utilisez vidéo, PDF, PPT, PPTX, DOC ou DOCX.",
+    "EMPTY": "Ajoutez du texte ou un média avant de publier.",
+    "PUBLISHING_PROGRESS": "Publication en cours…",
+    "PUBLISHED": "Publié ✅",
+    "PUBLISH_ERROR": "Erreur lors de la publication"
   },
   "EDIT_PROFILE": {
     "TITLE": "Modifier le profil",
@@ -127,7 +154,11 @@
     "BIO": "Bio",
     "BIO_PLACEHOLDER": "Parlez un peu de vous…",
     "SAVING": "Enregistrement…",
-    "LOADING": "Chargement du profil…"
+    "LOADING": "Chargement du profil…",
+    "INVALID_IMAGE": "Veuillez choisir une image valide.",
+    "INVALID_PHONE": "Veuillez entrer un numéro valide.",
+    "UPDATE_SUCCESS": "Profil mis à jour avec succès.",
+    "UPDATE_ERROR": "Impossible de mettre à jour le profil."
   },
   "PROFILE": {
     "COVER": "Photo de mur",
@@ -152,16 +183,31 @@
     "CALLS": "Appels",
     "RECENT_CHATS": "Discussions récentes",
     "NEW_CONVERSATION": "Nouvelle conversation",
-    "SEARCH_USER": "Rechercher un utilisateur"
+    "SEARCH_USER": "Rechercher un utilisateur",
+    "EMPTY_TITLE": "Aucune discussion",
+    "YOU_PREFIX": "Vous : ",
+    "PHOTO_PREVIEW": "📷 Photo",
+    "START_CONVERSATION": "Démarrer la conversation",
+    "YESTERDAY": "Hier"
   },
   "CHAT": {
     "DOCUMENT": "Document",
-    "MESSAGE_PLACEHOLDER": "Message"
+    "MESSAGE_PLACEHOLDER": "Message",
+    "EMPTY_TITLE": "Aucune conversation",
+    "FILE_TOO_LARGE": "Fichier trop lourd. Choisis un fichier moins lourd (max 50 Mo).",
+    "FILE_SEND_ERROR": "Impossible d'envoyer ce fichier pour le moment.",
+    "MESSAGE_SEND_ERROR": "Impossible d'envoyer le message.",
+    "SETTINGS_SOON": "Paramètres de discussion bientôt disponibles.",
+    "PROFILE_UNAVAILABLE": "Profil utilisateur indisponible.",
+    "ROOM_RESTORED": "Conversation restaurée avec succès.",
+    "ROOM_NOT_FOUND": "Discussion introuvable. Ouvre-la depuis la liste de chats.",
+    "ROOM_UNAVAILABLE": "Discussion indisponible pour le moment."
   },
   "POSTDETAIL": {
     "TITLE": "Détail de la publication",
     "NO_POST": "Aucune publication à afficher ou en chargement…",
-    "COMMENTS": "Commentaires"
+    "COMMENTS": "Commentaires",
+    "COMMENT_FAILED": "Impossible d'ajouter le commentaire."
   },
   "ITEMS": {
     "CONTACT": "Contact",
@@ -170,6 +216,8 @@
   "SIGNUPD": {
     "I_AM_DOCTOR": "Je suis médecin",
     "USERNAME_PLACEHOLDER": "Entrez un nom d'utilisateur",
-    "USERNAME_ERROR": "*Veuillez saisir un nom d'utilisateur"
+    "USERNAME_ERROR": "*Veuillez saisir un nom d'utilisateur",
+    "ERROR_GENERIC": "Impossible de créer le compte, veuillez réessayer.",
+    "ERROR_EMAIL_IN_USE": "Adresse e-mail déjà utilisée."
   }
 }

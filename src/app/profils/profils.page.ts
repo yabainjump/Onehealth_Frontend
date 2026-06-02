@@ -12,6 +12,7 @@ import { resolveMediaUrl } from '../core/utils/media-url.util';
 import { AuthService } from '../services/auth/auth.service';
 import { ChatService } from '../services/chat/chat.service';
 import { PublishService, Post, PostAttachment } from 'src/app/services/publish/publish.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profils',
@@ -46,6 +47,7 @@ export class ProfilsPage implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly toastController: ToastController,
     private readonly shareLinkService: ShareLinkService,
+    private readonly translate: TranslateService,
     public chatService: ChatService,
     private router: Router,
     private route: ActivatedRoute,
@@ -449,14 +451,14 @@ export class ProfilsPage implements OnInit {
         [payload.title, payload.text, payload.url].filter(Boolean).join('\n\n').trim(),
       );
       const toast = await this.toastController.create({
-        message: 'Lien copié',
+        message: this.translate.instant('COMMON.LINK_COPIED'),
         duration: 1500,
         icon: 'copy',
       });
       await toast.present();
     } catch {
       const toast = await this.toastController.create({
-        message: 'Partage impossible',
+        message: this.translate.instant('COMMON.SHARE_FAILED'),
         duration: 1500,
         color: 'danger',
       });

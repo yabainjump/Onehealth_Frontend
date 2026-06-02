@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-signupd',
@@ -20,8 +21,9 @@ export class SignupdPage implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private alertController: AlertController
-  ) { 
+    private alertController: AlertController,
+    private translate: TranslateService
+  ) {
     this.initForm();
   }
 
@@ -67,9 +69,9 @@ export class SignupdPage implements OnInit {
       console.log(e);
       // this.global.hideLoader();
       this.isLoading = false;
-      let msg: string = 'Could not sign you up, please try again.';
+      let msg: string = this.translate.instant('SIGNUPD.ERROR_GENERIC');
       if(e.code == 'auth/email-already-in-use') {
-        msg = 'Email already in use';
+        msg = this.translate.instant('SIGNUPD.ERROR_EMAIL_IN_USE');
       }
       this.showAlert(msg);
     });
@@ -77,7 +79,7 @@ export class SignupdPage implements OnInit {
   
   async showAlert(msg) {
     const alert = await this.alertController.create({
-      header: 'Alert',
+      header: this.translate.instant('COMMON.ALERT'),
       // subHeader: 'Important message',
       message: msg,
       buttons: ['OK'],

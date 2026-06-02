@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { firstValueFrom, take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
@@ -21,8 +22,9 @@ export class LoginPage implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private alertController: AlertController
-  ) { 
+    private alertController: AlertController,
+    private translate: TranslateService
+  ) {
     this.initForm();
   }
 
@@ -85,16 +87,16 @@ export class LoginPage implements OnInit {
       this.isLogin = false;
       console.log(e);
       // this.global.hideLoader();
-      let msg: string = 'Could not sign you in, please try again.';
-      if(e.code == 'auth/user-not-found') msg = 'E-mail address could not be found';
-      else if(e.code == 'auth/wrong-password') msg = 'Please enter a correct password';
+      let msg: string = this.translate.instant('LOGIN.ERROR_GENERIC');
+      if(e.code == 'auth/user-not-found') msg = this.translate.instant('LOGIN.ERROR_USER_NOT_FOUND');
+      else if(e.code == 'auth/wrong-password') msg = this.translate.instant('LOGIN.ERROR_WRONG_PASSWORD');
       this.showAlert(msg);
     });
   }
   
   async showAlert(msg) {
     const alert = await this.alertController.create({
-      header: 'Alert',
+      header: this.translate.instant('COMMON.ALERT'),
       // subHeader: 'Important message',
       message: msg,
       buttons: ['OK'],
