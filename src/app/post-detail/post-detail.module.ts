@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PostDetailPageRoutingModule } from './post-detail-routing.module';
 
 import { PostDetailPage } from './post-detail.page';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { PostDetailPage } from './post-detail.page';
     FormsModule,
     IonicModule,
     PostDetailPageRoutingModule,
-    TranslateModule
+    TranslateModule,
+    ComponentsModule
   ],
   declarations: [PostDetailPage]
 })

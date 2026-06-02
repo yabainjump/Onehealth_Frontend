@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DashbordPageRoutingModule } from './dashbord-routing.module';
 
 import { DashbordPage } from './dashbord.page';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
   exports: [FormatPostPipe],
@@ -17,7 +18,8 @@ import { DashbordPage } from './dashbord.page';
     FormsModule,
     IonicModule,
     DashbordPageRoutingModule,
-    TranslateModule
+    TranslateModule,
+    ComponentsModule
   ],
   declarations: [DashbordPage, FormatPostPipe]
 })

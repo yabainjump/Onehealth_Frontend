@@ -46,22 +46,14 @@
     {{ (expanded[post.id] ? 'DASHBOARD.SHOW_LESS' : 'DASHBOARD.SHOW_MORE') | translate }}
   </button>
 
-  <!-- Si une seule image (ancien format) -->
-  <div *ngIf="post.imageUrl && !post.imageUrls?.length" class="single-image-wrapper">
-    <img [src]="post.imageUrl" (error)="onMediaError($event, post.fullImageUrl)" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
-  </div>
-  <div *ngIf="post.imageUrls?.length === 1" class="single-image-wrapper">
-    <img [src]="post.imageUrls[0]" (error)="onMediaError($event, post.fullImageUrls?.[0])" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
-  </div>
-
-  <!-- Galerie d'images -->
-  <ion-grid *ngIf="post.imageUrls?.length > 1">
-    <ion-row>
-      <ion-col size="6" *ngFor="let img of post.imageUrls; let i = index; trackBy: trackByImage">
-        <img [src]="img" (error)="onMediaError($event, post.fullImageUrls?.[i])" alt="Image" class="gallery-img" loading="lazy" decoding="async" />
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <!-- Images : mosaique style LinkedIn + visionneuse plein ecran au clic -->
+  <app-post-gallery
+    [images]="post.imageUrls"
+    [fullImages]="post.fullImageUrls"
+    [legacyImage]="post.imageUrl"
+    [legacyFull]="post.fullImageUrl"
+    [lightbox]="true"
+  ></app-post-gallery>
 
   <div class="video-wrapper" *ngIf="hasVideoAttachment(post)">
     <video

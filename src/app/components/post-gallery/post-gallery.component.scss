@@ -1,0 +1,154 @@
+:host {
+  display: block;
+}
+
+.gallery {
+  margin: 10px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+}
+
+.tile img {
+  display: block;
+  width: 100%;
+}
+
+/* 1 image : pleine largeur, ratio naturel, hauteur plafonnee (style LinkedIn) */
+.gallery.count-1 .tile img {
+  height: auto;
+  max-height: 480px;
+  object-fit: cover;
+}
+
+/* Mosaiques 2+ : grille avec tuiles recadrees */
+.gallery.count-2,
+.gallery.count-3,
+.gallery.count-4,
+.gallery.count-many {
+  display: grid;
+  gap: 3px;
+  background: #e9edf2;
+
+  .tile img {
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.gallery.count-2 {
+  grid-template-columns: 1fr 1fr;
+  aspect-ratio: 2 / 1;
+}
+
+.gallery.count-3 {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  aspect-ratio: 3 / 2;
+
+  .tile:first-child {
+    grid-row: 1 / span 2;
+  }
+}
+
+.gallery.count-4,
+.gallery.count-many {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  aspect-ratio: 1 / 1;
+}
+
+.more-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Visionneuse plein ecran */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.93);
+  animation: viewer-fade 0.15s ease-out;
+}
+
+@keyframes viewer-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.viewer-img {
+  max-width: 94vw;
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.viewer-btn {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+.viewer-btn.close {
+  top: max(12px, env(safe-area-inset-top));
+  right: 14px;
+}
+
+.viewer-btn.nav {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.viewer-btn.nav.prev {
+  left: 10px;
+}
+
+.viewer-btn.nav.next {
+  right: 10px;
+}
+
+.viewer-counter {
+  position: absolute;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 0.9rem;
+}

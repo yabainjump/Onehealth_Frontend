@@ -1,0 +1,64 @@
+<div class="gallery" [ngClass]="layoutClass" *ngIf="tiles.length">
+  <div
+    class="tile"
+    *ngFor="let tile of visibleTiles; let i = index; trackBy: trackByIndex"
+    (click)="onTileClick(i)"
+  >
+    <img
+      [src]="tile.url"
+      (error)="onImgError($event, tile.full)"
+      alt="Image de la publication"
+      loading="lazy"
+      decoding="async"
+    />
+    <div
+      class="more-overlay"
+      *ngIf="i === visibleTiles.length - 1 && extraCount > 0"
+    >
+      +{{ extraCount }}
+    </div>
+  </div>
+</div>
+
+<!-- Visionneuse plein ecran (detail du post) -->
+<div class="viewer" *ngIf="viewerOpen" (click)="closeViewer($event)">
+  <button
+    type="button"
+    class="viewer-btn close"
+    (click)="closeViewer($event)"
+    aria-label="Fermer"
+  >
+    <ion-icon name="close"></ion-icon>
+  </button>
+
+  <button
+    type="button"
+    class="viewer-btn nav prev"
+    *ngIf="tiles.length > 1"
+    (click)="prev($event)"
+    aria-label="Image precedente"
+  >
+    <ion-icon name="chevron-back"></ion-icon>
+  </button>
+
+  <img
+    class="viewer-img"
+    [src]="tiles[viewerIndex].full"
+    (click)="stop($event)"
+    alt="Image en plein ecran"
+  />
+
+  <button
+    type="button"
+    class="viewer-btn nav next"
+    *ngIf="tiles.length > 1"
+    (click)="next($event)"
+    aria-label="Image suivante"
+  >
+    <ion-icon name="chevron-forward"></ion-icon>
+  </button>
+
+  <div class="viewer-counter" *ngIf="tiles.length > 1">
+    {{ viewerIndex + 1 }} / {{ tiles.length }}
+  </div>
+</div>

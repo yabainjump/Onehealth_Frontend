@@ -93,21 +93,13 @@
       </ion-button>
     </div>
 
-    <div (click)="openPostDetail(post)" *ngIf="post.imageUrl && !post.imageUrls?.length" class="single-image-wrapper">
-      <img [src]="post.imageUrl" (error)="onMediaError($event, post.fullImageUrl)" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
-    </div>
-
-    <div (click)="openPostDetail(post)" *ngIf="post.imageUrls?.length === 1" class="single-image-wrapper">
-      <img [src]="post.imageUrls[0]" (error)="onMediaError($event, post.fullImageUrls?.[0])" alt="Post Image" class="single-image" loading="lazy" decoding="async" />
-    </div>
-
-    <ion-grid (click)="openPostDetail(post)" *ngIf="post.imageUrls?.length > 1">
-      <ion-row>
-        <ion-col size="6" *ngFor="let url of post.imageUrls; let i = index; trackBy: trackByImageUrl">
-          <img [src]="url" (error)="onMediaError($event, post.fullImageUrls?.[i])" alt="Post image" class="gallery-img" loading="lazy" decoding="async" />
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <app-post-gallery
+      [images]="post.imageUrls"
+      [fullImages]="post.fullImageUrls"
+      [legacyImage]="post.imageUrl"
+      [legacyFull]="post.fullImageUrl"
+      (imageOpen)="openPostDetail(post)"
+    ></app-post-gallery>
 
     <div class="video-wrapper" *ngIf="hasVideoAttachment(post)">
       <video
