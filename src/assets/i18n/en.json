@@ -65,7 +65,11 @@
     "DEV_TITLE": "Local mode (development)",
     "COPY_TOKEN": "Copy token",
     "SEND_ERROR": "Could not send the request right now. Check your connection and try again.",
-    "TOKEN_COPIED": "Token copied."
+    "TOKEN_COPIED": "Token copied.",
+    "SENT_TITLE": "Email sent!",
+    "SENT_TEXT": "If an account exists for this address, a reset link has just been sent. Remember to check your spam folder.",
+    "RESEND": "Resend email",
+    "BACK_TO_LOGIN": "Back to sign in"
   },
   "RESET": {
     "TITLE_BAR": "New password",

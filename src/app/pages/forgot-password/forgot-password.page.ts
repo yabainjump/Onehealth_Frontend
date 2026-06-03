@@ -17,6 +17,8 @@ export class ForgotPasswordPage {
   });
 
   isSubmitting = false;
+  emailSent = false;
+  submittedEmail = '';
   message = '';
   devResetToken = '';
   devResetUrl = '';
@@ -41,13 +43,14 @@ export class ForgotPasswordPage {
     this.devResetUrl = '';
 
     try {
-      const response = await this.authService.requestPasswordReset(
-        this.form.getRawValue().email,
-      );
+      const email = this.form.getRawValue().email;
+      const response = await this.authService.requestPasswordReset(email);
 
       this.message = response.message;
       this.devResetToken = response.resetToken ?? '';
       this.devResetUrl = response.resetUrl ?? '';
+      this.submittedEmail = email;
+      this.emailSent = true;
     } catch {
       const toast = await this.toastController.create({
         message: this.translate.instant('FORGOT.SEND_ERROR'),
@@ -58,6 +61,17 @@ export class ForgotPasswordPage {
     } finally {
       this.isSubmitting = false;
     }
+  }
+
+  resend(): void {
+    this.emailSent = false;
+    this.message = '';
+    this.devResetToken = '';
+    this.devResetUrl = '';
+  }
+
+  goToLogin(): void {
+    void this.router.navigate(['/login']);
   }
 
   goToReset(): void {

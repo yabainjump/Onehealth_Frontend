@@ -65,7 +65,11 @@
     "DEV_TITLE": "Mode local (développement)",
     "COPY_TOKEN": "Copier le token",
     "SEND_ERROR": "Impossible d'envoyer la demande maintenant. Vérifie la connexion et réessaie.",
-    "TOKEN_COPIED": "Token copié."
+    "TOKEN_COPIED": "Token copié.",
+    "SENT_TITLE": "E-mail envoyé !",
+    "SENT_TEXT": "Si un compte existe pour cette adresse, un lien de réinitialisation vient d'être envoyé. Pense à vérifier tes spams.",
+    "RESEND": "Renvoyer l'e-mail",
+    "BACK_TO_LOGIN": "Retour à la connexion"
   },
   "RESET": {
     "TITLE_BAR": "Nouveau mot de passe",
