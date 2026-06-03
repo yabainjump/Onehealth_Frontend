@@ -396,3 +396,27 @@ ion-avatar {
 .load-more-skeletons {
   margin-bottom: 8px;
 }
+
+.new-posts-pill {
+  position: sticky;
+  top: 10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  margin: 10px auto;
+  padding: 8px 16px;
+  background: #0a66c2;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+
+  ion-icon {
+    font-size: 16px;
+  }
+}

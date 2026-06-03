@@ -31,6 +31,20 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="chevron-down-circle-outline"
+      [pullingText]="'DASHBOARD.PULL_TO_REFRESH' | translate"
+      refreshingSpinner="crescent"
+      [refreshingText]="'DASHBOARD.REFRESHING' | translate">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div class="new-posts-pill" *ngIf="showNewPostsBanner" (click)="loadNewPosts()">
+    <ion-icon name="arrow-up-outline"></ion-icon>
+    {{ (newPostsCount > 1 ? 'DASHBOARD.NEW_POSTS_MANY' : 'DASHBOARD.NEW_POSTS_ONE') | translate:{ count: newPostsCount } }}
+  </div>
+
   <div class="profile-complete-banner" *ngIf="showProfileBanner">
     <ion-icon name="person-circle-outline" class="pcb-icon"></ion-icon>
     <div class="pcb-text">

@@ -5,7 +5,9 @@ import {
   PopoverController,
   ActionSheetController,
   ToastController,
+  IonContent,
   InfiniteScrollCustomEvent,
+  RefresherCustomEvent,
 } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api/api.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -27,6 +29,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class DashbordPage implements OnInit {
   @ViewChild('popover') popover: PopoverController;
+  @ViewChild(IonContent) content?: IonContent;
 
   userPhoto: string = 'assets/default-profile.png';
   showProfileBanner = false;
@@ -49,6 +52,11 @@ export class DashbordPage implements OnInit {
   commentsOpen: Record<string, boolean> = {};
   commentDrafts: Record<string, string> = {};
   commentSending: Record<string, boolean> = {};
+  showNewPostsBanner = false;
+  newPostsCount = 0;
+  private pendingNewPosts: Post[] = [];
+  private newPostsTimer: any;
+  private feedInitialized = false;
 
   constructor(
     public apiService: ApiService,
@@ -150,6 +158,8 @@ export class DashbordPage implements OnInit {
     });
 
     await this.loadInitialPosts();
+    this.feedInitialized = true;
+    this.startNewPostsPolling();
 
     // 3) rafraîchir le relativeTime chaque minute (avec garde)
     this._relTimer = setInterval(() => {
@@ -236,9 +246,102 @@ export class DashbordPage implements OnInit {
     }
   }
 
+  // Tirer vers le bas pour rafraichir le fil (pull-to-refresh).
+  async handleRefresh(event: RefresherCustomEvent) {
+    try {
+      await this.refreshFeed();
+    } finally {
+      await event.target.complete();
+    }
+  }
+
+  // Recharge la 1re page SANS afficher les squelettes : mise a jour en place
+  // (trackByPostId evite tout clignotement, on garde les posts inchanges).
+  private async refreshFeed(): Promise<void> {
+    this.currentPage = 1;
+    this.hasMorePosts = true;
+    this.dismissNewPostsBanner();
+    try {
+      const posts = await this.publicationService.getPostsPage(
+        1,
+        this.feedPageSize,
+      );
+      this.applyPosts(posts, false);
+      this.hasMorePosts = posts.length === this.feedPageSize;
+    } catch (error) {
+      console.error('Erreur lors de l’actualisation du fil :', error);
+    }
+  }
+
+  // OPTION 1 : en revenant sur l'onglet Accueil, on rafraichit + on remonte.
+  ionViewWillEnter(): void {
+    if (!this.feedInitialized) {
+      return;
+    }
+    void this.refreshFeed().then(() => {
+      void this.content?.scrollToTop(300);
+    });
+  }
+
+  // OPTION 2 : sondage periodique qui detecte les nouveaux posts SANS toucher
+  // au fil, puis affiche le bandeau "X nouvelles publications".
+  private startNewPostsPolling(): void {
+    if (this.newPostsTimer) {
+      return;
+    }
+    this.newPostsTimer = setInterval(() => {
+      void this.checkForNewPosts();
+    }, 30_000);
+  }
+
+  private async checkForNewPosts(): Promise<void> {
+    if (this.isLoadingFeed || this.isLoadingMore || this.searchQuery.trim()) {
+      return;
+    }
+    try {
+      const latest = await this.publicationService.getPostsPage(
+        1,
+        this.feedPageSize,
+      );
+      const existingIds = new Set(this.posts.map((post) => post.id));
+      const fresh = latest.filter(
+        (post) => post.id && !existingIds.has(post.id),
+      );
+      if (fresh.length > 0) {
+        this.pendingNewPosts = fresh;
+        this.newPostsCount = fresh.length;
+        this.showNewPostsBanner = true;
+      }
+    } catch (error) {
+      // Silencieux : on reessaiera au prochain tick.
+      console.debug('checkForNewPosts error', error);
+    }
+  }
+
+  // Clic sur le bandeau : on insere les nouveaux posts EN HAUT (sans recharger
+  // tout le fil) puis on remonte. L'utilisateur ne perd pas sa lecture.
+  loadNewPosts(): void {
+    if (this.pendingNewPosts.length) {
+      const decorated = this.pendingNewPosts.map((post) =>
+        this.decoratePost(post),
+      );
+      this.posts = [...decorated, ...this.posts];
+      this.filterPosts();
+    }
+    this.dismissNewPostsBanner();
+    void this.content?.scrollToTop(300);
+  }
+
+  dismissNewPostsBanner(): void {
+    this.showNewPostsBanner = false;
+    this.newPostsCount = 0;
+    this.pendingNewPosts = [];
+  }
+
   // pour bien nettoyer l’intervalle
   ngOnDestroy() {
     if (this._relTimer) clearInterval(this._relTimer);
+    if (this.newPostsTimer) clearInterval(this.newPostsTimer);
   }
 
   async loadUserPhoto() {
