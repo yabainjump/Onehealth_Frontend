@@ -126,11 +126,17 @@ h1 {
 
 .btn {
   min-width: 104px;
-  height: 42px;
+  height: 44px;
   border-radius: 999px;
   font-size: 16px;
   font-weight: 600;
   padding: 0 18px;
+  cursor: pointer;
+  transition: transform var(--app-transition), box-shadow var(--app-transition);
+}
+
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn-primary {

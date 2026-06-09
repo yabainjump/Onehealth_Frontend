@@ -34,6 +34,7 @@
     "PASSWORD_MINLENGTH": "*Password must be at least 8 characters",
     "REMEMBER_ME": "Remember me",
     "FORGOT_PASSWORD": "Forgot password?",
+    "TOGGLE_PASSWORD": "Show or hide password",
     "SUBMIT": "Log In",
     "NO_ACCOUNT": "Not a member yet?",
     "SIGN_UP": "Sign Up",

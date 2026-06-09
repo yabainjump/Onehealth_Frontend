@@ -35,7 +35,7 @@
 
 .brand span {
   color: var(--brand-blue-deep);
-  font-family: 'Noto Sans', 'Trebuchet MS', sans-serif;
+  font-family: var(--ion-font-family);
   font-size: 1.22rem;
   font-weight: 800;
   white-space: nowrap;
@@ -57,6 +57,16 @@
   background: transparent;
   border: 0;
   padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background var(--app-transition);
+}
+
+.icon-btn:hover,
+.avatar-btn:hover {
+  background: rgba(29, 81, 165, 0.08);
 }
 
 .icon-btn ion-icon {
@@ -73,7 +83,7 @@
 
 .welcome-content {
   --background: var(--surface);
-  font-family: 'Noto Sans', 'Trebuchet MS', sans-serif;
+  font-family: var(--ion-font-family);
 }
 
 .hero-section {
@@ -130,6 +140,7 @@
   --box-shadow: 0 10px 24px rgba(29, 81, 165, 0.35);
   --color: #ffffff;
   font-weight: 700;
+  transition: transform var(--app-transition);
 }
 
 .cta-secondary {
@@ -137,6 +148,12 @@
   --color: var(--brand-blue);
   --border-color: #c8d8f3;
   font-weight: 700;
+  transition: transform var(--app-transition);
+}
+
+.cta-primary:active,
+.cta-secondary:active {
+  transform: scale(0.98);
 }
 
 .pillars-section {
@@ -170,6 +187,13 @@
   border-radius: 14px;
   padding: 18px;
   margin-bottom: 14px;
+  box-shadow: var(--app-shadow-sm);
+  transition: transform var(--app-transition), box-shadow var(--app-transition);
+}
+
+.pillar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--app-shadow-md);
 }
 
 .pillar-icon {
@@ -188,9 +212,9 @@
 }
 
 .pillar-card h3 {
-  margin: 12px 0 8px;
+  margin: 12px 0 6px;
   color: #122340;
-  font-size: 1.8rem;
+  font-size: 1.18rem;
   font-weight: 700;
 }
 

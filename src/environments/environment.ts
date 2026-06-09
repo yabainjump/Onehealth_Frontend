@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
-  apiBaseUrl: 'http://localhost:3000/api',
+  production: true,
+  apiBaseUrl: 'https://backend.onehealthnetwork.yaba-in.com/api',
   botApiUrl: 'http://localhost:5000/api/bot',
 };

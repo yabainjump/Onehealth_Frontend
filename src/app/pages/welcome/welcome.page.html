@@ -31,10 +31,10 @@
             EN
           </button>
         </div>
-        <button type="button" class="icon-btn">
-          <ion-icon name="search-outline"></ion-icon>
+        <button type="button" class="icon-btn" [attr.aria-label]="content.exploreNetwork" (click)="exploreAsGuest()">
+          <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
         </button>
-        <button type="button" class="avatar-btn">
+        <button type="button" class="avatar-btn" [attr.aria-label]="content.loginCta" (click)="navigateToLogin()">
           <img
             src="assets/images/logo-onehealth-in-cameroon.png"
             alt="Profile avatar"

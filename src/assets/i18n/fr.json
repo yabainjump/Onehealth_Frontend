@@ -34,6 +34,7 @@
     "PASSWORD_MINLENGTH": "*Le mot de passe doit contenir au moins 8 caractères",
     "REMEMBER_ME": "Se souvenir de moi",
     "FORGOT_PASSWORD": "Mot de passe oublié ?",
+    "TOGGLE_PASSWORD": "Afficher ou masquer le mot de passe",
     "SUBMIT": "Se connecter",
     "NO_ACCOUNT": "Pas encore membre ?",
     "SIGN_UP": "S'inscrire",

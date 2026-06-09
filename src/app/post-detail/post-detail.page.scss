@@ -167,6 +167,7 @@
   border: 0;
   background: transparent;
   padding: 9px 4px;
+  min-height: 44px;
   border-radius: 8px;
   color: #5f6368;
   font-size: 14px;
@@ -180,6 +181,10 @@
 
   &:hover {
     background: #f2f3f5;
+  }
+
+  &:active {
+    background: #e7e9ec;
   }
 
   &.liked {

@@ -69,6 +69,19 @@ ion-list {
     font-size: 0.8rem;
   }
 
+  .link {
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 600;
+  }
+
+  .pwd-toggle {
+    cursor: pointer;
+    padding: 6px;
+    font-size: 1.15rem;
+  }
+
   ion-col {
     ion-note {
       font-size: 0.85rem;

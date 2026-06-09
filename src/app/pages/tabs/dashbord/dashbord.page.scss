@@ -73,11 +73,12 @@
   text-decoration: none;
 }
 .post-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  border: 1px solid #e6e9ee;
+  border-radius: var(--app-radius-md);
   padding: 15px;
-  margin: 10px 0;
+  margin: 12px 0;
   background: #fff;
+  box-shadow: var(--app-shadow-sm);
 }
 .law {
   color: black;
@@ -219,6 +220,7 @@ ion-avatar {
   border: 0;
   background: transparent;
   padding: 9px 4px;
+  min-height: 44px;
   border-radius: 8px;
   color: #5f6368;
   font-size: 14px;
@@ -232,6 +234,10 @@ ion-avatar {
 
   &:hover {
     background: #f2f3f5;
+  }
+
+  &:active {
+    background: #e7e9ec;
   }
 
   &:disabled {

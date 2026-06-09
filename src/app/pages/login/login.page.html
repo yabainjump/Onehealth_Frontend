@@ -29,6 +29,10 @@
         </ion-icon>
         <ion-input
           formControlName="email"
+          type="email"
+          inputmode="email"
+          autocomplete="email"
+          [attr.aria-label]="'LOGIN.EMAIL_PLACEHOLDER' | translate"
           [placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate">
         </ion-input>
       </ion-item>
@@ -41,6 +45,10 @@
 
       <ion-item class="ion-margin-vertical">
         <ion-icon (click)="onChange()"
+          role="button"
+          tabindex="0"
+          class="pwd-toggle"
+          [attr.aria-label]="'LOGIN.TOGGLE_PASSWORD' | translate"
           [name]="isTypePassword ? 'lock-closed-outline' : 'lock-open-outline'"
           slot="end"
           [color]="isTypePassword ? 'medium' : 'primary'">
@@ -48,6 +56,8 @@
         <ion-input
           formControlName="password"
           [type]="isTypePassword ? 'password' : 'text'"
+          autocomplete="current-password"
+          [attr.aria-label]="'LOGIN.PASSWORD_PLACEHOLDER' | translate"
           [placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate">
         </ion-input>
       </ion-item>
@@ -76,17 +86,17 @@
         </ion-col>
         <ion-col size="6">
           <div align=right>
-            <ion-note fill="clear" routerLink="/forgot-password">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</ion-note>
+            <ion-note class="link" fill="clear" routerLink="/forgot-password">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</ion-note>
           </div>
         </ion-col>
       </ion-row>
-      <ion-button *ngIf="!isLogin" color="primary" shape="round" (click)="onSubmit()">{{ 'LOGIN.SUBMIT' | translate }}</ion-button>
-      <ion-button fill="clear" *ngIf="isLogin">
-        <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <ion-button color="primary" shape="round" [disabled]="isLogin" (click)="onSubmit()">
+        <ion-spinner *ngIf="isLogin" name="crescent" slot="start"></ion-spinner>
+        {{ 'LOGIN.SUBMIT' | translate }}
       </ion-button>
       <p class="signup">
         <ion-note>
-          {{ 'LOGIN.NO_ACCOUNT' | translate }} <ion-text (click)="navigateToSignup()" color="primary">{{ 'LOGIN.SIGN_UP' | translate }}</ion-text>
+          {{ 'LOGIN.NO_ACCOUNT' | translate }} <ion-text class="link" (click)="navigateToSignup()" color="primary">{{ 'LOGIN.SIGN_UP' | translate }}</ion-text>
         </ion-note>
       </p>
     </ion-list>

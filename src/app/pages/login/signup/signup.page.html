@@ -10,14 +10,15 @@
     </ion-text>
   </ion-label>
 
-  <ion-icon name="arrow-back-outline" color="light" class="backButton" (click)="navigateToLogin()">
+  <ion-icon name="arrow-back-outline" color="light" class="backButton" role="button" tabindex="0"
+    [attr.aria-label]="'COMMON.CANCEL' | translate" (click)="navigateToLogin()">
   </ion-icon>
 
   <form [formGroup]="signupForm">
     <ion-list lines="none" class="ion-margin ion-padding ion-text-center">
       <ion-item class="ion-margin-vertical">
-        <ion-icon name="person-outline" slot="end" color="medium"></ion-icon>
-        <ion-input formControlName="firstName" [placeholder]="'SIGNUP.FIRST_NAME_PLACEHOLDER' | translate"></ion-input>
+        <ion-icon name="person-outline" slot="end" color="medium" aria-hidden="true"></ion-icon>
+        <ion-input formControlName="firstName" autocomplete="given-name" autocapitalize="words" [attr.aria-label]="'SIGNUP.FIRST_NAME_PLACEHOLDER' | translate" [placeholder]="'SIGNUP.FIRST_NAME_PLACEHOLDER' | translate"></ion-input>
       </ion-item>
       <ion-text
         class="ion-text-left"
@@ -28,8 +29,8 @@
       </ion-text>
 
       <ion-item class="ion-margin-vertical">
-        <ion-icon name="person-outline" slot="end" color="medium"></ion-icon>
-        <ion-input formControlName="lastName" [placeholder]="'SIGNUP.LAST_NAME_PLACEHOLDER' | translate"></ion-input>
+        <ion-icon name="person-outline" slot="end" color="medium" aria-hidden="true"></ion-icon>
+        <ion-input formControlName="lastName" autocomplete="family-name" autocapitalize="words" [attr.aria-label]="'SIGNUP.LAST_NAME_PLACEHOLDER' | translate" [placeholder]="'SIGNUP.LAST_NAME_PLACEHOLDER' | translate"></ion-input>
       </ion-item>
       <ion-text
         class="ion-text-left"
@@ -40,8 +41,8 @@
       </ion-text>
 
       <ion-item class="ion-margin-vertical">
-        <ion-icon name="mail-outline" slot="end" color="medium"></ion-icon>
-        <ion-input formControlName="email" type="email" [placeholder]="'SIGNUP.EMAIL_PLACEHOLDER' | translate"></ion-input>
+        <ion-icon name="mail-outline" slot="end" color="medium" aria-hidden="true"></ion-icon>
+        <ion-input formControlName="email" type="email" inputmode="email" autocomplete="email" [attr.aria-label]="'SIGNUP.EMAIL_PLACEHOLDER' | translate" [placeholder]="'SIGNUP.EMAIL_PLACEHOLDER' | translate"></ion-input>
       </ion-item>
       <ion-text class="ion-text-left" color="danger" *ngIf="!signupForm.get('email').valid && signupForm.get('email').touched">
         <p class="error">{{ 'SIGNUP.EMAIL_ERROR' | translate }}</p>
@@ -50,12 +51,16 @@
       <ion-item class="ion-margin-vertical">
         <ion-icon
           (click)="onChange()"
+          role="button"
+          tabindex="0"
+          class="pwd-toggle"
+          [attr.aria-label]="'LOGIN.TOGGLE_PASSWORD' | translate"
           [name]="isTypePassword ? 'lock-closed-outline' : 'lock-open-outline'"
           slot="end"
           [color]="isTypePassword ? 'medium' : 'primary'"
         >
         </ion-icon>
-        <ion-input formControlName="password" [type]="isTypePassword ? 'password' : 'text'" [placeholder]="'SIGNUP.PASSWORD_PLACEHOLDER' | translate">
+        <ion-input formControlName="password" [type]="isTypePassword ? 'password' : 'text'" autocomplete="new-password" [attr.aria-label]="'SIGNUP.PASSWORD_PLACEHOLDER' | translate" [placeholder]="'SIGNUP.PASSWORD_PLACEHOLDER' | translate">
         </ion-input>
       </ion-item>
       <ion-text class="ion-text-left" color="danger" *ngIf="!signupForm.get('password').valid && signupForm.get('password').touched">
@@ -80,9 +85,9 @@
         </ion-col>
       </ion-row>
 
-      <ion-button *ngIf="!isLoading" color="primary" shape="round" (click)="onSubmit()">{{ 'SIGNUP.SUBMIT' | translate }}</ion-button>
-      <ion-button fill="clear" *ngIf="isLoading">
-        <ion-spinner name="crescent" color="light"></ion-spinner>
+      <ion-button color="primary" shape="round" [disabled]="isLoading" (click)="onSubmit()">
+        <ion-spinner *ngIf="isLoading" name="crescent" slot="start"></ion-spinner>
+        {{ 'SIGNUP.SUBMIT' | translate }}
       </ion-button>
     </ion-list>
   </form>

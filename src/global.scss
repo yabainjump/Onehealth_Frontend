@@ -165,3 +165,53 @@ body {
   border: 0;
   background: #fff;
 }
+
+/* ============================================================
+   Finition globale UI/UX — typographie, accessibilité, états
+   (s'applique à tous les écrans sans changer la structure)
+   ============================================================ */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Titres un peu plus affirmés (hiérarchie visuelle) */
+h1, h2, h3 {
+  letter-spacing: -0.01em;
+}
+
+/* Focus clavier visible partout (accessibilité — règle CRITICAL) */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible,
+ion-button:focus-visible,
+ion-item.ion-focusable:focus-visible,
+.action-btn:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Bouton oeil (afficher/masquer mot de passe) — cible tactile + curseur */
+.pwd-toggle {
+  cursor: pointer;
+  padding: 6px;
+  font-size: 1.15rem;
+}
+
+/* Respect de la préférence système "réduire les animations" */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
