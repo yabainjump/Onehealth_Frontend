@@ -102,8 +102,8 @@
 
 
   <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="segment === 'chats'">
-    <ion-fab-button (click)="newChat()">
-      <ion-icon name="add"></ion-icon>
+    <ion-fab-button [attr.aria-label]="'HOME.NEW_CONVERSATION' | translate" (click)="newChat()">
+      <ion-icon name="add" aria-hidden="true"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 

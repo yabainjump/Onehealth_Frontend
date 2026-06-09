@@ -19,8 +19,8 @@
       </button>
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button fill="clear" class="toolbar-action" (click)="openOptionsMenu()">
-        <ion-icon name="ellipsis-vertical"></ion-icon>
+      <ion-button fill="clear" class="toolbar-action" [attr.aria-label]="'CHAT.OPTIONS' | translate" (click)="openOptionsMenu()">
+        <ion-icon name="ellipsis-vertical" aria-hidden="true"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -105,8 +105,8 @@
       (change)="onFileChosen($event)" />
 
     <div class="composer-wrap">
-      <button type="button" class="composer-icon-btn" (click)="triggerFile()">
-        <ion-icon name="add-circle-outline"></ion-icon>
+      <button type="button" class="composer-icon-btn" [attr.aria-label]="'CHAT.ATTACH' | translate" (click)="triggerFile()">
+        <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
       </button>
 
       <div class="composer-input-wrap">
@@ -122,8 +122,9 @@
         *ngIf="!isLoading"
         type="button"
         class="composer-send-btn"
+        [attr.aria-label]="'CHAT.SEND' | translate"
         (click)="sendMessage()">
-        <ion-icon name="send"></ion-icon>
+        <ion-icon name="send" aria-hidden="true"></ion-icon>
       </button>
 
       <button

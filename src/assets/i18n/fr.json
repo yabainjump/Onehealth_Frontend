@@ -206,6 +206,9 @@
   "CHAT": {
     "DOCUMENT": "Document",
     "MESSAGE_PLACEHOLDER": "Message",
+    "ATTACH": "Joindre un fichier",
+    "SEND": "Envoyer le message",
+    "OPTIONS": "Options de la discussion",
     "EMPTY_TITLE": "Aucune conversation",
     "FILE_TOO_LARGE": "Fichier trop lourd. Choisis un fichier moins lourd (max 50 Mo).",
     "FILE_SEND_ERROR": "Impossible d'envoyer ce fichier pour le moment.",

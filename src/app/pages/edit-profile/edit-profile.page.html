@@ -128,6 +128,7 @@
 
       <div class="actions">
         <ion-button type="submit" expand="block" [disabled]="savingProfile">
+          <ion-spinner *ngIf="savingProfile" name="crescent" slot="start"></ion-spinner>
           {{ (savingProfile ? 'EDIT_PROFILE.SAVING' : 'COMMON.SAVE') | translate }}
         </ion-button>
         <ion-button type="button" expand="block" fill="outline" (click)="cancel()">
