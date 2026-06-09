@@ -198,52 +198,149 @@ ion-item.ion-focusable:focus-visible,
 }
 
 /* ============================================================
-   Pop-ups (alertes / action sheets / modales / toasts)
-   Police cohérente, coins arrondis, cibles 44px, voile lisible
+   Pop-ups modernes (alertes / action sheets / modales / toasts)
+   Voile flouté, carte arrondie + ombre douce, boutons pleins
    ============================================================ */
+
+/* Voile flouté + assez sombre pour isoler le dialogue */
 ion-alert,
 ion-action-sheet,
 ion-modal {
-  --backdrop-opacity: 0.42; /* voile lisible (recommandation 40-60%) */
+  --backdrop-opacity: 0.5;
 }
 
+/* Largeur des alertes uniquement (pas les sheets/modales) */
+ion-alert {
+  --min-width: 300px;
+  --max-width: 342px;
+}
+
+ion-alert ion-backdrop,
+ion-action-sheet ion-backdrop {
+  background: #0b1220;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ---- Alertes ---- */
 ion-alert .alert-wrapper {
-  border-radius: 16px;
+  border-radius: 24px;
+  padding: 22px 20px 16px;
+  box-shadow: 0 24px 64px rgba(16, 24, 40, 0.32);
   font-family: var(--ion-font-family);
+  background: #ffffff;
+}
+
+ion-alert .alert-head {
+  padding: 0 0 4px;
+  text-align: center;
+}
+
+ion-alert .alert-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1b2330;
+}
+
+ion-alert .alert-sub-title {
+  margin-top: 4px;
+  color: #5a6578;
+  font-size: 0.9rem;
+}
+
+ion-alert .alert-message {
+  padding: 2px 0 4px;
+  text-align: center;
+  color: #5a6578;
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+ion-alert .alert-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0 2px;
 }
 
 ion-alert .alert-button {
-  min-height: 44px;
+  margin: 0;
+  width: 100%;
+  border-radius: 14px;
+  min-height: 50px;
+  font-size: 1rem;
   font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  background: var(--ion-color-primary);
+  color: #ffffff;
 }
 
-/* Action destructive bien distincte (rouge) */
+ion-alert .alert-button .alert-button-inner {
+  justify-content: center;
+}
+
+ion-alert .alert-button.alert-button-role-cancel {
+  background: #eef1f6;
+  color: #1b2330;
+}
+
 ion-alert .alert-button.alert-button-role-destructive {
+  background: #fdeaea;
   color: var(--ion-color-danger);
   font-weight: 700;
 }
 
+/* ---- Action sheets (feuille du bas) ---- */
+ion-action-sheet .action-sheet-container {
+  padding: 0 8px max(10px, env(safe-area-inset-bottom));
+}
+
 ion-action-sheet .action-sheet-group {
-  border-radius: 16px;
+  border-radius: 22px;
   overflow: hidden;
+  margin-bottom: 8px;
+  box-shadow: 0 14px 44px rgba(16, 24, 40, 0.24);
+  font-family: var(--ion-font-family);
+}
+
+ion-action-sheet .action-sheet-title {
+  font-size: 0.9rem;
+  color: #5a6578;
 }
 
 ion-action-sheet .action-sheet-button {
-  min-height: 52px;
-  font-family: var(--ion-font-family);
+  min-height: 56px;
+  font-size: 1.02rem;
+  font-weight: 500;
 }
 
 ion-action-sheet .action-sheet-button.action-sheet-destructive {
   color: var(--ion-color-danger);
+  font-weight: 600;
 }
 
-ion-modal {
-  --border-radius: 16px;
+ion-action-sheet .action-sheet-group-cancel .action-sheet-button {
+  font-weight: 700;
+  color: var(--ion-color-primary);
 }
 
+/* ---- Modales ---- */
+ion-modal::part(content) {
+  border-radius: 20px;
+}
+
+ion-modal::part(backdrop) {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ---- Toasts (pilule flottante) ---- */
 ion-toast {
-  --border-radius: 12px;
+  --border-radius: 14px;
+  --box-shadow: 0 10px 30px rgba(16, 24, 40, 0.24);
   font-family: var(--ion-font-family);
+  font-weight: 500;
 }
 
 /* Bouton oeil (afficher/masquer mot de passe) — cible tactile + curseur */
