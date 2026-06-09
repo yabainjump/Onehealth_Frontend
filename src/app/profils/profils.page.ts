@@ -13,6 +13,7 @@ import { AuthService } from '../services/auth/auth.service';
 import { ChatService } from '../services/chat/chat.service';
 import { PublishService, Post, PostAttachment } from 'src/app/services/publish/publish.service';
 import { TranslateService } from '@ngx-translate/core';
+import { InteractionGuardService } from '../core/services/interaction-guard.service';
 
 @Component({
   selector: 'app-profils',
@@ -47,6 +48,7 @@ export class ProfilsPage implements OnInit {
     private readonly sanitizer: DomSanitizer,
     private readonly toastController: ToastController,
     private readonly shareLinkService: ShareLinkService,
+    private readonly interactionGuard: InteractionGuardService,
     private readonly translate: TranslateService,
     public chatService: ChatService,
     private router: Router,
@@ -366,6 +368,9 @@ export class ProfilsPage implements OnInit {
 
   async toggleFollow() {
     if (this.isOwnProfile || !this.userId || this.followProcessing) {
+      return;
+    }
+    if (!(await this.interactionGuard.requireAuth())) {
       return;
     }
 

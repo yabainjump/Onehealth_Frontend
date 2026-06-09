@@ -5,6 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { IonInput, ToastController } from '@ionic/angular';
 import { ShareLinkService } from '../core/services/share-link.service';
 import { AuthService } from '../services/auth/auth.service';
+import { InteractionGuardService } from '../core/services/interaction-guard.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -35,6 +36,7 @@ longPost:   Record<string, boolean> = {};
     private readonly shareLinkService: ShareLinkService,
     private readonly authService: AuthService,
     private readonly translate: TranslateService,
+    private readonly interactionGuard: InteractionGuardService,
   ) {}
 
   async ngOnInit() {
@@ -200,6 +202,9 @@ longPost:   Record<string, boolean> = {};
     if (!this.post?.id) {
       return;
     }
+    if (!(await this.interactionGuard.requireAuth())) {
+      return;
+    }
     try {
       const userId = await this.authService.getUserIdOrThrow();
       if (this.post.userHasLiked) {
@@ -223,6 +228,9 @@ longPost:   Record<string, boolean> = {};
   }
 
   async submitComment(): Promise<void> {
+    if (!(await this.interactionGuard.requireAuth())) {
+      return;
+    }
     const text = (this.commentDraft || '').trim();
     if (!text || this.commentSending || !this.post?.id) {
       return;

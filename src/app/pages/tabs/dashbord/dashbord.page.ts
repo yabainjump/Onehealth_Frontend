@@ -19,6 +19,7 @@ import {
 } from 'src/app/services/publish/publish.service';
 import { Capacitor } from '@capacitor/core';
 import { ShareLinkService } from 'src/app/core/services/share-link.service';
+import { InteractionGuardService } from 'src/app/core/services/interaction-guard.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -68,6 +69,7 @@ export class DashbordPage implements OnInit {
     private toastCtrl: ToastController,
     private readonly shareLinkService: ShareLinkService,
     private readonly translate: TranslateService,
+    private readonly interactionGuard: InteractionGuardService,
   ) {}
 
   private buildPostUrl(id: string): string {
@@ -79,9 +81,12 @@ export class DashbordPage implements OnInit {
     if (el && typeof el.blur === 'function') el.blur();
   }
 
-  goPushPub(ev: Event) {
+  async goPushPub(ev: Event) {
     ev.preventDefault(); // évite la navigation du <a> interne
     this.blurActive(); // enlève le focus du bouton
+    if (!(await this.interactionGuard.requireAuth())) {
+      return;
+    }
     this.router.navigateByUrl('/tabs/pushpub', { replaceUrl: false });
   }
 
@@ -476,6 +481,9 @@ export class DashbordPage implements OnInit {
   }
 
   async submitInlineComment(post: Post) {
+    if (!(await this.interactionGuard.requireAuth())) {
+      return;
+    }
     const postId = post?.id || '';
     if (!postId || this.commentSending[postId]) return;
 
@@ -499,6 +507,9 @@ export class DashbordPage implements OnInit {
   }
 
   async likePost(post: Post) {
+    if (!(await this.interactionGuard.requireAuth())) {
+      return;
+    }
     try {
       const userId = await this.authService.getUserIdOrThrow();
 
@@ -528,6 +539,9 @@ export class DashbordPage implements OnInit {
   }
 
   async toggleCommentLike(post: Post, comment: CommentData) {
+    if (!(await this.interactionGuard.requireAuth())) {
+      return;
+    }
     try {
       await this.authService.getUserIdOrThrow();
 

@@ -18,7 +18,11 @@
     "CONTINUE": "Continue",
     "DELETE": "Delete",
     "LINK_COPIED": "Link copied",
-    "SHARE_FAILED": "Sharing failed"
+    "SHARE_FAILED": "Sharing failed",
+    "LOGIN_REQUIRED_TITLE": "Sign in required",
+    "LOGIN_REQUIRED_TEXT": "Sign in or create an account to interact.",
+    "SIGN_IN": "Sign in",
+    "SIGN_UP": "Sign up"
   },
   "LOGIN": {
     "WELCOME_BACK": "Welcome back,",

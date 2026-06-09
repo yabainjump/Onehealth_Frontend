@@ -18,6 +18,7 @@ interface WelcomeContent {
   title: string;
   subtitle: string;
   joinNetwork: string;
+  exploreNetwork: string;
   learnMore: string;
   pillarsTitle: string;
   impactTitle: string;
@@ -46,6 +47,7 @@ export class WelcomePage {
       subtitle:
         'La plateforme mondiale pour les professionnels de la sante humaine, animale et environnementale.',
       joinNetwork: 'Rejoindre le Reseau',
+      exploreNetwork: 'Explorer en invité',
       learnMore: 'En savoir plus',
       pillarsTitle: 'Les Trois Piliers',
       impactTitle: "Rejoignez une communaute d'impact",
@@ -81,6 +83,7 @@ export class WelcomePage {
       subtitle:
         'A global platform for human, animal and environmental health professionals.',
       joinNetwork: 'Join the Network',
+      exploreNetwork: 'Browse as guest',
       learnMore: 'Learn more',
       pillarsTitle: 'The Three Pillars',
       impactTitle: 'Join an impact community',
@@ -141,6 +144,12 @@ export class WelcomePage {
     const active = document.activeElement as HTMLElement | null;
     active?.blur();
     void this.router.navigateByUrl('/register');
+  }
+
+  exploreAsGuest() {
+    const active = document.activeElement as HTMLElement | null;
+    active?.blur();
+    void this.router.navigateByUrl('/tabs/dashbord');
   }
 
   scrollToPillars() {

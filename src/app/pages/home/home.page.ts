@@ -6,6 +6,7 @@ import { Observable, map, take } from 'rxjs';
 import { ApiService } from 'src/app/services/api/api.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { InteractionGuardService } from 'src/app/core/services/interaction-guard.service';
 import { environment } from 'src/environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -43,7 +44,8 @@ export class HomePage implements OnInit, OnDestroy {
     private api: ApiService,
     private authService: AuthService,
     private http: HttpClient,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private interactionGuard: InteractionGuardService
   ) {}
   
 
@@ -124,8 +126,12 @@ export class HomePage implements OnInit, OnDestroy {
 
   
 
-  ngOnInit() {
+  async ngOnInit() {
     this.translate.get('HOME.EMPTY_TITLE').subscribe((t) => (this.model.title = t));
+    if (!(await this.interactionGuard.requireAuth())) {
+      void this.router.navigateByUrl('/tabs/dashbord', { replaceUrl: true });
+      return;
+    }
     this.getRooms();
     this.chatService
       .getCurrentUserProfil()
