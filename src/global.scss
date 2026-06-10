@@ -264,31 +264,40 @@ ion-alert .alert-button-group {
 }
 
 ion-alert .alert-button {
-  margin: 0;
-  width: 100%;
-  border-radius: 14px;
-  min-height: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-  background: var(--ion-color-primary);
-  color: #ffffff;
+  margin: 0 !important;
+  width: 100% !important;
+  border-radius: 14px !important;
+  min-height: 50px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  background: var(--ion-color-primary) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
 }
 
 ion-alert .alert-button .alert-button-inner {
-  justify-content: center;
+  justify-content: center !important;
 }
 
+/* Action secondaire : bleu clair tonal (subordonnée au CTA principal) */
+ion-alert .alert-button.ohp-secondary {
+  background: #e9f1fc !important;
+  color: var(--ion-color-primary) !important;
+}
+
+/* Annuler : gris neutre */
 ion-alert .alert-button.alert-button-role-cancel {
-  background: #eef1f6;
-  color: #1b2330;
+  background: #eef1f6 !important;
+  color: #1b2330 !important;
 }
 
+/* Destructif : rouge bien distinct */
 ion-alert .alert-button.alert-button-role-destructive {
-  background: #fdeaea;
-  color: var(--ion-color-danger);
-  font-weight: 700;
+  background: #fdeaea !important;
+  color: var(--ion-color-danger) !important;
+  font-weight: 700 !important;
 }
 
 /* ---- Action sheets (feuille du bas) ---- */
@@ -333,6 +342,31 @@ ion-modal::part(content) {
 ion-modal::part(backdrop) {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+}
+
+/* Panneau "Connexion requise" : feuille du bas auto-ajustée à son contenu */
+ion-modal.auth-prompt-modal {
+  --width: 100%;
+  --max-width: 460px;
+  --height: auto;
+  --border-radius: 24px;
+  --box-shadow: 0 -10px 44px rgba(16, 24, 40, 0.26);
+  align-items: flex-end;
+  justify-content: center;
+}
+
+ion-modal.auth-prompt-modal::part(content) {
+  border-radius: 24px 24px 0 0;
+}
+
+@media (min-width: 540px) {
+  ion-modal.auth-prompt-modal {
+    align-items: center;
+  }
+  ion-modal.auth-prompt-modal::part(content) {
+    border-radius: 24px;
+    margin-bottom: 0;
+  }
 }
 
 /* ---- Toasts (pilule flottante) ---- */

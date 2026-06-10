@@ -3,9 +3,9 @@
 
 /** Ionic CSS Variables **/
 :root {
-  /* Police de l'app — finition typographique (Figtree, chargée dans index.html) */
-  --ion-font-family: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, Helvetica, Arial, sans-serif;
+  /* Police de l'app — pile système façon LinkedIn (rendu natif net + rapide) */
+  --ion-font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
 
   /* Couleur de texte raffinée (slate foncé : meilleur contraste qu'un noir pur) */
   --ion-text-color: #1b2330;

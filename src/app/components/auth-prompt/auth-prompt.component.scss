@@ -1,0 +1,89 @@
+:host {
+  display: block;
+}
+
+.ap-card {
+  background: #ffffff;
+  padding: 12px 22px calc(20px + env(safe-area-inset-bottom));
+  text-align: center;
+}
+
+/* poignée de feuille (affordance bottom-sheet) */
+.ap-grip {
+  display: block;
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: #d6dbe4;
+  margin: 0 auto 18px;
+}
+
+.ap-icon {
+  width: 66px;
+  height: 66px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9f1fc;
+  color: var(--ion-color-primary);
+}
+
+.ap-icon ion-icon {
+  font-size: 32px;
+}
+
+.ap-title {
+  margin: 0 0 6px;
+  font-size: 1.32rem;
+  font-weight: 700;
+  color: #1b2330;
+}
+
+.ap-text {
+  margin: 0 auto 22px;
+  max-width: 320px;
+  color: #5a6578;
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+.ap-primary {
+  --background: var(--ion-color-primary);
+  --background-activated: #17407f;
+  --border-radius: 14px;
+  --box-shadow: 0 8px 20px rgba(29, 81, 165, 0.28);
+  --color: #ffffff;
+  min-height: 52px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.ap-secondary {
+  --background: #e9f1fc;
+  --background-activated: #d8e6fa;
+  --border-radius: 14px;
+  --box-shadow: none;
+  --color: var(--ion-color-primary);
+  min-height: 52px;
+  font-weight: 600;
+}
+
+.ap-cancel {
+  margin-top: 8px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #5a6578;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background var(--app-transition);
+}
+
+.ap-cancel:hover {
+  background: #f3f5f8;
+}

@@ -1,0 +1,22 @@
+<div class="ap-card" role="dialog" aria-modal="true">
+  <span class="ap-grip" aria-hidden="true"></span>
+
+  <div class="ap-icon">
+    <ion-icon name="log-in-outline" aria-hidden="true"></ion-icon>
+  </div>
+
+  <h2 class="ap-title">{{ 'COMMON.LOGIN_REQUIRED_TITLE' | translate }}</h2>
+  <p class="ap-text">{{ 'COMMON.LOGIN_REQUIRED_TEXT' | translate }}</p>
+
+  <ion-button expand="block" class="ap-primary" (click)="choose('login')">
+    {{ 'COMMON.SIGN_IN' | translate }}
+  </ion-button>
+
+  <ion-button expand="block" class="ap-secondary" (click)="choose('register')">
+    {{ 'COMMON.SIGN_UP' | translate }}
+  </ion-button>
+
+  <button type="button" class="ap-cancel" (click)="choose('cancel')">
+    {{ 'COMMON.CANCEL' | translate }}
+  </button>
+</div>
