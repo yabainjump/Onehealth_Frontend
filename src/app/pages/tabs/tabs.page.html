@@ -1,32 +1,70 @@
-<ion-tabs #tabs (ionTabsDidChange)="setCurrentTab()">
-  <ion-tab-bar slot="bottom" color="success" [class.tabbar-hidden]="chrome.hidden$ | async">
-    <ion-tab-button class="let" tab="dashbord">
-      <ion-icon
-        color="primary"
-        [name]="selectedTab === 'dashbord' ? 'home' : 'home-outline'"
-      ></ion-icon>
-      {{ 'TABS.HOME' | translate }}
-    </ion-tab-button>
-    <ion-tab-button class="let" tab="pushpub">
-      <ion-icon
-        color="primary"
-        [name]="selectedTab === 'pushpub' ? 'add' : 'add-outline'"
-      ></ion-icon>
-      {{ 'TABS.PUBLISH' | translate }}
-    </ion-tab-button>
-    <ion-tab-button class="let" tab="home">
-      <ion-icon
-        color="primary"
-        [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"
-      ></ion-icon>
-      {{ 'TABS.MESSAGES' | translate }}
-    </ion-tab-button>
-    <ion-tab-button class="let" tab="profils">
-      <ion-icon
-        color="primary"
-        [name]="selectedTab === 'profils' ? 'person' : 'person-outline'"
-      ></ion-icon>
-      {{ 'TABS.PROFILE' | translate }}
-    </ion-tab-button>
-  </ion-tab-bar>
-</ion-tabs>
+<div class="app-shell">
+  <!-- Barre de navigation PC (masquée sur mobile) -->
+  <header class="desktop-nav">
+    <div class="dn-inner">
+      <a class="dn-brand" routerLink="/tabs/dashbord">
+        <img src="assets/images/logo-onehealth-in-cameroon.png" alt="One Health Network" />
+        <span>One Health</span>
+      </a>
+
+      <ion-searchbar
+        class="dn-search"
+        [placeholder]="'DASHBOARD.SEARCH_PLACEHOLDER' | translate"
+        [debounce]="200"
+        (ionInput)="onDesktopSearch($event)"
+      ></ion-searchbar>
+
+      <nav class="dn-links">
+        <a class="dn-link" routerLink="/tabs/dashbord" [class.active]="selectedTab === 'dashbord'">
+          <ion-icon [name]="selectedTab === 'dashbord' ? 'home' : 'home-outline'"></ion-icon>
+          <span>{{ 'TABS.HOME' | translate }}</span>
+        </a>
+        <a class="dn-link" routerLink="/tabs/home" [class.active]="selectedTab === 'home'">
+          <ion-icon [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"></ion-icon>
+          <span>{{ 'TABS.MESSAGES' | translate }}</span>
+        </a>
+        <a class="dn-link" routerLink="/tabs/profils" [class.active]="selectedTab === 'profils'">
+          <ion-icon [name]="selectedTab === 'profils' ? 'person' : 'person-outline'"></ion-icon>
+          <span>{{ 'TABS.PROFILE' | translate }}</span>
+        </a>
+        <a class="dn-publish" routerLink="/tabs/pushpub">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>{{ 'TABS.PUBLISH' | translate }}</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <ion-tabs #tabs (ionTabsDidChange)="setCurrentTab()">
+    <ion-tab-bar slot="bottom" color="success" [class.tabbar-hidden]="chrome.hidden$ | async">
+      <ion-tab-button class="let" tab="dashbord">
+        <ion-icon
+          color="primary"
+          [name]="selectedTab === 'dashbord' ? 'home' : 'home-outline'"
+        ></ion-icon>
+        {{ 'TABS.HOME' | translate }}
+      </ion-tab-button>
+      <ion-tab-button class="let" tab="pushpub">
+        <ion-icon
+          color="primary"
+          [name]="selectedTab === 'pushpub' ? 'add' : 'add-outline'"
+        ></ion-icon>
+        {{ 'TABS.PUBLISH' | translate }}
+      </ion-tab-button>
+      <ion-tab-button class="let" tab="home">
+        <ion-icon
+          color="primary"
+          [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"
+        ></ion-icon>
+        {{ 'TABS.MESSAGES' | translate }}
+      </ion-tab-button>
+      <ion-tab-button class="let" tab="profils">
+        <ion-icon
+          color="primary"
+          [name]="selectedTab === 'profils' ? 'person' : 'person-outline'"
+        ></ion-icon>
+        {{ 'TABS.PROFILE' | translate }}
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
+</div>

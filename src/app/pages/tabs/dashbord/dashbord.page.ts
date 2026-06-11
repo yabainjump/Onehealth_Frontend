@@ -23,6 +23,8 @@ import { InteractionGuardService } from 'src/app/core/services/interaction-guard
 import { TranslateService } from '@ngx-translate/core';
 import { hashtagFromClick } from 'src/app/shared/utils/post-html.util';
 import { ChromeVisibilityService } from 'src/app/core/services/chrome-visibility.service';
+import { FeedSearchService } from 'src/app/core/services/feed-search.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashbord',
@@ -35,7 +37,10 @@ export class DashbordPage implements OnInit {
   @ViewChild(IonContent) content?: IonContent;
 
   userPhoto: string = 'assets/default-profile.png';
+  userName = '';
+  userHeadline = '';
   showProfileBanner = false;
+  private searchSub?: Subscription;
   posts: Post[] = [];
   currentUserId: string;
   pageSize = 4;
@@ -73,6 +78,7 @@ export class DashbordPage implements OnInit {
     private readonly translate: TranslateService,
     private readonly interactionGuard: InteractionGuardService,
     private readonly chromeVisibility: ChromeVisibilityService,
+    private readonly feedSearch: FeedSearchService,
   ) {}
 
   // ===== Hide-on-scroll (en-tête + barre d'onglets), façon LinkedIn =====
@@ -211,6 +217,12 @@ export class DashbordPage implements OnInit {
     await this.loadInitialPosts();
     this.feedInitialized = true;
     this.startNewPostsPolling();
+
+    // Recherche pilotée par la barre de navigation PC → filtre le fil.
+    this.searchSub = this.feedSearch.query$.subscribe((q) => {
+      this.searchQuery = q;
+      this.filterPosts();
+    });
 
     // 3) rafraîchir le relativeTime chaque minute (avec garde)
     this._relTimer = setInterval(() => {
@@ -396,6 +408,7 @@ export class DashbordPage implements OnInit {
   ngOnDestroy() {
     if (this._relTimer) clearInterval(this._relTimer);
     if (this.newPostsTimer) clearInterval(this.newPostsTimer);
+    this.searchSub?.unsubscribe();
   }
 
   async loadUserPhoto() {
@@ -403,6 +416,11 @@ export class DashbordPage implements OnInit {
       const userData = await this.authService.getUserData(this.currentUserId);
       this.userPhoto =
         userData?.photoURL || userData?.photo || 'assets/default-profile.png';
+      this.userName =
+        `${userData?.firstName || ''} ${userData?.lastName || ''}`.trim() ||
+        userData?.username ||
+        '';
+      this.userHeadline = userData?.institution || userData?.typeMedecin || '';
       this.showProfileBanner =
         this.isProfileIncomplete(userData) && !this.isProfileBannerDismissed();
     } catch (error) {

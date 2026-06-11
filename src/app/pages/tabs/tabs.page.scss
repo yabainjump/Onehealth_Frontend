@@ -2,7 +2,7 @@
   color: #1d51a5;
 }
 
-/* Barre d'onglets : glisse vers le bas au scroll (façon LinkedIn) */
+/* Barre d'onglets (mobile) : glisse vers le bas au scroll */
 ion-tab-bar {
   transition: margin-bottom 0.28s ease, opacity 0.28s ease;
 }
@@ -11,4 +11,126 @@ ion-tab-bar.tabbar-hidden {
   margin-bottom: calc(-1 * (56px + env(safe-area-inset-bottom)));
   opacity: 0;
   pointer-events: none;
+}
+
+/* Shell : permet de poser la barre de nav PC au-dessus des onglets */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Barre de nav PC masquée par défaut (affichée seulement ≥1024px) */
+.desktop-nav {
+  display: none;
+}
+
+/* ===================== Desktop (≥ 1024px) ===================== */
+@media (min-width: 1024px) {
+  .desktop-nav {
+    display: block;
+    flex: 0 0 auto;
+    background: #ffffff;
+    border-bottom: 1px solid #e4e8ee;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  .dn-inner {
+    max-width: 1128px;
+    margin: 0 auto;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+  }
+
+  .dn-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--ion-color-primary);
+    font-weight: 800;
+    font-size: 1.05rem;
+    white-space: nowrap;
+  }
+
+  .dn-brand img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+
+  .dn-search {
+    --background: #eef3f8;
+    --border-radius: 8px;
+    --box-shadow: none;
+    max-width: 320px;
+    padding: 0;
+  }
+
+  .dn-links {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dn-link {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 76px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #5f6b7c;
+    font-size: 0.72rem;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .dn-link ion-icon {
+    font-size: 22px;
+  }
+
+  .dn-link:hover {
+    background: #f1f4f8;
+    color: #1b2330;
+  }
+
+  .dn-link.active {
+    color: var(--ion-color-primary);
+  }
+
+  .dn-publish {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    background: var(--ion-color-primary);
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background 0.15s ease;
+  }
+
+  .dn-publish ion-icon {
+    font-size: 18px;
+  }
+
+  .dn-publish:hover {
+    background: #17407f;
+  }
+
+  /* Barre d'onglets du bas masquée sur PC (navigation en haut) */
+  ion-tab-bar {
+    display: none;
+  }
 }

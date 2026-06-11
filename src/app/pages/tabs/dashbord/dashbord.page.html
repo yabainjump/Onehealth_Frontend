@@ -40,6 +40,21 @@
     </ion-refresher-content>
   </ion-refresher>
 
+  <div class="feed-layout">
+    <!-- Colonne gauche (PC) : carte profil -->
+    <aside class="rail rail-left">
+      <section class="side-card profile-mini">
+        <div class="pm-cover"></div>
+        <img class="pm-avatar" [src]="userPhoto" alt="" loading="lazy" decoding="async" />
+        <h3 class="pm-name" *ngIf="userName">{{ userName }}</h3>
+        <p class="pm-head" *ngIf="userHeadline">{{ userHeadline }}</p>
+        <a class="pm-link" routerLink="/tabs/profils">{{ 'DASHBOARD.SIDE_VIEW_PROFILE' | translate }}</a>
+      </section>
+    </aside>
+
+    <!-- Colonne centrale : le fil -->
+    <main class="feed-main">
+
   <div class="new-posts-pill" *ngIf="showNewPostsBanner" (click)="loadNewPosts()">
     <ion-icon name="arrow-up-outline"></ion-icon>
     {{ (newPostsCount > 1 ? 'DASHBOARD.NEW_POSTS_MANY' : 'DASHBOARD.NEW_POSTS_ONE') | translate:{ count: newPostsCount } }}
@@ -247,5 +262,16 @@
     <ion-infinite-scroll-content loadingSpinner="crescent" [loadingText]="'DASHBOARD.LOADING' | translate">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
+
+    </main>
+
+    <!-- Colonne droite (PC) : encart d'information -->
+    <aside class="rail rail-right">
+      <section class="side-card info-card">
+        <h3>{{ 'DASHBOARD.SIDE_ABOUT_TITLE' | translate }}</h3>
+        <p>{{ 'DASHBOARD.SIDE_ABOUT_TEXT' | translate }}</p>
+      </section>
+    </aside>
+  </div>
 
 </ion-content>

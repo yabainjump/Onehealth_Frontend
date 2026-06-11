@@ -103,6 +103,9 @@
   },
   "DASHBOARD": {
     "SEARCH_PLACEHOLDER": "Rechercher une publication, un auteur, une institution…",
+    "SIDE_VIEW_PROFILE": "Voir mon profil",
+    "SIDE_ABOUT_TITLE": "À propos",
+    "SIDE_ABOUT_TEXT": "One Health Network connecte les experts de la santé humaine, animale et environnementale pour prévenir les zoonoses et coordonner la réponse aux crises sanitaires.",
     "BANNER_TITLE": "Complétez votre profil",
     "BANNER_TEXT": "Ajoutez votre institution, spécialité, localisation et photo pour mieux vous connecter au réseau.",
     "BANNER_CTA": "Compléter",
