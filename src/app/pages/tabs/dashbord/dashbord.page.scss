@@ -102,6 +102,76 @@
     background: #eaf1fc;
   }
 
+  /* Encart « Qui suivre » */
+  .suggestions-card {
+    padding: 14px 14px 4px;
+  }
+
+  .suggestions-card h3 {
+    margin: 0 0 10px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #1b2330;
+  }
+
+  .suggestion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .sg-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+    flex-shrink: 0;
+    background: #eef1f6;
+  }
+
+  .sg-meta {
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sg-meta strong {
+    font-size: 0.86rem;
+    color: #1b2330;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sg-meta span {
+    font-size: 0.74rem;
+    color: #6a7892;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sg-follow {
+    flex-shrink: 0;
+    border: 1px solid var(--ion-color-primary);
+    background: transparent;
+    color: var(--ion-color-primary);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .sg-follow:hover {
+    background: #eaf1fc;
+  }
+
   /* Encart info (droite) */
   .info-card {
     padding: 16px;

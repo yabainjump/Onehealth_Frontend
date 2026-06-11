@@ -104,6 +104,9 @@
   "DASHBOARD": {
     "SEARCH_PLACEHOLDER": "Rechercher une publication, un auteur, une institution…",
     "SIDE_VIEW_PROFILE": "Voir mon profil",
+    "SIDE_SUGGESTIONS": "Qui suivre",
+    "SIDE_FOLLOW": "Suivre",
+    "SIDE_FOLLOW_ERROR": "Impossible de suivre pour le moment.",
     "SIDE_ABOUT_TITLE": "À propos",
     "SIDE_ABOUT_TEXT": "One Health Network connecte les experts de la santé humaine, animale et environnementale pour prévenir les zoonoses et coordonner la réponse aux crises sanitaires.",
     "BANNER_TITLE": "Complétez votre profil",
@@ -210,6 +213,7 @@
     "YOU_PREFIX": "Vous : ",
     "PHOTO_PREVIEW": "📷 Photo",
     "START_CONVERSATION": "Démarrer la conversation",
+    "SELECT_CONVERSATION": "Sélectionnez une conversation pour commencer",
     "YESTERDAY": "Hier"
   },
   "CHAT": {

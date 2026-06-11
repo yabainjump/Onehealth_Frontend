@@ -265,8 +265,31 @@
 
     </main>
 
-    <!-- Colonne droite (PC) : encart d'information -->
+    <!-- Colonne droite (PC) -->
     <aside class="rail rail-right">
+      <!-- Qui suivre (connectés) -->
+      <section class="side-card suggestions-card" *ngIf="suggestions.length">
+        <h3>{{ 'DASHBOARD.SIDE_SUGGESTIONS' | translate }}</h3>
+        <div class="suggestion" *ngFor="let u of suggestions; trackBy: trackBySuggestion">
+          <img
+            class="sg-avatar"
+            [src]="u.photoURL"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            (click)="openSuggestion(u)"
+          />
+          <div class="sg-meta" (click)="openSuggestion(u)">
+            <strong>{{ u.firstName }} {{ u.lastName }}</strong>
+            <span>{{ u.institution || u.typeMedecin || '' }}</span>
+          </div>
+          <button type="button" class="sg-follow" (click)="followSuggestion(u)">
+            {{ 'DASHBOARD.SIDE_FOLLOW' | translate }}
+          </button>
+        </div>
+      </section>
+
+      <!-- À propos -->
       <section class="side-card info-card">
         <h3>{{ 'DASHBOARD.SIDE_ABOUT_TITLE' | translate }}</h3>
         <p>{{ 'DASHBOARD.SIDE_ABOUT_TEXT' | translate }}</p>

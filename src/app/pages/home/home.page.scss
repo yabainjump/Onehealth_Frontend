@@ -1,8 +1,83 @@
-/* ===== Vue PC : liste de discussions centrée (≥1024px) ===== */
+/* ===== Messagerie : structure 2 volets ===== */
+.msg-2pane {
+  position: absolute;
+  inset: 0;
+  display: block; /* mobile : un seul volet à la fois */
+}
+
+.msg-list-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.msg-convo-pane {
+  display: none;
+}
+
+.msg-convo-pane ion-router-outlet {
+  position: absolute;
+  inset: 0;
+}
+
+.msg-empty {
+  display: none;
+}
+
+/* Mobile : conversation ouverte → plein écran, liste masquée (comme avant) */
+.msg-2pane.convo-open .msg-list-pane {
+  display: none;
+}
+
+.msg-2pane.convo-open .msg-convo-pane {
+  display: block;
+  position: relative;
+  height: 100%;
+}
+
+/* ===== PC (≥1024px) : liste + conversation côte à côte ===== */
 @media (min-width: 1024px) {
-  ion-content {
-    --padding-start: max(16px, calc((100% - 720px) / 2));
-    --padding-end: max(16px, calc((100% - 720px) / 2));
+  .msg-2pane {
+    display: flex;
+  }
+
+  .msg-list-pane {
+    width: 360px;
+    flex-shrink: 0;
+    border-right: 1px solid #e1e6ee;
+  }
+
+  /* La liste reste visible même quand une conversation est ouverte */
+  .msg-2pane.convo-open .msg-list-pane {
+    display: flex;
+  }
+
+  .msg-convo-pane {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    height: 100%;
+    background: #eef2f7;
+  }
+
+  .msg-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #8a96a8;
+    gap: 8px;
+  }
+
+  .msg-empty ion-icon {
+    font-size: 56px;
+  }
+
+  .msg-2pane.convo-open .msg-empty {
+    display: none;
   }
 }
 

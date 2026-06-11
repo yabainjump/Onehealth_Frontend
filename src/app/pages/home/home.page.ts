@@ -1,8 +1,8 @@
 import { ChatService } from './../../services/chat/chat.service';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { NavigationEnd, NavigationExtras, Router } from '@angular/router';
 import { IonContent, ModalController, PopoverController } from '@ionic/angular';
-import { Observable, map, take } from 'rxjs';
+import { Observable, Subscription, map, take } from 'rxjs';
 import { ApiService } from 'src/app/services/api/api.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -19,6 +19,9 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class HomePage implements OnInit, OnDestroy {
   private roomsRefreshTimer: ReturnType<typeof setInterval> | null = null;
+  // Vue PC : vrai quand une conversation est ouverte (affichage 2 volets).
+  conversationOpen = false;
+  private routerSub?: Subscription;
   @ViewChild('new_chat') modal: ModalController;
   @ViewChild('popover') popover: PopoverController;
   @ViewChild('contentChat', { static: false }) contentChat: IonContent;
@@ -137,6 +140,14 @@ export class HomePage implements OnInit, OnDestroy {
       .getCurrentUserProfil()
       .subscribe((user) => (this.currentUser = user[0]));
 
+    // Suit l'URL pour savoir si une conversation est ouverte (vue 2 volets PC).
+    this.conversationOpen = this.router.url.includes('/home/chats/');
+    this.routerSub = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.conversationOpen = this.router.url.includes('/home/chats/');
+      }
+    });
+
     // Rafraichit periodiquement la liste des conversations (nouveaux messages / non-lus).
     this.roomsRefreshTimer = setInterval(() => this.getRooms(), 10000);
   }
@@ -146,6 +157,7 @@ export class HomePage implements OnInit, OnDestroy {
       clearInterval(this.roomsRefreshTimer);
       this.roomsRefreshTimer = null;
     }
+    this.routerSub?.unsubscribe();
   }
 
   scrollToBottom() {

@@ -9,6 +9,11 @@
     max-width: 820px;
     margin: 0 auto;
   }
+
+  /* En 2 volets, la liste est déjà à côté : bouton retour inutile sur PC */
+  .chat-back {
+    display: none;
+  }
 }
 
 :host {

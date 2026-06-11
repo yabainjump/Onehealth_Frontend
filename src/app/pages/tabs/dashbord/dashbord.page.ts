@@ -24,6 +24,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { hashtagFromClick } from 'src/app/shared/utils/post-html.util';
 import { ChromeVisibilityService } from 'src/app/core/services/chrome-visibility.service';
 import { FeedSearchService } from 'src/app/core/services/feed-search.service';
+import { UsersService } from 'src/app/core/services/users.service';
+import { resolveMediaUrl } from 'src/app/core/utils/media-url.util';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -79,7 +81,71 @@ export class DashbordPage implements OnInit {
     private readonly interactionGuard: InteractionGuardService,
     private readonly chromeVisibility: ChromeVisibilityService,
     private readonly feedSearch: FeedSearchService,
+    private readonly usersService: UsersService,
   ) {}
+
+  // ===== Suggestions « Qui suivre » (colonne droite, PC, connectés) =====
+  suggestions: any[] = [];
+
+  private loadSuggestions(): void {
+    if (!this.currentUserId) {
+      return;
+    }
+    this.usersService.listUsers().subscribe({
+      next: (users) => {
+        this.suggestions = (users || [])
+          .filter((u) => (u?.id || (u as any)?._id) !== this.currentUserId)
+          .slice(0, 4)
+          .map((u) => ({
+            ...u,
+            photoURL: resolveMediaUrl(u?.photoURL) || 'assets/default-profile.png',
+          }));
+      },
+      error: () => {
+        this.suggestions = [];
+      },
+    });
+  }
+
+  openSuggestion(user: any): void {
+    const id = user?.id || user?._id;
+    if (id) {
+      void this.router.navigate(['/tabs/profils', id]);
+    }
+  }
+
+  async followSuggestion(user: any): Promise<void> {
+    if (!(await this.interactionGuard.requireAuth())) {
+      return;
+    }
+    const id = user?.id || user?._id;
+    if (!id) {
+      return;
+    }
+    this.usersService.followUser(id).subscribe({
+      next: () => {
+        this.suggestions = this.suggestions.filter(
+          (u) => (u?.id || u?._id) !== id,
+        );
+      },
+      error: () => {
+        void this.presentFollowError();
+      },
+    });
+  }
+
+  private async presentFollowError(): Promise<void> {
+    const toast = await this.toastCtrl.create({
+      message: this.translate.instant('DASHBOARD.SIDE_FOLLOW_ERROR'),
+      duration: 1800,
+      color: 'danger',
+    });
+    await toast.present();
+  }
+
+  trackBySuggestion(_index: number, user: any): string {
+    return `${user?.id || user?._id || _index}`;
+  }
 
   // ===== Hide-on-scroll (en-tête + barre d'onglets), façon LinkedIn =====
   chromeHidden = false;
@@ -209,6 +275,7 @@ export class DashbordPage implements OnInit {
       if (user) {
         this.currentUserId = (user.uid || '').trim();
         this.loadUserPhoto(); // si tu en as besoin
+        this.loadSuggestions();
       } else {
         this.currentUserId = '';
       }
