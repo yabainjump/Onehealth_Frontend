@@ -1,3 +1,11 @@
+/* ===== Vue PC : liste de discussions centrée (≥1024px) ===== */
+@media (min-width: 1024px) {
+  ion-content {
+    --padding-start: max(16px, calc((100% - 720px) / 2));
+    --padding-end: max(16px, calc((100% - 720px) / 2));
+  }
+}
+
 ion-header.title-header {
   ion-toolbar {
     font-family: var(--ion-font-family) !important;

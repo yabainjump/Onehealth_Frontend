@@ -2,6 +2,15 @@
   --background: #f3f4f7;
 }
 
+/* ===== Vue PC : profil centré (≥1024px) ===== */
+@media (min-width: 1024px) {
+  ion-content.profile-page {
+    --padding-start: max(20px, calc((100% - 820px) / 2));
+    --padding-end: max(20px, calc((100% - 820px) / 2));
+    --padding-top: 24px;
+  }
+}
+
 .hero {
   position: relative;
   height: 255px;

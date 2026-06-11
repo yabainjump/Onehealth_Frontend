@@ -1,3 +1,16 @@
+/* ===== Vue PC : conversation centrée (≥1024px) ===== */
+@media (min-width: 1024px) {
+  ion-content.chat-content {
+    --padding-start: max(16px, calc((100% - 820px) / 2));
+    --padding-end: max(16px, calc((100% - 820px) / 2));
+  }
+
+  .composer-wrap {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+}
+
 :host {
   --chat-accent: #0f5db8;
   --chat-toolbar-bg: #1454a3;

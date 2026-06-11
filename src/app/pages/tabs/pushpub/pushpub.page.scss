@@ -1,3 +1,16 @@
+/* ===== Vue PC : composer centré (≥1024px) ===== */
+@media (min-width: 1024px) {
+  .composer-content {
+    --padding-start: max(16px, calc((100% - 620px) / 2));
+    --padding-end: max(16px, calc((100% - 620px) / 2));
+  }
+
+  .add-row {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+}
+
 /* ===== Composer moderne (style réseau social) ===== */
 
 .composer-header ion-toolbar {
