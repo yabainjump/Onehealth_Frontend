@@ -188,21 +188,25 @@ body {
 }
 
 /* Curseur de saisie (caret) bien visible dans TOUS les champs.
-   On le force au niveau de l'hôte (héritage) ET sur l'input natif d'Ionic
-   (::part(native)) pour qu'il s'affiche partout, y compris dans la shadow DOM. */
+   Ionic applique « caret-color: var(--highlight-color) » DIRECTEMENT sur son
+   input natif. Comme ion-input / ion-textarea / ion-searchbar sont des
+   composants « scoped », cet input natif est dans le DOM normal : on le cible
+   donc directement (avec !important pour battre la règle d'Ionic), et on fixe
+   aussi --highlight-color par sécurité. */
 ion-input,
 ion-textarea,
-ion-searchbar,
-input,
-textarea,
-[contenteditable] {
-  caret-color: var(--ion-color-primary);
+ion-searchbar {
+  --highlight-color: var(--ion-color-primary);
+  --highlight-color-focused: var(--ion-color-primary);
 }
 
-ion-input::part(native),
-ion-textarea::part(native),
-ion-searchbar::part(native) {
-  caret-color: var(--ion-color-primary);
+input,
+textarea,
+.native-input,
+.native-textarea,
+.searchbar-input,
+[contenteditable] {
+  caret-color: var(--ion-color-primary) !important;
 }
 
 /* Hashtags cliquables dans le contenu des posts */
