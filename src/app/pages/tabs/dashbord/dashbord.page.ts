@@ -22,6 +22,7 @@ import { ShareLinkService } from 'src/app/core/services/share-link.service';
 import { InteractionGuardService } from 'src/app/core/services/interaction-guard.service';
 import { TranslateService } from '@ngx-translate/core';
 import { hashtagFromClick } from 'src/app/shared/utils/post-html.util';
+import { ChromeVisibilityService } from 'src/app/core/services/chrome-visibility.service';
 
 @Component({
   selector: 'app-dashbord',
@@ -71,7 +72,42 @@ export class DashbordPage implements OnInit {
     private readonly shareLinkService: ShareLinkService,
     private readonly translate: TranslateService,
     private readonly interactionGuard: InteractionGuardService,
+    private readonly chromeVisibility: ChromeVisibilityService,
   ) {}
+
+  // ===== Hide-on-scroll (en-tête + barre d'onglets), façon LinkedIn =====
+  chromeHidden = false;
+  private lastScrollTop = 0;
+
+  /** Réagit au défilement du fil pour cacher/montrer le chrome de navigation. */
+  onContentScroll(ev: CustomEvent): void {
+    const top = Math.max(0, (ev as CustomEvent & { detail?: { scrollTop?: number } })?.detail?.scrollTop ?? 0);
+    const delta = top - this.lastScrollTop;
+    if (Math.abs(delta) < 6) {
+      return; // ignore les micro-mouvements (évite le clignotement)
+    }
+    this.lastScrollTop = top;
+    if (top < 60) {
+      this.applyChrome(false); // toujours visible près du haut
+      return;
+    }
+    this.applyChrome(delta > 0); // vers le bas = cacher ; vers le haut = montrer
+  }
+
+  private applyChrome(hidden: boolean): void {
+    if (this.chromeHidden === hidden) {
+      return;
+    }
+    this.chromeHidden = hidden;
+    this.chromeVisibility.setHidden(hidden);
+  }
+
+  /** Au départ de l'onglet : on réaffiche toujours le chrome. */
+  ionViewWillLeave(): void {
+    this.lastScrollTop = 0;
+    this.chromeHidden = false;
+    this.chromeVisibility.reset();
+  }
 
   private buildPostUrl(id: string): string {
     return this.shareLinkService.buildPostShareUrl(id);
@@ -290,6 +326,9 @@ export class DashbordPage implements OnInit {
 
   // OPTION 1 : en revenant sur l'onglet Accueil, on rafraichit + on remonte.
   ionViewWillEnter(): void {
+    this.lastScrollTop = 0;
+    this.chromeHidden = false;
+    this.chromeVisibility.reset();
     if (!this.feedInitialized) {
       return;
     }

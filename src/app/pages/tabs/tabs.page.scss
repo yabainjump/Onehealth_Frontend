@@ -1,3 +1,14 @@
 .let {
   color: #1d51a5;
 }
+
+/* Barre d'onglets : glisse vers le bas au scroll (façon LinkedIn) */
+ion-tab-bar {
+  transition: margin-bottom 0.28s ease, opacity 0.28s ease;
+}
+
+ion-tab-bar.tabbar-hidden {
+  margin-bottom: calc(-1 * (56px + env(safe-area-inset-bottom)));
+  opacity: 0;
+  pointer-events: none;
+}

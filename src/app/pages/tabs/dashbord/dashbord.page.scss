@@ -1,3 +1,14 @@
+/* En-tête du fil : glisse vers le haut au scroll (façon LinkedIn).
+   La marge négative libère l'espace pour le contenu (pas juste un décalage). */
+.feed-header {
+  transition: margin-top 0.28s ease;
+  will-change: margin-top;
+}
+
+.feed-header.feed-header-hidden {
+  margin-top: calc(-1 * (58px + env(safe-area-inset-top)));
+}
+
 .profile-complete-banner {
   display: flex;
   align-items: center;

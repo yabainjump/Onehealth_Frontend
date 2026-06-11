@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [class.feed-header-hidden]="chromeHidden" class="feed-header">
   <ion-toolbar color="success">
     <!-- Photo de profil -->
     <ion-avatar slot="start">
@@ -30,7 +30,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [scrollEvents]="true" (ionScroll)="onContentScroll($event)">
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content
       pullingIcon="chevron-down-circle-outline"
