@@ -21,6 +21,11 @@ export class UsersService {
     return this.api.get<PublicUser[]>(endpoint);
   }
 
+  /** Suggestions « qui suivre » : comptes qui publient le plus. */
+  getSuggestions(limit = 5): Observable<PublicUser[]> {
+    return this.api.get<PublicUser[]>(`/users/suggestions?limit=${limit}`);
+  }
+
   getUserById(userId: string): Observable<PublicUser> {
     return this.api.get<PublicUser>(`/users/${userId}?_=${Date.now()}`);
   }

@@ -187,6 +187,24 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Curseur de saisie (caret) bien visible dans TOUS les champs.
+   On le force au niveau de l'hôte (héritage) ET sur l'input natif d'Ionic
+   (::part(native)) pour qu'il s'affiche partout, y compris dans la shadow DOM. */
+ion-input,
+ion-textarea,
+ion-searchbar,
+input,
+textarea,
+[contenteditable] {
+  caret-color: var(--ion-color-primary);
+}
+
+ion-input::part(native),
+ion-textarea::part(native),
+ion-searchbar::part(native) {
+  caret-color: var(--ion-color-primary);
+}
+
 /* Hashtags cliquables dans le contenu des posts */
 .hashtag {
   color: var(--ion-color-primary);

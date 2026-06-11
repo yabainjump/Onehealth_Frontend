@@ -91,15 +91,13 @@ export class DashbordPage implements OnInit {
     if (!this.currentUserId) {
       return;
     }
-    this.usersService.listUsers().subscribe({
+    // Comptes qui publient le plus (tri + exclusion soi-même/déjà suivis côté backend).
+    this.usersService.getSuggestions(4).subscribe({
       next: (users) => {
-        this.suggestions = (users || [])
-          .filter((u) => (u?.id || (u as any)?._id) !== this.currentUserId)
-          .slice(0, 4)
-          .map((u) => ({
-            ...u,
-            photoURL: resolveMediaUrl(u?.photoURL) || 'assets/default-profile.png',
-          }));
+        this.suggestions = (users || []).map((u) => ({
+          ...u,
+          photoURL: resolveMediaUrl(u?.photoURL) || 'assets/default-profile.png',
+        }));
       },
       error: () => {
         this.suggestions = [];
