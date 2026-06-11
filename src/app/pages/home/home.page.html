@@ -122,6 +122,7 @@
 
         <!-- plus de select de spécialité -->
         <ion-searchbar (ionInput)="searchUsers($event)" show-clear-button="always"
+          [debounce]="250"
           [placeholder]="'HOME.SEARCH_USER' | translate">
         </ion-searchbar>
       </ion-header>

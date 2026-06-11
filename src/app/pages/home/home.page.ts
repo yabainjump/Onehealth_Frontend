@@ -247,28 +247,10 @@ export class HomePage implements OnInit, OnDestroy {
   // }
 
   searchUsers(event: any) {
-  const q = (event?.target?.value || '').toLowerCase().trim();
-  if (!q) {
-    // si champ vide, on réaffiche tout
-    this.getUsers();
-    return;
+    // Recherche côté serveur (toute la base, pas seulement les 100 derniers).
+    const q = (event?.target?.value || '').trim();
+    this.users = this.chatService.getUsers(q);
   }
-
-  this.users = this.chatService.getUsers().pipe(
-    map(users =>
-      users.filter(u => {
-        const hay = [
-          u?.name,
-          u?.username,
-          u?.firstName,
-          u?.lastName,
-          u?.email
-        ].join(' ').toLowerCase();
-        return hay.includes(q);
-      })
-    )
-  );
-}
 
   getRooms() {
     // this.chatService.getId();

@@ -54,9 +54,11 @@ export class ChatService {
     this.currentUserId = this.auth.getId() || '';
   }
 
-  getUsers(): Observable<any[]> {
+  getUsers(search = ''): Observable<any[]> {
     const uid = this.currentUserId || this.auth._uid.getValue();
-    return this.usersService.listUsers('').pipe(
+    // La recherche est transmise au serveur (toute la base, pas seulement
+    // les 100 derniers inscrits).
+    return this.usersService.listUsers(search).pipe(
       map((users) =>
         users
           .filter((user) => user.id !== uid)
