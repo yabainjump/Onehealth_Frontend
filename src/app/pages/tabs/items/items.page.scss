@@ -1,3 +1,11 @@
+/* ===== Vue PC : page article centrée (≥1024px) ===== */
+@media (min-width: 1024px) {
+  ion-content {
+    --padding-start: max(16px, calc((100% - 900px) / 2));
+    --padding-end: max(16px, calc((100% - 900px) / 2));
+  }
+}
+
 ion-content {
   ion-grid {
     padding: 0;

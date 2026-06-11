@@ -1,3 +1,13 @@
+/* ===== Vue PC : formulaire centré (≥1024px) ===== */
+@media (min-width: 1024px) {
+  .edit-form,
+  .loading-wrap {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 :host {
   --oh-blue: #145cb3;
   --oh-blue-soft: #1f6cd6;

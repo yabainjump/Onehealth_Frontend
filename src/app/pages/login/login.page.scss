@@ -36,6 +36,8 @@ ion-content {
 ion-list {
   background: transparent;
   transform: translateY(20vh);
+  max-width: 520px;
+  margin-inline: auto;
 
   ion-item {
     border: 1px solid var(--ion-color-medium);
