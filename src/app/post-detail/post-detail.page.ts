@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommentData, Post, PostAttachment, PublishService } from '../services/publish/publish.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { buildPostHtml, hashtagFromClick } from '../shared/utils/post-html.util';
 import { IonInput, ToastController } from '@ionic/angular';
 import { ShareLinkService } from '../core/services/share-link.service';
 import { AuthService } from '../services/auth/auth.service';
@@ -37,7 +38,17 @@ longPost:   Record<string, boolean> = {};
     private readonly authService: AuthService,
     private readonly translate: TranslateService,
     private readonly interactionGuard: InteractionGuardService,
+    private readonly router: Router,
   ) {}
+
+  /** Clic sur un #hashtag dans le contenu → page de résultats du tag. */
+  onPostBodyClick(event: Event): void {
+    const tag = hashtagFromClick(event);
+    if (tag) {
+      event.preventDefault();
+      void this.router.navigate(['/tags', tag]);
+    }
+  }
 
   async ngOnInit() {
     const postId = this.resolvePostIdFromRoute();
@@ -168,23 +179,7 @@ longPost:   Record<string, boolean> = {};
   }
 
   formatPostContent(value: string | null | undefined): SafeHtml {
-    if (!value) return '';
-
-    const escaped = value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-    const urlRegex = /((https?:\/\/|www\.)[^\s<]+)/gi;
-    const linkified = escaped.replace(urlRegex, (match: string) => {
-      const href = match.startsWith('http') ? match : `https://${match}`;
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${match}</a>`;
-    });
-
-    const withBreaks = linkified.replace(/\n/g, '<br>');
-    return this.sanitizer.bypassSecurityTrustHtml(withBreaks);
+    return this.sanitizer.bypassSecurityTrustHtml(buildPostHtml(value));
   }
 
   trackByImage(_index: number, img: string): string {

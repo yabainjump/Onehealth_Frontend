@@ -34,7 +34,7 @@
     [class.collapsed]="post.id && !expanded[post.id] && longPost[post.id]"
   >
     <p class="post-title" *ngIf="post.title">{{ post.title }}</p>
-    <div class="post-text post-body" [innerHTML]="formatPostContent(post.content || post.title || '')"></div>
+    <div class="post-text post-body" (click)="onPostBodyClick($event)" [innerHTML]="formatPostContent(post.content || post.title || '')"></div>
   </div>
 
   <button

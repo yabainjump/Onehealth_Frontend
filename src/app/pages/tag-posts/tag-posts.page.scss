@@ -1,0 +1,101 @@
+.tag-content {
+  --background: #f3f4f7;
+}
+
+.tag-sub {
+  margin: 14px 16px 2px;
+  color: #5a6578;
+  font-size: 0.9rem;
+}
+
+.tag-loading {
+  display: flex;
+  justify-content: center;
+  padding: 44px 0;
+}
+
+.tag-empty {
+  text-align: center;
+  color: #707f97;
+  padding: 52px 24px;
+}
+
+.tag-empty ion-icon {
+  font-size: 46px;
+  margin-bottom: 8px;
+}
+
+.tag-card {
+  display: block;
+  background: #ffffff;
+  margin: 10px 12px;
+  padding: 14px;
+  border: 1px solid #e6e9ee;
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-shadow-sm);
+  cursor: pointer;
+  transition: transform var(--app-transition), box-shadow var(--app-transition);
+}
+
+.tag-card:active {
+  transform: scale(0.99);
+}
+
+.tag-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tag-head ion-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.tag-head-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tag-head-meta strong {
+  font-size: 0.95rem;
+  color: #1b2330;
+}
+
+.tag-head-meta span {
+  font-size: 0.78rem;
+  color: #7a8699;
+}
+
+.tag-snippet {
+  margin: 0;
+  color: #1b2330;
+  font-size: 0.96rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tag-thumb {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 10px;
+  max-height: 260px;
+  object-fit: cover;
+}
+
+.tag-video {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0a66c2;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.tag-video ion-icon {
+  font-size: 18px;
+}

@@ -70,6 +70,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./pages/not-found/not-found.module').then((m) => m.NotFoundPageModule),
   },
+  {
+    path: 'tags/:tag',
+    loadComponent: () =>
+      import('./pages/tag-posts/tag-posts.page').then((m) => m.TagPostsPage),
+  },
   { path: '**', redirectTo: 'not-found' },
 ];
 

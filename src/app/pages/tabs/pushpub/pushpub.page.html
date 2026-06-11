@@ -1,64 +1,129 @@
-<ion-header>
-  <ion-toolbar color="success">
+<ion-header class="ion-no-border composer-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="goBack()" [attr.aria-label]="'COMMON.CANCEL' | translate">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
     <ion-title>{{ 'PUSHPUB.TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        class="publish-btn"
+        shape="round"
+        (click)="addPost()"
+        [disabled]="isPublishing || !canPublish"
+      >
+        <ion-spinner name="crescent" *ngIf="isPublishing"></ion-spinner>
+        <span *ngIf="!isPublishing">{{ 'PUSHPUB.SUBMIT' | translate }}</span>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
-  
 </ion-header>
 
-<ion-content>   
-<ion-item >
-    <ion-label class="box1" position="floating">{{ 'PUSHPUB.PLACEHOLDER' | translate }}</ion-label>
-    <ion-textarea [autoGrow]="true" class="box1" [(ngModel)]="content"></ion-textarea>
-  </ion-item>
+<ion-content class="composer-content">
+  <!-- Auteur + audience -->
+  <div class="composer-author">
+    <ion-avatar>
+      <img src="assets/default-profile.png" alt="" />
+    </ion-avatar>
+    <span class="audience-chip">
+      <ion-icon name="earth-outline" aria-hidden="true"></ion-icon>
+      {{ 'PUSHPUB.PUBLIC' | translate }}
+    </span>
+  </div>
 
-   <ion-item lines="none">
-    <ion-label>{{ 'PUSHPUB.ADD_MEDIA' | translate }}</ion-label>
-    <ion-icon name="image-outline" (click)="fileInput.click()" style="cursor: pointer; font-size: 24px;"></ion-icon>
-    <input
-      type="file"
-      #fileInput
-      accept="image/*,video/*,.pdf,.ppt,.pptx,.doc,.docx"
-      multiple
-      hidden
-      (change)="handleImageInput($event)"
-    />
-  </ion-item>
+  <!-- Zone d'écriture : s'agrandit au fur et à mesure -->
+  <ion-textarea
+    class="composer-input"
+    [autoGrow]="true"
+    [rows]="6"
+    [placeholder]="'PUSHPUB.PLACEHOLDER' | translate"
+    [(ngModel)]="content"
+  ></ion-textarea>
 
-  <!-- Prévisualisation des images sélectionnées -->
-  <ion-grid *ngIf="previewUrls.length">
-    <ion-row>
-      <ion-col size="4" *ngFor="let url of previewUrls; trackBy: trackByPreviewUrl">
-        <img [src]="url" [alt]="'PUSHPUB.IMAGE_ALT' | translate" loading="lazy" decoding="async" />
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <!-- Aperçu des médias -->
+  <div class="media-block" *ngIf="previewUrls.length || attachmentFile">
+    <button
+      type="button"
+      class="media-remove"
+      (click)="removeMedia()"
+      [attr.aria-label]="'PUSHPUB.REMOVE_MEDIA' | translate"
+    >
+      <ion-icon name="close" aria-hidden="true"></ion-icon>
+    </button>
 
-  <div class="media-preview-card" *ngIf="attachmentFile && attachmentType === 'video'">
+    <!-- Images -->
+    <div class="media-grid" *ngIf="previewUrls.length" [class.single]="previewUrls.length === 1">
+      <img
+        *ngFor="let url of previewUrls; trackBy: trackByPreviewUrl"
+        [src]="url"
+        [alt]="'PUSHPUB.IMAGE_ALT' | translate"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+
+    <!-- Vidéo -->
     <video
+      *ngIf="attachmentFile && attachmentType === 'video'"
       class="video-preview"
       [src]="attachmentPreviewUrl || ''"
       controls
       playsinline
-      preload="metadata">
-    </video>
-    <p class="media-name">{{ attachmentFile.name }}</p>
-  </div>
+      preload="metadata"
+    ></video>
 
-  <div class="media-preview-card doc" *ngIf="attachmentFile && attachmentType === 'document'">
-    <ion-icon name="document-text-outline"></ion-icon>
-    <div>
-      <p class="media-name">{{ attachmentFile.name }}</p>
-      <small>{{ 'PUSHPUB.DOC_READY' | translate }}</small>
+    <!-- Document -->
+    <div class="doc-chip" *ngIf="attachmentFile && attachmentType === 'document'">
+      <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+      <div class="doc-meta">
+        <p class="media-name">{{ attachmentFile.name }}</p>
+        <small>{{ 'PUSHPUB.DOC_READY' | translate }}</small>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Barre d'ajout de média (style réseau social) -->
+<ion-footer class="ion-no-border composer-footer">
+  <div class="add-row">
+    <span class="add-label">{{ 'PUSHPUB.ADD_TO_POST' | translate }}</span>
+    <div class="add-actions">
+      <button
+        type="button"
+        class="add-btn photo"
+        (click)="photoInput.click()"
+        [attr.aria-label]="'PUSHPUB.PHOTO' | translate"
+      >
+        <ion-icon name="image-outline" aria-hidden="true"></ion-icon>
+      </button>
+      <button
+        type="button"
+        class="add-btn video"
+        (click)="videoInput.click()"
+        [attr.aria-label]="'PUSHPUB.VIDEO' | translate"
+      >
+        <ion-icon name="videocam-outline" aria-hidden="true"></ion-icon>
+      </button>
+      <button
+        type="button"
+        class="add-btn doc"
+        (click)="docInput.click()"
+        [attr.aria-label]="'PUSHPUB.DOCUMENT' | translate"
+      >
+        <ion-icon name="document-attach-outline" aria-hidden="true"></ion-icon>
+      </button>
     </div>
   </div>
 
-   <ion-button expand="block"
-            color="primary"
-            [disabled]="isPublishing"
-            (click)="addPost()">
-  <ion-spinner name="crescent" *ngIf="isPublishing" style="margin-right:8px"></ion-spinner>
-  {{ (isPublishing ? 'PUSHPUB.PUBLISHING' : 'PUSHPUB.SUBMIT') | translate }}
-</ion-button>
-
-
-</ion-content>
+  <!-- Sélecteurs natifs (filtrés par type pour un meilleur choix) -->
+  <input type="file" #photoInput accept="image/*" multiple hidden (change)="handleImageInput($event)" />
+  <input type="file" #videoInput accept="video/*" hidden (change)="handleImageInput($event)" />
+  <input
+    type="file"
+    #docInput
+    accept=".pdf,.ppt,.pptx,.doc,.docx"
+    hidden
+    (change)="handleImageInput($event)"
+  />
+</ion-footer>

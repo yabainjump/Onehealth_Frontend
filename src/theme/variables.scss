@@ -3,9 +3,9 @@
 
 /** Ionic CSS Variables **/
 :root {
-  /* Police de l'app — pile système façon LinkedIn (rendu natif net + rapide) */
-  --ion-font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Police de l'app — Inter (chargée dans index.html) : nette, moderne, lisible */
+  --ion-font-family: 'Inter', -apple-system, system-ui, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
   /* Couleur de texte raffinée (slate foncé : meilleur contraste qu'un noir pur) */
   --ion-text-color: #1b2330;

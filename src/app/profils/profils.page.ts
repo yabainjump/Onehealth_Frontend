@@ -14,6 +14,7 @@ import { ChatService } from '../services/chat/chat.service';
 import { PublishService, Post, PostAttachment } from 'src/app/services/publish/publish.service';
 import { TranslateService } from '@ngx-translate/core';
 import { InteractionGuardService } from '../core/services/interaction-guard.service';
+import { buildPostHtml, hashtagFromClick } from '../shared/utils/post-html.util';
 
 @Component({
   selector: 'app-profils',
@@ -232,28 +233,18 @@ export class ProfilsPage implements OnInit {
   }
 
   formatPostContent(value: string | null | undefined): SafeHtml {
-    if (!value) {
-      return '';
-    }
-
-    const escaped = value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-    const urlRegex = /((https?:\/\/|www\.)[^\s<]+)/gi;
-    const linkified = escaped.replace(urlRegex, (match: string) => {
-      const href = match.startsWith('http') ? match : `https://${match}`;
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${match}</a>`;
-    });
-
-    const withBreaks = linkified.replace(/\n/g, '<br>');
-    return this.sanitizer.bypassSecurityTrustHtml(withBreaks);
+    return this.sanitizer.bypassSecurityTrustHtml(buildPostHtml(value));
   }
 
   stopPostBodyClick(event: Event) {
+    // Si on a cliqué un #hashtag : on va aux résultats du tag (sans ouvrir le post).
+    const tag = hashtagFromClick(event);
+    if (tag) {
+      event.stopPropagation();
+      event.preventDefault();
+      void this.router.navigate(['/tags', tag]);
+      return;
+    }
     event.stopPropagation();
   }
 

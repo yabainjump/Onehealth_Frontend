@@ -47,6 +47,25 @@ export class PushpubPage implements OnDestroy {
     }
   }
 
+  /** Vrai s'il y a du texte ou un média : active le bouton « Publier ». */
+  get canPublish(): boolean {
+    return !!(
+      this.content?.trim() ||
+      this.previewUrls.length ||
+      this.attachmentFile
+    );
+  }
+
+  /** Ferme le composer et revient au fil. */
+  goBack(): void {
+    void this.router.navigate(['/', 'tabs', 'dashbord']);
+  }
+
+  /** Retire le(s) média(s) sélectionné(s). */
+  removeMedia(): void {
+    this.clearSelection();
+  }
+
   handleImageInput(event: any) {
     const selectedFiles: File[] = Array.from(event?.target?.files || []);
     if (!selectedFiles.length) return;

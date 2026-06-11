@@ -170,7 +170,14 @@ body {
    Finition globale UI/UX — typographie, accessibilité, états
    (s'applique à tous les écrans sans changer la structure)
    ============================================================ */
+/* Base un peu plus grande pour plus de présence et de lisibilité */
+html {
+  font-size: 17px;
+}
+
 body {
+  font-size: 1rem;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -178,6 +185,17 @@ body {
 
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Hashtags cliquables dans le contenu des posts */
+.hashtag {
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hashtag:hover {
+  text-decoration: underline;
 }
 
 /* Titres un peu plus affirmés (hiérarchie visuelle) */

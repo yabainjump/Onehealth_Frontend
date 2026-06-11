@@ -139,6 +139,12 @@
     "DOC_READY": "Document ready to publish",
     "PUBLISHING": "Publishing…",
     "SUBMIT": "Post",
+    "PUBLIC": "Public",
+    "ADD_TO_POST": "Add to your post",
+    "PHOTO": "Photo",
+    "VIDEO": "Video",
+    "DOCUMENT": "Document",
+    "REMOVE_MEDIA": "Remove media",
     "FILE_TOO_LARGE": "File too large. Max size: 50 MB.",
     "MIX_ERROR": "Choose either images or a single video/document file.",
     "ONE_ATTACHMENT": "Only one video/document file is allowed per post.",
@@ -218,6 +224,11 @@
     "ROOM_RESTORED": "Conversation restored successfully.",
     "ROOM_NOT_FOUND": "Conversation not found. Open it from the chats list.",
     "ROOM_UNAVAILABLE": "Conversation unavailable right now."
+  },
+  "TAGS": {
+    "SUBTITLE": "Posts mentioning this hashtag",
+    "EMPTY": "No post for this hashtag yet.",
+    "VIDEO": "Video"
   },
   "POSTDETAIL": {
     "TITLE": "Post detail",

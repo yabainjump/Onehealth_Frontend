@@ -214,6 +214,18 @@ export class PublishService {
     return (posts || []).map((post) => this.toLegacyPost(post));
   }
 
+  /** Récupère les posts contenant un hashtag donné (page de résultats). */
+  async getPostsByHashtag(tag: string, page = 1, limit = 20): Promise<Post[]> {
+    const posts = await firstValueFrom(
+      this.api
+        .get<any[]>(
+          `/posts/hashtag/${encodeURIComponent(tag)}?page=${page}&limit=${limit}`,
+        )
+        .pipe(catchError(() => of([] as any[]))),
+    );
+    return (posts || []).map((post) => this.toLegacyPost(post));
+  }
+
   getPostsByAuthor(userId: string, pageSize = 20): Observable<Post[]> {
     return this.api
       .get<any[]>(`/posts/user/${encodeURIComponent(userId)}?limit=${pageSize}`)

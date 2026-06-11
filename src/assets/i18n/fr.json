@@ -139,6 +139,12 @@
     "DOC_READY": "Document prêt à publier",
     "PUBLISHING": "Publication…",
     "SUBMIT": "Publier",
+    "PUBLIC": "Public",
+    "ADD_TO_POST": "Ajouter à votre publication",
+    "PHOTO": "Photo",
+    "VIDEO": "Vidéo",
+    "DOCUMENT": "Document",
+    "REMOVE_MEDIA": "Retirer le média",
     "FILE_TOO_LARGE": "Fichier trop lourd. Taille max : 50 Mo.",
     "MIX_ERROR": "Choisissez soit des images, soit un seul fichier vidéo/document.",
     "ONE_ATTACHMENT": "Un seul fichier vidéo/document est autorisé par publication.",
@@ -218,6 +224,11 @@
     "ROOM_RESTORED": "Conversation restaurée avec succès.",
     "ROOM_NOT_FOUND": "Discussion introuvable. Ouvre-la depuis la liste de chats.",
     "ROOM_UNAVAILABLE": "Discussion indisponible pour le moment."
+  },
+  "TAGS": {
+    "SUBTITLE": "Publications mentionnant ce hashtag",
+    "EMPTY": "Aucune publication pour ce hashtag pour le moment.",
+    "VIDEO": "Vidéo"
   },
   "POSTDETAIL": {
     "TITLE": "Détail de la publication",

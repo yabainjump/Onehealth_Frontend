@@ -94,7 +94,7 @@
     <!-- CONTENU inchangé -->
     <div class="post-content" [class.collapsed]="!expanded[post.id] && longPost[post.id]">
       <p class="post-title" *ngIf="post.title">{{ post.title }}</p>
-      <div class="post-body" [innerHTML]="post.content | formatPost"></div>
+      <div class="post-body" (click)="onPostBodyClick($event)" [innerHTML]="post.content | formatPost"></div>
     </div>
 
     <div *ngIf="longPost[post.id]">

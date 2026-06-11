@@ -21,6 +21,7 @@ import { Capacitor } from '@capacitor/core';
 import { ShareLinkService } from 'src/app/core/services/share-link.service';
 import { InteractionGuardService } from 'src/app/core/services/interaction-guard.service';
 import { TranslateService } from '@ngx-translate/core';
+import { hashtagFromClick } from 'src/app/shared/utils/post-html.util';
 
 @Component({
   selector: 'app-dashbord',
@@ -74,6 +75,15 @@ export class DashbordPage implements OnInit {
 
   private buildPostUrl(id: string): string {
     return this.shareLinkService.buildPostShareUrl(id);
+  }
+
+  /** Clic sur un #hashtag dans le contenu d'un post → résultats du tag. */
+  onPostBodyClick(event: Event): void {
+    const tag = hashtagFromClick(event);
+    if (tag) {
+      event.preventDefault();
+      void this.router.navigate(['/tags', tag]);
+    }
   }
 
   blurActive() {

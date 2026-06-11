@@ -1,9 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { buildPostHtml } from '../utils/post-html.util';
 
 @Pipe({
   name: 'formatPost',
-  standalone: false 
+  standalone: false
 })
 export class FormatPostPipe implements PipeTransform {
 
@@ -11,26 +12,7 @@ export class FormatPostPipe implements PipeTransform {
 
   transform(value: string | null | undefined): SafeHtml {
     if (!value) return '';
-
-    // 1) On échappe le HTML pour éviter les injections (XSS)
-    const escaped = value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-    // 2) On linkifie http(s)://... et www....
-    const urlRegex = /((https?:\/\/|www\.)[^\s<]+)/gi;
-    const linkified = escaped.replace(urlRegex, (match: string) => {
-      const href = match.startsWith('http') ? match : `https://${match}`;
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${match}</a>`;
-    });
-
-    // 3) On remplace \n par des <br>
-    const withBreaks = linkified.replace(/\n/g, '<br>');
-
-    // 4) On “trust” ce HTML *après* l’avoir construit proprement
-    return this.sanitizer.bypassSecurityTrustHtml(withBreaks);
+    // Échappe le HTML, linkifie URLs + #hashtags, gère les sauts de ligne.
+    return this.sanitizer.bypassSecurityTrustHtml(buildPostHtml(value));
   }
 }

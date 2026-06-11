@@ -1,0 +1,62 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/dashbord"></ion-back-button>
+    </ion-buttons>
+    <ion-title>#{{ tag }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="tag-content">
+  <p class="tag-sub" *ngIf="!loading && posts.length > 0">
+    {{ 'TAGS.SUBTITLE' | translate }}
+  </p>
+
+  <!-- Chargement -->
+  <div class="tag-loading" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="tag-empty" *ngIf="!loading && posts.length === 0">
+    <ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon>
+    <p>{{ 'TAGS.EMPTY' | translate }}</p>
+  </div>
+
+  <!-- Résultats -->
+  <article
+    class="tag-card"
+    *ngFor="let post of posts; trackBy: trackByPostId"
+    (click)="openPost(post)"
+  >
+    <div class="tag-head">
+      <ion-avatar>
+        <img
+          [src]="post.author?.photoURL || 'assets/default-profile.png'"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+      </ion-avatar>
+      <div class="tag-head-meta">
+        <strong>{{ post.author?.firstName }} {{ post.author?.lastName }}</strong>
+        <span>{{ post.timestamp | date: 'short' }}</span>
+      </div>
+    </div>
+
+    <p class="tag-snippet">{{ snippet(post) }}</p>
+
+    <img
+      class="tag-thumb"
+      *ngIf="post.imageUrl"
+      [src]="post.imageUrl"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="tag-video" *ngIf="!post.imageUrl && post.attachment?.type === 'video'">
+      <ion-icon name="videocam-outline" aria-hidden="true"></ion-icon>
+      <span>{{ 'TAGS.VIDEO' | translate }}</span>
+    </div>
+  </article>
+</ion-content>
