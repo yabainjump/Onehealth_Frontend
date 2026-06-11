@@ -2,7 +2,10 @@
 .msg-2pane {
   position: absolute;
   inset: 0;
-  display: block; /* mobile : un seul volet à la fois */
+}
+
+.msg-board {
+  height: 100%;
 }
 
 .msg-list-pane {
@@ -36,14 +39,28 @@
   height: 100%;
 }
 
-/* ===== PC (≥1024px) : liste + conversation côte à côte ===== */
+/* ===== PC (≥1024px) : carte centrée façon LinkedIn ===== */
 @media (min-width: 1024px) {
   .msg-2pane {
+    background: #f1f3f6;
+    overflow: hidden;
+  }
+
+  /* Carte blanche centrée contenant les 2 volets */
+  .msg-board {
     display: flex;
+    max-width: 1128px;
+    height: calc(100% - 32px);
+    margin: 16px auto;
+    background: #ffffff;
+    border: 1px solid #e1e6ee;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--app-shadow-sm);
   }
 
   .msg-list-pane {
-    width: 360px;
+    width: 340px;
     flex-shrink: 0;
     border-right: 1px solid #e1e6ee;
   }
