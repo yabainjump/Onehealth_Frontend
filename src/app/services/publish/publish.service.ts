@@ -40,11 +40,13 @@ export interface Post {
   likedBy?: string[];
   userHasLiked?: boolean;
   author?: {
+    id?: string;
     firstName: string;
     userName: string;
     lastName: string;
     institution: string;
     photoURL?: string;
+    isFollowing?: boolean;
   };
 }
 
@@ -285,11 +287,13 @@ export class PublishService {
       timestamp: new Date(post?.createdAt || post?.timestamp || Date.now()),
       author: author
         ? {
+            id: author.id || post?.authorId || '',
             userName: author.username || '',
             firstName: author.firstName || '',
             lastName: author.lastName || '',
             institution: author.institution || '',
             photoURL: resolveMediaUrl(author.photoURL) || 'assets/default-profile.png',
+            isFollowing: !!author.isFollowing,
           }
         : undefined,
     };

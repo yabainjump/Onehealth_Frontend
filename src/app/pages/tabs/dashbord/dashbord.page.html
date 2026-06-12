@@ -88,9 +88,20 @@
   <div *ngFor="let post of filteredPosts; trackBy: trackByPostId" class="post-card">
     <!-- En-tête -->
     <div class="post-header">
-      <ion-avatar class="clickable-avatar" (click)="openAuthorProfile(post, $event)">
-        <img [src]="post.author?.photoURL || 'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
-      </ion-avatar>
+      <div class="post-avatar-wrap">
+        <ion-avatar class="clickable-avatar" (click)="openAuthorProfile(post, $event)">
+          <img [src]="post.author?.photoURL || 'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
+        </ion-avatar>
+        <button
+          type="button"
+          class="follow-badge"
+          *ngIf="canShowFollow(post)"
+          (click)="followAuthor(post, $event)"
+          [attr.aria-label]="'DASHBOARD.SIDE_FOLLOW' | translate"
+        >
+          <ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
 
       <div (click)="openPostDetail(post)" class="post-author-details">
         <h3 class="law">{{ post.author?.firstName }} {{ post.author?.lastName }}</h3>

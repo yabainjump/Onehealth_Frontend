@@ -192,6 +192,45 @@ export class DashbordPage implements OnInit {
     }
   }
 
+  /** Bouton « + suivre » visible seulement si on ne suit pas encore l'auteur (et pas soi-même). */
+  canShowFollow(post: Post): boolean {
+    const author = post?.author;
+    return !!(
+      author &&
+      author.id &&
+      author.id !== this.currentUserId &&
+      !author.isFollowing
+    );
+  }
+
+  /** Suivre l'auteur depuis son post → le bouton disparaît sur tous ses posts. */
+  async followAuthor(post: Post, event: Event): Promise<void> {
+    event.stopPropagation();
+    if (!(await this.interactionGuard.requireAuth())) {
+      return;
+    }
+    const authorId = post?.author?.id;
+    if (!authorId) {
+      return;
+    }
+    this.usersService.followUser(authorId).subscribe({
+      next: () => {
+        const markFollowed = (list: Post[]) => {
+          for (const p of list) {
+            if (p?.author?.id === authorId && p.author) {
+              p.author.isFollowing = true;
+            }
+          }
+        };
+        markFollowed(this.posts);
+        markFollowed(this.filteredPosts);
+      },
+      error: () => {
+        void this.presentFollowError();
+      },
+    });
+  }
+
   blurActive() {
     const el = document.activeElement as HTMLElement | null;
     if (el && typeof el.blur === 'function') el.blur();
