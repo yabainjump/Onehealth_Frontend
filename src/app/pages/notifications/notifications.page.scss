@@ -1,0 +1,105 @@
+.notif-content {
+  --background: #f3f4f7;
+}
+
+.notif-loading {
+  display: flex;
+  justify-content: center;
+  padding: 44px 0;
+}
+
+.notif-empty {
+  text-align: center;
+  color: #707f97;
+  padding: 56px 24px;
+}
+
+.notif-empty ion-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+
+.notif-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 0;
+  border-bottom: 1px solid #e6e9ee;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--app-transition);
+}
+
+.notif-item:hover {
+  background: #f7f9fc;
+}
+
+.notif-item:active {
+  background: #eef1f6;
+}
+
+/* Non lue : fond légèrement teinté */
+.notif-item.unread {
+  background: #eef4ff;
+}
+
+.notif-item.unread:hover {
+  background: #e6efff;
+}
+
+.notif-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #eef1f6;
+}
+
+.notif-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-text {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #1b2330;
+  line-height: 1.4;
+}
+
+.notif-text strong {
+  font-weight: 700;
+}
+
+.notif-time {
+  font-size: 0.74rem;
+  color: #7a8699;
+}
+
+.notif-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  flex-shrink: 0;
+}
+
+/* ===== Vue PC : liste centrée (≥1024px) ===== */
+@media (min-width: 1024px) {
+  ion-content.notif-content {
+    --padding-start: max(16px, calc((100% - 720px) / 2));
+    --padding-end: max(16px, calc((100% - 720px) / 2));
+    --padding-top: 16px;
+  }
+
+  .notif-item {
+    border: 1px solid #e6e9ee;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: var(--app-shadow-sm);
+  }
+}

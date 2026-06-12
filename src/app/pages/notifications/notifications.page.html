@@ -1,0 +1,45 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="success">
+    <ion-title>{{ 'NOTIF.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="notif-content">
+  <!-- Chargement -->
+  <div class="notif-loading" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- Vide -->
+  <div class="notif-empty" *ngIf="!loading && notifications.length === 0">
+    <ion-icon name="notifications-off-outline" aria-hidden="true"></ion-icon>
+    <p>{{ 'NOTIF.EMPTY' | translate }}</p>
+  </div>
+
+  <!-- Liste -->
+  <button
+    type="button"
+    class="notif-item"
+    *ngFor="let n of notifications; trackBy: trackById"
+    [class.unread]="!n.read"
+    (click)="open(n)"
+  >
+    <img
+      class="notif-avatar"
+      [src]="n.actorPhotoURL"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="notif-body">
+      <p class="notif-text">
+        <strong>{{ n.actorName || ('NOTIF.SOMEONE' | translate) }}</strong>
+        <span *ngIf="n.type === 'like'"> {{ 'NOTIF.LIKE' | translate }}</span>
+        <span *ngIf="n.type === 'comment'"> {{ 'NOTIF.COMMENT' | translate }}</span>
+        <span *ngIf="n.type === 'follow'"> {{ 'NOTIF.FOLLOW' | translate }}</span>
+      </p>
+      <span class="notif-time">{{ n.createdAt | date: 'short' }}</span>
+    </div>
+    <span class="notif-dot" *ngIf="!n.read" aria-hidden="true"></span>
+  </button>
+</ion-content>

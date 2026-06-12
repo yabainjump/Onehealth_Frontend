@@ -43,6 +43,13 @@ const routes: Routes = [
           import('./pushpub/pushpub.module').then((m) => m.PushpubPageModule),
       },
       {
+        path: 'notifications',
+        loadComponent: () =>
+          import('../notifications/notifications.page').then(
+            (m) => m.NotificationsPage,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashbord',
         pathMatch: 'full',

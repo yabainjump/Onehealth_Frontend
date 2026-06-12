@@ -23,6 +23,11 @@
           <ion-icon [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"></ion-icon>
           <span>{{ 'TABS.MESSAGES' | translate }}</span>
         </a>
+        <a class="dn-link dn-notif" routerLink="/tabs/notifications" [class.active]="selectedTab === 'notifications'">
+          <ion-icon [name]="selectedTab === 'notifications' ? 'notifications' : 'notifications-outline'"></ion-icon>
+          <ion-badge color="danger" *ngIf="(notifs.unread$ | async) as count">{{ count }}</ion-badge>
+          <span>{{ 'TABS.NOTIFICATIONS' | translate }}</span>
+        </a>
         <a class="dn-link" routerLink="/tabs/profils" [class.active]="selectedTab === 'profils'">
           <ion-icon [name]="selectedTab === 'profils' ? 'person' : 'person-outline'"></ion-icon>
           <span>{{ 'TABS.PROFILE' | translate }}</span>
@@ -57,6 +62,14 @@
           [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"
         ></ion-icon>
         {{ 'TABS.MESSAGES' | translate }}
+      </ion-tab-button>
+      <ion-tab-button class="let" tab="notifications">
+        <ion-icon
+          color="primary"
+          [name]="selectedTab === 'notifications' ? 'notifications' : 'notifications-outline'"
+        ></ion-icon>
+        <ion-badge color="danger" *ngIf="(notifs.unread$ | async) as count">{{ count }}</ion-badge>
+        {{ 'TABS.NOTIFICATIONS' | translate }}
       </ion-tab-button>
       <ion-tab-button class="let" tab="profils">
         <ion-icon

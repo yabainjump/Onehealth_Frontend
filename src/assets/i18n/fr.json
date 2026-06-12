@@ -99,7 +99,16 @@
     "HOME": "Accueil",
     "PUBLISH": "Publier",
     "MESSAGES": "Messages",
+    "NOTIFICATIONS": "Notifs",
     "PROFILE": "Profil"
+  },
+  "NOTIF": {
+    "TITLE": "Notifications",
+    "EMPTY": "Aucune notification pour le moment.",
+    "SOMEONE": "Quelqu'un",
+    "LIKE": "a aimé votre publication.",
+    "COMMENT": "a commenté votre publication.",
+    "FOLLOW": "a commencé à vous suivre."
   },
   "DASHBOARD": {
     "SEARCH_PLACEHOLDER": "Rechercher une publication, un auteur, une institution…",

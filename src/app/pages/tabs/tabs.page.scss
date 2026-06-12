@@ -117,6 +117,19 @@ ion-tab-bar.tabbar-hidden {
     color: var(--ion-color-primary);
   }
 
+  .dn-notif {
+    position: relative;
+  }
+
+  .dn-notif ion-badge {
+    position: absolute;
+    top: 0;
+    right: 12px;
+    font-size: 0.58rem;
+    --padding-start: 5px;
+    --padding-end: 5px;
+  }
+
   .dn-publish {
     display: inline-flex;
     align-items: center;
