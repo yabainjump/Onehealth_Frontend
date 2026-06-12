@@ -306,43 +306,36 @@ ion-avatar {
   cursor: pointer;
 }
 
-/* Avatar + bouton « + suivre » par-dessus (si on ne suit pas l'auteur) */
-.post-avatar-wrap {
-  position: relative;
+/* Bouton « suivre » à droite de l'en-tête (auteur non suivi, hors ses posts) */
+.post-follow-btn {
   flex-shrink: 0;
-  margin-right: 10px;
-}
-
-.post-avatar-wrap ion-avatar {
-  margin-right: 0;
-}
-
-.follow-badge {
-  position: absolute;
-  right: -4px;
-  bottom: -4px;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #ffffff;
-  color: var(--ion-color-primary);
-  border: 1px solid #d6deea;
+  margin-left: auto;
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0;
+  gap: 5px;
+  border: 1px solid var(--ion-color-primary);
+  background: transparent;
+  color: var(--ion-color-primary);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 0.82rem;
+  font-weight: 600;
   cursor: pointer;
-  z-index: 2;
-  box-shadow: 0 1px 4px rgba(16, 24, 40, 0.2);
-  transition: transform var(--app-transition);
+  white-space: nowrap;
+  transition: background var(--app-transition), transform var(--app-transition);
 }
 
-.follow-badge ion-icon {
-  font-size: 15px;
+.post-follow-btn ion-icon {
+  font-size: 16px;
 }
 
-.follow-badge:hover {
+.post-follow-btn:hover {
   background: #eef4ff;
+}
+
+.post-follow-btn:active {
+  transform: scale(0.97);
 }
 
 .follow-badge:active {

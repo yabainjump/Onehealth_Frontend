@@ -88,26 +88,27 @@
   <div *ngFor="let post of filteredPosts; trackBy: trackByPostId" class="post-card">
     <!-- En-tête -->
     <div class="post-header">
-      <div class="post-avatar-wrap">
-        <ion-avatar class="clickable-avatar" (click)="openAuthorProfile(post, $event)">
-          <img [src]="post.author?.photoURL || 'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
-        </ion-avatar>
-        <button
-          type="button"
-          class="follow-badge"
-          *ngIf="canShowFollow(post)"
-          (click)="followAuthor(post, $event)"
-          [attr.aria-label]="'DASHBOARD.SIDE_FOLLOW' | translate"
-        >
-          <ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
-        </button>
-      </div>
+      <ion-avatar class="clickable-avatar" (click)="openAuthorProfile(post, $event)">
+        <img [src]="post.author?.photoURL || 'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
+      </ion-avatar>
 
       <div (click)="openPostDetail(post)" class="post-author-details">
         <h3 class="law">{{ post.author?.firstName }} {{ post.author?.lastName }}</h3>
         <p>{{ post.author?.institution || ('DASHBOARD.USER_DESCRIPTION' | translate) }}</p>
         <span>{{ post.timestamp | date: 'short' }}</span>
       </div>
+
+      <!-- Bouton « suivre » (auteur non suivi ; pas sur ses propres posts) -->
+      <button
+        type="button"
+        class="post-follow-btn"
+        *ngIf="canShowFollow(post)"
+        (click)="followAuthor(post, $event)"
+        [attr.aria-label]="'DASHBOARD.SIDE_FOLLOW' | translate"
+      >
+        <ion-icon name="person-add-outline" aria-hidden="true"></ion-icon>
+        <span>{{ 'DASHBOARD.SIDE_FOLLOW' | translate }}</span>
+      </button>
 
       <!-- 👇 Ajout: menu trois points (auteur uniquement) -->
       <ion-button class="post-menu-btn" fill="clear"  *ngIf="isOwner(post)"
