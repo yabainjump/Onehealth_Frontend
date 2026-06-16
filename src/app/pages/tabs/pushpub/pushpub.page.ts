@@ -47,6 +47,21 @@ export class PushpubPage implements OnDestroy {
     }
   }
 
+  /**
+   * L'onglet « Publier » n'est jamais détruit (page Ionic mise en cache) : on
+   * réarme donc l'état à chaque entrée et on ferme tout loader fantôme résiduel,
+   * pour ne jamais rester bloqué après une publication précédente.
+   */
+  async ionViewWillEnter(): Promise<void> {
+    this.isPublishing = false;
+    try {
+      const top = await this.loadingCtrl.getTop();
+      await top?.dismiss();
+    } catch {
+      /* aucun overlay résiduel */
+    }
+  }
+
   /** Vrai s'il y a du texte ou un média : active le bouton « Publier ». */
   get canPublish(): boolean {
     return !!(
@@ -69,6 +84,12 @@ export class PushpubPage implements OnDestroy {
   handleImageInput(event: any) {
     const selectedFiles: File[] = Array.from(event?.target?.files || []);
     if (!selectedFiles.length) return;
+
+    // On vide l'input tout de suite (les File restent valides) pour pouvoir
+    // re-sélectionner le MÊME fichier plus tard (sinon l'event change ne refire pas).
+    if (event?.target) {
+      event.target.value = '';
+    }
 
     const oversized = selectedFiles.find((file) => file.size > this.maxAttachmentBytes);
     if (oversized) {
@@ -202,6 +223,7 @@ export class PushpubPage implements OnDestroy {
     });
     await loading.present();
 
+    let published = false;
     try {
       // 1) upload images (si présentes)
       const imageUrls = this.imageFiles?.length
@@ -241,15 +263,25 @@ export class PushpubPage implements OnDestroy {
       this.clearSelection();
 
       await this.presentToast(this.translate.instant('PUSHPUB.PUBLISHED'), 'success');
-
-      // 4) navigate si besoin
-      this.router.navigate(['/', 'tabs', 'dashbord']); // adapte "dashbord" vs "dashboard"
-    } catch (error) {
-      console.error('Error uploading/adding post:', error);
+      published = true;
+    } catch (error: any) {
+      // Log détaillé (status + corps) pour diagnostiquer en prod.
+      console.error('Error uploading/adding post:', error?.status, error?.error || error);
       await this.presentToast(this.translate.instant('PUSHPUB.PUBLISH_ERROR'), 'danger');
     } finally {
-      await loading.dismiss();
+      // dismiss DÉFENSIF : ne doit JAMAIS empêcher la réinitialisation de l'état,
+      // sinon isPublishing reste bloqué à true et plus aucune publication ne passe.
+      try {
+        await loading.dismiss();
+      } catch {
+        /* overlay déjà détaché (page d'onglet masquée) — sans gravité */
+      }
       this.isPublishing = false;
+    }
+
+    // Navigation APRÈS la fermeture de l'overlay (évite loader fantôme + état bloqué).
+    if (published) {
+      await this.router.navigate(['/', 'tabs', 'dashbord']);
     }
   }
 
@@ -275,8 +307,10 @@ export class PushpubPage implements OnDestroy {
     this.attachmentFile = null;
     this.attachmentType = null;
     if (clearInput) {
-      const inputEl = document.querySelector('input[type="file"]') as HTMLInputElement | null;
-      if (inputEl) inputEl.value = '';
+      // Il y a 3 inputs (photo / vidéo / document) : on les vide TOUS.
+      document.querySelectorAll('input[type="file"]').forEach((el) => {
+        (el as HTMLInputElement).value = '';
+      });
     }
   }
 }
