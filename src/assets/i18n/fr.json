@@ -109,7 +109,9 @@
     "LIKE": "a aimé votre publication.",
     "COMMENT": "a commenté votre publication.",
     "FOLLOW": "a commencé à vous suivre.",
-    "ALERT": "a signalé une alerte près de vous."
+    "ALERT": "a signalé une alerte près de vous.",
+    "LIKE_ALERT": "a aimé votre alerte.",
+    "COMMENT_ALERT": "a commenté votre alerte."
   },
   "ALERTS": {
     "TITLE": "Alertes One Health",
@@ -150,7 +152,22 @@
     "PHOTO_ERR": "Échec de l'envoi de la photo",
     "REMOVE_PHOTO": "Retirer la photo",
     "DETAIL_TITLE": "Détail de l'alerte",
-    "NOT_FOUND": "Alerte introuvable."
+    "NOT_FOUND": "Alerte introuvable.",
+    "COMMENTS": "Commentaires",
+    "COMMENT_PH": "Écrire un commentaire…",
+    "COMMENT_SEND": "Envoyer",
+    "COMMENT_ERR": "Action impossible. Réessaie.",
+    "NO_COMMENTS": "Aucun commentaire pour le moment.",
+    "COMMENT_DELETE": "Supprimer le commentaire",
+    "COMMENT_DELETE_CONFIRM": "Voulez-vous vraiment supprimer ce commentaire ?",
+    "EDIT": "Modifier l'alerte",
+    "EDIT_SAVE": "Enregistrer",
+    "EDIT_DONE": "Alerte modifiée ✅",
+    "EDIT_ERR": "Échec de la modification",
+    "DELETE": "Supprimer",
+    "DELETE_CONFIRM": "Voulez-vous vraiment supprimer cette alerte ? Cette action est définitive.",
+    "DELETE_DONE": "Alerte supprimée",
+    "DELETE_ERR": "Échec de la suppression"
   },
   "DASHBOARD": {
     "SEARCH_PLACEHOLDER": "Rechercher une publication, un auteur, une institution…",

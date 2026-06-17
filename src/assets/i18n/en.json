@@ -109,7 +109,9 @@
     "LIKE": "liked your post.",
     "COMMENT": "commented on your post.",
     "FOLLOW": "started following you.",
-    "ALERT": "reported an alert near you."
+    "ALERT": "reported an alert near you.",
+    "LIKE_ALERT": "liked your alert.",
+    "COMMENT_ALERT": "commented on your alert."
   },
   "ALERTS": {
     "TITLE": "One Health Alerts",
@@ -150,7 +152,22 @@
     "PHOTO_ERR": "Photo upload failed",
     "REMOVE_PHOTO": "Remove photo",
     "DETAIL_TITLE": "Alert details",
-    "NOT_FOUND": "Alert not found."
+    "NOT_FOUND": "Alert not found.",
+    "COMMENTS": "Comments",
+    "COMMENT_PH": "Write a comment…",
+    "COMMENT_SEND": "Send",
+    "COMMENT_ERR": "Action failed. Please try again.",
+    "NO_COMMENTS": "No comments yet.",
+    "COMMENT_DELETE": "Delete comment",
+    "COMMENT_DELETE_CONFIRM": "Are you sure you want to delete this comment?",
+    "EDIT": "Edit alert",
+    "EDIT_SAVE": "Save",
+    "EDIT_DONE": "Alert updated ✅",
+    "EDIT_ERR": "Update failed",
+    "DELETE": "Delete",
+    "DELETE_CONFIRM": "Are you sure you want to delete this alert? This cannot be undone.",
+    "DELETE_DONE": "Alert deleted",
+    "DELETE_ERR": "Delete failed"
   },
   "DASHBOARD": {
     "SEARCH_PLACEHOLDER": "Search for a publication, author, institution…",

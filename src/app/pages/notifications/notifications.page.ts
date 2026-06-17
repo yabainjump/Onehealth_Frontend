@@ -44,13 +44,15 @@ export class NotificationsPage implements OnInit {
   }
 
   open(notification: AppNotification): void {
-    if (
-      (notification.type === 'like' || notification.type === 'comment') &&
-      notification.postId
-    ) {
-      void this.router.navigate(['/post-detail'], {
-        queryParams: { id: notification.postId },
-      });
+    if (notification.type === 'like' || notification.type === 'comment') {
+      // Un like/commentaire peut concerner une alerte OU une publication.
+      if (notification.alertId) {
+        void this.router.navigate(['/tabs/alerts', notification.alertId]);
+      } else if (notification.postId) {
+        void this.router.navigate(['/post-detail'], {
+          queryParams: { id: notification.postId },
+        });
+      }
     } else if (notification.type === 'follow' && notification.actorId) {
       void this.router.navigate(['/tabs/profils', notification.actorId]);
     } else if (notification.type === 'alert' && notification.alertId) {

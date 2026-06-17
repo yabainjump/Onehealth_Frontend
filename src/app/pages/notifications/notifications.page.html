@@ -34,8 +34,10 @@
     <div class="notif-body">
       <p class="notif-text">
         <strong>{{ n.actorName || ('NOTIF.SOMEONE' | translate) }}</strong>
-        <span *ngIf="n.type === 'like'"> {{ 'NOTIF.LIKE' | translate }}</span>
-        <span *ngIf="n.type === 'comment'"> {{ 'NOTIF.COMMENT' | translate }}</span>
+        <span *ngIf="n.type === 'like' && !n.alertId"> {{ 'NOTIF.LIKE' | translate }}</span>
+        <span *ngIf="n.type === 'like' && n.alertId"> {{ 'NOTIF.LIKE_ALERT' | translate }}</span>
+        <span *ngIf="n.type === 'comment' && !n.alertId"> {{ 'NOTIF.COMMENT' | translate }}</span>
+        <span *ngIf="n.type === 'comment' && n.alertId"> {{ 'NOTIF.COMMENT_ALERT' | translate }}</span>
         <span *ngIf="n.type === 'follow'"> {{ 'NOTIF.FOLLOW' | translate }}</span>
         <span *ngIf="n.type === 'alert'"> {{ 'NOTIF.ALERT' | translate }}</span>
       </p>

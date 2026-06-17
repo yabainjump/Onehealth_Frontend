@@ -4,6 +4,14 @@
       <ion-back-button defaultHref="/tabs/alerts"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ 'ALERTS.DETAIL_TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end" *ngIf="isAuthor">
+      <ion-button (click)="openEdit()" [attr.aria-label]="'ALERTS.EDIT' | translate">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="confirmDelete()" [attr.aria-label]="'ALERTS.DELETE' | translate">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -45,5 +53,132 @@
     </div>
 
     <div id="alert-detail-map" class="ad-map" *ngIf="alert.lat && alert.lng"></div>
+
+    <!-- Réactions -->
+    <div class="ad-actions">
+      <button type="button" class="ad-like" [class.liked]="alert.userHasLiked" [disabled]="liking" (click)="toggleLike()">
+        <ion-icon [name]="alert.userHasLiked ? 'heart' : 'heart-outline'" aria-hidden="true"></ion-icon>
+        <span>{{ alert.likesCount || 0 }}</span>
+      </button>
+      <span class="ad-ccount">
+        <ion-icon name="chatbubble-outline" aria-hidden="true"></ion-icon>
+        {{ alert.commentsCount || 0 }}
+      </span>
+    </div>
   </article>
+
+  <!-- Commentaires -->
+  <section class="ad-comments" *ngIf="alert">
+    <h2>{{ 'ALERTS.COMMENTS' | translate }}</h2>
+
+    <div class="ad-comment-form">
+      <ion-textarea
+        [(ngModel)]="newComment"
+        [placeholder]="'ALERTS.COMMENT_PH' | translate"
+        autoGrow="true"
+        rows="1"
+        maxlength="500"
+      ></ion-textarea>
+      <ion-button
+        size="small"
+        [disabled]="commentSubmitting || !newComment.trim()"
+        (click)="submitComment()"
+      >
+        <ion-spinner *ngIf="commentSubmitting" name="crescent"></ion-spinner>
+        <span *ngIf="!commentSubmitting">{{ 'ALERTS.COMMENT_SEND' | translate }}</span>
+      </ion-button>
+    </div>
+
+    <p class="ad-no-comments" *ngIf="!alert.comments?.length">
+      {{ 'ALERTS.NO_COMMENTS' | translate }}
+    </p>
+
+    <div class="ad-comment" *ngFor="let c of alert.comments; trackBy: trackByComment">
+      <img [src]="c.author?.photoURL || 'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
+      <div class="ad-comment-body">
+        <span class="ad-comment-name">{{ c.author?.firstName }} {{ c.author?.lastName }}</span>
+        <p class="ad-comment-text">{{ c.text }}</p>
+        <span class="ad-comment-date">{{ c.createdAt | date: 'short' }}</span>
+      </div>
+      <button
+        type="button"
+        class="ad-comment-del"
+        *ngIf="canDeleteComment(c)"
+        (click)="deleteComment(c)"
+        [attr.aria-label]="'ALERTS.DELETE' | translate"
+      >
+        <ion-icon name="trash-outline"></ion-icon>
+      </button>
+    </div>
+  </section>
+
+  <!-- Modale d'édition (auteur) -->
+  <ion-modal [isOpen]="editOpen" (didDismiss)="closeEdit()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="success">
+          <ion-title>{{ 'ALERTS.EDIT' | translate }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeEdit()">{{ 'COMMON.CLOSE' | translate }}</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding ad-edit-form">
+        <ion-list lines="full">
+          <ion-item>
+            <ion-select [label]="'ALERTS.CATEGORY' | translate" labelPlacement="stacked" [(ngModel)]="editForm.category" interface="popover">
+              <ion-select-option value="human">{{ 'ALERTS.CAT_human' | translate }}</ion-select-option>
+              <ion-select-option value="animal">{{ 'ALERTS.CAT_animal' | translate }}</ion-select-option>
+              <ion-select-option value="environment">{{ 'ALERTS.CAT_environment' | translate }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-input [label]="'ALERTS.FIELD_TITLE' | translate" labelPlacement="stacked" [(ngModel)]="editForm.title" maxlength="140"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-textarea [label]="'ALERTS.FIELD_DESC' | translate" labelPlacement="stacked" [(ngModel)]="editForm.description" autoGrow="true" rows="3" maxlength="2000"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-input [label]="'ALERTS.FIELD_COUNTRY' | translate" labelPlacement="stacked" [(ngModel)]="editForm.country"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input [label]="'ALERTS.FIELD_CITY' | translate" labelPlacement="stacked" [(ngModel)]="editForm.city"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-select [label]="'ALERTS.FIELD_SEVERITY' | translate" labelPlacement="stacked" [(ngModel)]="editForm.severity" interface="popover">
+              <ion-select-option value="low">{{ 'ALERTS.SEV_low' | translate }}</ion-select-option>
+              <ion-select-option value="medium">{{ 'ALERTS.SEV_medium' | translate }}</ion-select-option>
+              <ion-select-option value="high">{{ 'ALERTS.SEV_high' | translate }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+
+        <!-- Photos -->
+        <button
+          type="button"
+          class="add-photo-btn"
+          [disabled]="editPhotoUploading || (editForm.imageUrls?.length || 0) >= 4"
+          (click)="editPhotoInput.click()"
+        >
+          <ion-spinner *ngIf="editPhotoUploading" name="crescent"></ion-spinner>
+          <ion-icon *ngIf="!editPhotoUploading" name="image-outline"></ion-icon>
+          {{ 'ALERTS.ADD_PHOTO' | translate }}
+        </button>
+        <input type="file" #editPhotoInput accept="image/*" multiple hidden (change)="handleEditPhoto($event)" />
+        <div class="photo-previews" *ngIf="editForm.imageUrls?.length">
+          <div class="photo-thumb" *ngFor="let url of editForm.imageUrls">
+            <img [src]="photoSrc(url)" alt="" />
+            <button type="button" class="photo-remove" (click)="removeEditPhoto(url)" [attr.aria-label]="'ALERTS.REMOVE_PHOTO' | translate">
+              <ion-icon name="close"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <ion-button expand="block" class="submit-btn" [disabled]="editSubmitting" (click)="submitEdit()">
+          <ion-spinner *ngIf="editSubmitting" name="crescent" slot="start"></ion-spinner>
+          {{ 'ALERTS.EDIT_SAVE' | translate }}
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

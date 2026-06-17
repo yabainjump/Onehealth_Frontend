@@ -14,6 +14,13 @@ export interface AlertAuthor {
   institution: string;
 }
 
+export interface AlertComment {
+  id: string;
+  author: AlertAuthor | null;
+  text: string;
+  createdAt: string;
+}
+
 export interface HealthAlert {
   id: string;
   category: AlertCategory;
@@ -26,8 +33,14 @@ export interface HealthAlert {
   severity: AlertSeverity;
   imageUrls: string[];
   author: AlertAuthor | null;
+  likesCount: number;
+  userHasLiked: boolean;
+  commentsCount: number;
+  comments?: AlertComment[];
   createdAt: string;
 }
+
+export type UpdateAlertPayload = Partial<CreateAlertPayload>;
 
 export interface CreateAlertPayload {
   category: AlertCategory;
@@ -85,6 +98,39 @@ export class AlertsService {
 
   create(payload: CreateAlertPayload): Observable<HealthAlert> {
     return this.api.post<HealthAlert, CreateAlertPayload>('/alerts', payload);
+  }
+
+  update(id: string, payload: UpdateAlertPayload): Observable<HealthAlert> {
+    return this.api.patch<HealthAlert, UpdateAlertPayload>(
+      `/alerts/${id}`,
+      payload,
+    );
+  }
+
+  remove(id: string): Observable<{ success: boolean }> {
+    return this.api.delete<{ success: boolean }>(`/alerts/${id}`);
+  }
+
+  like(id: string): Observable<HealthAlert> {
+    return this.api.post<HealthAlert, Record<string, never>>(
+      `/alerts/${id}/like`,
+      {},
+    );
+  }
+
+  unlike(id: string): Observable<HealthAlert> {
+    return this.api.delete<HealthAlert>(`/alerts/${id}/like`);
+  }
+
+  addComment(id: string, text: string): Observable<HealthAlert> {
+    return this.api.post<HealthAlert, { text: string }>(
+      `/alerts/${id}/comments`,
+      { text },
+    );
+  }
+
+  deleteComment(id: string, commentId: string): Observable<HealthAlert> {
+    return this.api.delete<HealthAlert>(`/alerts/${id}/comments/${commentId}`);
   }
 }
 

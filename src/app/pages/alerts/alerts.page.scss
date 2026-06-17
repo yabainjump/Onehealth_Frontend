@@ -151,6 +151,23 @@
   object-fit: cover;
 }
 
+.alert-stats {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #8893a6;
+  font-size: 0.78rem;
+}
+
+.alert-stats ion-icon {
+  font-size: 15px;
+}
+
+.alert-stats ion-icon:not(:first-child) {
+  margin-left: 6px;
+}
+
 /* Formulaire de signalement */
 .report-form .loc-btn {
   margin-top: 12px;
