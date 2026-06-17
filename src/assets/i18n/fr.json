@@ -315,6 +315,12 @@
     "COMMENTS": "Commentaires",
     "COMMENT_FAILED": "Impossible d'ajouter le commentaire."
   },
+  "EDITPOST": {
+    "NOT_FOUND": "Publication introuvable.",
+    "ADD_PHOTO": "Ajouter des photos",
+    "PHOTO_ERR": "Échec de l'envoi de la photo",
+    "ATTACHMENT_LOCKED": "La pièce jointe ne peut pas être modifiée ici."
+  },
   "ITEMS": {
     "CONTACT": "Contact",
     "DESCRIPTION": "Description"

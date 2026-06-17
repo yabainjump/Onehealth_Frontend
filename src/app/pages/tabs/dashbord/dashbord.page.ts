@@ -846,76 +846,12 @@ export class DashbordPage implements OnInit {
     await sheet.present();
   }
 
-  /** Ouvre l'éditeur du texte de la publication (auteur uniquement). */
-  private async editPost(post: Post): Promise<void> {
-    const alert = await this.alertController.create({
-      header: this.translate.instant('DASHBOARD.EDIT_TITLE'),
-      inputs: [
-        {
-          name: 'content',
-          type: 'textarea',
-          value: post.content || '',
-          attributes: { rows: 6 },
-        },
-      ],
-      buttons: [
-        { text: this.translate.instant('COMMON.CANCEL'), role: 'cancel' },
-        {
-          text: this.translate.instant('COMMON.SAVE'),
-          handler: (data) => {
-            void this.saveEditedPost(post, `${data?.content || ''}`.trim());
-            return true;
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
-  private async saveEditedPost(post: Post, newContent: string): Promise<void> {
+  /** Ouvre la page de modification de la publication (auteur uniquement). */
+  private editPost(post: Post): void {
     if (!post.id) {
       return;
     }
-    const hasMedia = (post.imageUrls?.length || 0) > 0 || !!post.attachment;
-    if (!newContent && !hasMedia) {
-      const t = await this.toastCtrl.create({
-        message: this.translate.instant('PUSHPUB.EMPTY'),
-        duration: 1800,
-        color: 'danger',
-      });
-      await t.present();
-      return;
-    }
-    if (newContent === (post.content || '')) {
-      return; // aucun changement
-    }
-    try {
-      const updated = await this.publicationService.updatePost(post.id, {
-        content: newContent,
-      });
-      const apply = (list: Post[]) => {
-        const target = list.find((p) => p.id === post.id);
-        if (target) {
-          target.content = updated?.content ?? newContent;
-          this.decoratePost(target); // recalcule le « voir plus »
-        }
-      };
-      apply(this.posts);
-      apply(this.filteredPosts);
-      const ok = await this.toastCtrl.create({
-        message: this.translate.instant('DASHBOARD.EDIT_DONE'),
-        duration: 1500,
-        color: 'success',
-      });
-      await ok.present();
-    } catch {
-      const err = await this.toastCtrl.create({
-        message: this.translate.instant('DASHBOARD.EDIT_ERROR'),
-        duration: 1800,
-        color: 'danger',
-      });
-      await err.present();
-    }
+    void this.router.navigate(['/tabs/edit-post', post.id]);
   }
 
   private async confirmDelete(post: Post) {

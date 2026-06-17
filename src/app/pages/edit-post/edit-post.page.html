@@ -1,0 +1,111 @@
+<ion-header class="ion-no-border composer-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="cancel()">
+        <ion-icon name="close-outline" slot="icon-only" [attr.aria-label]="'COMMON.CANCEL' | translate"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'DASHBOARD.EDIT_TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button
+        class="publish-btn"
+        shape="round"
+        (click)="save()"
+        [disabled]="!canSave"
+      >
+        <ion-spinner name="crescent" *ngIf="saving"></ion-spinner>
+        <span *ngIf="!saving">{{ 'COMMON.SAVE' | translate }}</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="composer-content">
+  <div class="ep-loading" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="ep-empty" *ngIf="!loading && notFound">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <p>{{ 'EDITPOST.NOT_FOUND' | translate }}</p>
+  </div>
+
+  <ng-container *ngIf="!loading && !notFound">
+    <!-- Auteur + audience -->
+    <div class="composer-author">
+      <ion-avatar>
+        <img src="assets/default-profile.png" alt="" />
+      </ion-avatar>
+      <span class="audience-chip">
+        <ion-icon name="earth-outline" aria-hidden="true"></ion-icon>
+        {{ 'PUSHPUB.PUBLIC' | translate }}
+      </span>
+    </div>
+
+    <!-- Zone d'écriture : s'agrandit avec le texte -->
+    <ion-textarea
+      class="composer-input"
+      [autoGrow]="true"
+      [rows]="6"
+      [placeholder]="'PUSHPUB.PLACEHOLDER' | translate"
+      [(ngModel)]="content"
+    ></ion-textarea>
+
+    <!-- Images : suppression individuelle -->
+    <div class="ep-media-grid" *ngIf="images.length" [class.single]="images.length === 1">
+      <div class="ep-media-cell" *ngFor="let url of images; trackBy: trackByUrl">
+        <img [src]="photoSrc(url)" alt="" loading="lazy" decoding="async" />
+        <button
+          type="button"
+          class="ep-media-remove"
+          (click)="removeImage(url)"
+          [attr.aria-label]="'PUSHPUB.REMOVE_MEDIA' | translate"
+        >
+          <ion-icon name="close" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pièce jointe : lecture seule -->
+    <div class="media-block" *ngIf="hasAttachment && attachment">
+      <video
+        *ngIf="attachment.type === 'video'"
+        class="video-preview"
+        [src]="attachment.url"
+        controls
+        playsinline
+        preload="metadata"
+      ></video>
+      <div class="doc-chip" *ngIf="attachment.type === 'document'">
+        <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+        <div class="doc-meta">
+          <p class="media-name">{{ attachment.fileName }}</p>
+          <small>{{ 'EDITPOST.ATTACHMENT_LOCKED' | translate }}</small>
+        </div>
+      </div>
+      <p class="ep-locked-note" *ngIf="attachment.type === 'video'">
+        {{ 'EDITPOST.ATTACHMENT_LOCKED' | translate }}
+      </p>
+    </div>
+  </ng-container>
+</ion-content>
+
+<!-- Barre d'ajout de photos (cachée pour les posts à pièce jointe) -->
+<ion-footer class="ion-no-border composer-footer" *ngIf="!loading && !notFound && !hasAttachment">
+  <div class="add-row">
+    <span class="add-label">{{ 'EDITPOST.ADD_PHOTO' | translate }}</span>
+    <div class="add-actions">
+      <button
+        type="button"
+        class="add-btn photo"
+        [disabled]="photoUploading || !canAddPhoto"
+        (click)="photoInput.click()"
+        [attr.aria-label]="'PUSHPUB.PHOTO' | translate"
+      >
+        <ion-spinner *ngIf="photoUploading" name="crescent"></ion-spinner>
+        <ion-icon *ngIf="!photoUploading" name="image-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
+  </div>
+  <input type="file" #photoInput accept="image/*" multiple hidden (change)="handlePhoto($event)" />
+</ion-footer>

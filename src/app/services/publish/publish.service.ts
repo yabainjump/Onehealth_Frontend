@@ -30,6 +30,9 @@ export interface Post {
   // URLs originales (pleine resolution), utilisees en repli si la miniature echoue.
   fullImageUrl?: string;
   fullImageUrls?: string[];
+  // Chemins BRUTS tels que stockes en base (ex: /uploads/post/xxx.webp).
+  // Indispensables pour re-enregistrer les images lors d'une modification.
+  rawImageUrls?: string[];
   attachment?: PostAttachment | null;
   likes: number;
   title?: string;
@@ -150,11 +153,11 @@ export class PublishService {
   /** Modifie le texte d'une publication (auteur uniquement — vérifié côté serveur). */
   async updatePost(
     postId: string,
-    payload: { title?: string; content?: string },
+    payload: { title?: string; content?: string; imageUrls?: string[] },
   ): Promise<Post> {
     const updated = await firstValueFrom(
       this.api
-        .patch<any, { title?: string; content?: string }>(
+        .patch<any, { title?: string; content?: string; imageUrls?: string[] }>(
           `/posts/${postId}`,
           payload,
         )
@@ -283,6 +286,7 @@ export class PublishService {
       imageUrls: (post?.imageUrls || []).map((url: string) => mediaThumbUrl(url, 1000)),
       fullImageUrl: resolveMediaUrl(post?.imageUrls?.[0]),
       fullImageUrls: (post?.imageUrls || []).map((url: string) => resolveMediaUrl(url)),
+      rawImageUrls: [...(post?.imageUrls || [])],
       attachment: post?.attachment
         ? {
             type: post.attachment.type,

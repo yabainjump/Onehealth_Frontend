@@ -1,0 +1,260 @@
+/* ===== Vue PC : composer centré (≥1024px) ===== */
+@media (min-width: 1024px) {
+  .composer-content {
+    --padding-start: max(16px, calc((100% - 620px) / 2));
+    --padding-end: max(16px, calc((100% - 620px) / 2));
+  }
+
+  .add-row {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+}
+
+/* ===== Composer moderne (aligné sur la page Publier) ===== */
+.composer-header ion-toolbar {
+  --background: #ffffff;
+  --color: #1b2330;
+  --border-width: 0;
+  border-bottom: 1px solid #e9edf3;
+}
+
+.composer-header ion-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.publish-btn {
+  --background: var(--ion-color-primary);
+  --background-activated: #17407f;
+  --color: #ffffff;
+  --border-radius: 20px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  font-weight: 600;
+  min-height: 38px;
+}
+
+.publish-btn ion-spinner {
+  width: 18px;
+  height: 18px;
+}
+
+.composer-content {
+  --background: #ffffff;
+}
+
+.ep-loading {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.ep-empty {
+  text-align: center;
+  color: #707f97;
+  padding: 56px 24px;
+}
+
+.ep-empty ion-icon {
+  font-size: 46px;
+  margin-bottom: 8px;
+}
+
+/* Ligne auteur + audience */
+.composer-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 4px;
+}
+
+.composer-author ion-avatar {
+  width: 44px;
+  height: 44px;
+}
+
+.audience-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border: 1px solid #d6deea;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #44516a;
+  background: #f6f8fc;
+}
+
+.audience-chip ion-icon {
+  font-size: 15px;
+}
+
+/* Zone d'écriture */
+.composer-input {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 8px;
+  --placeholder-color: #8a96a8;
+  --placeholder-opacity: 1;
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: #1b2330;
+}
+
+/* ===== Grille d'images éditable ===== */
+.ep-media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 8px 16px 16px;
+}
+
+.ep-media-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.ep-media-cell {
+  position: relative;
+}
+
+.ep-media-cell img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.ep-media-grid.single .ep-media-cell img {
+  aspect-ratio: 16 / 10;
+}
+
+.ep-media-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(17, 24, 39, 0.62);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ep-media-remove ion-icon {
+  font-size: 16px;
+}
+
+/* ===== Pièce jointe (lecture seule) ===== */
+.media-block {
+  margin: 8px 16px 16px;
+}
+
+.video-preview {
+  width: 100%;
+  max-height: 340px;
+  border-radius: 14px;
+  background: #000;
+  display: block;
+}
+
+.doc-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #dbe2ec;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.doc-chip ion-icon {
+  font-size: 30px;
+  color: #195fc8;
+  flex-shrink: 0;
+}
+
+.doc-meta {
+  min-width: 0;
+}
+
+.media-name {
+  margin: 0;
+  font-weight: 600;
+  color: #1b2a43;
+  word-break: break-word;
+}
+
+.doc-meta small {
+  color: #7a8699;
+}
+
+.ep-locked-note {
+  margin: 8px 2px 0;
+  font-size: 0.8rem;
+  color: #7a8699;
+}
+
+/* ===== Barre d'ajout de photos ===== */
+.composer-footer {
+  background: #ffffff;
+}
+
+.add-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  border-top: 1px solid #e9edf3;
+}
+
+.add-label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #44516a;
+}
+
+.add-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--app-transition);
+}
+
+.add-btn ion-icon,
+.add-btn ion-spinner {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+}
+
+.add-btn:active {
+  background: #eef1f6;
+}
+
+.add-btn.photo ion-icon {
+  color: #1f9d57;
+}
+
+.add-btn[disabled] {
+  opacity: 0.5;
+}

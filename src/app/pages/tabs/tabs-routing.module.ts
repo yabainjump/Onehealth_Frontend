@@ -43,6 +43,11 @@ const routes: Routes = [
           import('./pushpub/pushpub.module').then((m) => m.PushpubPageModule),
       },
       {
+        path: 'edit-post/:id',
+        loadComponent: () =>
+          import('../edit-post/edit-post.page').then((m) => m.EditPostPage),
+      },
+      {
         path: 'notifications',
         loadComponent: () =>
           import('../notifications/notifications.page').then(

@@ -315,6 +315,12 @@
     "COMMENTS": "Comments",
     "COMMENT_FAILED": "Could not add the comment."
   },
+  "EDITPOST": {
+    "NOT_FOUND": "Post not found.",
+    "ADD_PHOTO": "Add photos",
+    "PHOTO_ERR": "Photo upload failed",
+    "ATTACHMENT_LOCKED": "The attachment cannot be changed here."
+  },
   "ITEMS": {
     "CONTACT": "Contact",
     "DESCRIPTION": "Description"
