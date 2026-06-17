@@ -2,6 +2,36 @@
   --background: #f3f4f7;
 }
 
+/* Boutons éditer/supprimer dans la barre (natifs : évite le bug Ionic
+   "onAriaChanged" sur ion-button inséré dynamiquement). */
+.ad-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 4px;
+}
+
+.ad-tool-btn {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.ad-tool-btn ion-icon {
+  font-size: 22px;
+}
+
+.ad-tool-btn:active {
+  background: rgba(255, 255, 255, 0.18);
+}
+
 .ad-loading {
   display: flex;
   justify-content: center;

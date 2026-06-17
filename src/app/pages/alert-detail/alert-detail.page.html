@@ -4,14 +4,14 @@
       <ion-back-button defaultHref="/tabs/alerts"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ 'ALERTS.DETAIL_TITLE' | translate }}</ion-title>
-    <ion-buttons slot="end" *ngIf="isAuthor">
-      <ion-button (click)="openEdit()" [attr.aria-label]="'ALERTS.EDIT' | translate">
-        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="confirmDelete()" [attr.aria-label]="'ALERTS.DELETE' | translate">
-        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <div slot="end" class="ad-tools" *ngIf="isAuthor">
+      <button type="button" class="ad-tool-btn" (click)="openEdit()" [attr.aria-label]="'ALERTS.EDIT' | translate">
+        <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+      </button>
+      <button type="button" class="ad-tool-btn" (click)="confirmDelete()" [attr.aria-label]="'ALERTS.DELETE' | translate">
+        <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+      </button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
