@@ -108,7 +108,8 @@
     "SOMEONE": "Someone",
     "LIKE": "liked your post.",
     "COMMENT": "commented on your post.",
-    "FOLLOW": "started following you."
+    "FOLLOW": "started following you.",
+    "ALERT": "reported an alert near you."
   },
   "ALERTS": {
     "TITLE": "One Health Alerts",
@@ -142,7 +143,14 @@
     "CAT_environment": "Environment",
     "SEV_low": "Low",
     "SEV_medium": "Medium",
-    "SEV_high": "High"
+    "SEV_high": "High",
+    "NEAR_ME": "Near me",
+    "NEAR_ERR": "Couldn't get your location. Please try again.",
+    "ADD_PHOTO": "Add a photo",
+    "PHOTO_ERR": "Photo upload failed",
+    "REMOVE_PHOTO": "Remove photo",
+    "DETAIL_TITLE": "Alert details",
+    "NOT_FOUND": "Alert not found."
   },
   "DASHBOARD": {
     "SEARCH_PLACEHOLDER": "Search for a publication, author, institution…",

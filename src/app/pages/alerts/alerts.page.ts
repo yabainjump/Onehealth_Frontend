@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 import * as L from 'leaflet';
+import 'leaflet.markercluster';
 
 import {
   AlertCategory,
@@ -12,6 +14,7 @@ import {
   HealthAlert,
 } from '../../core/services/alerts.service';
 import { InteractionGuardService } from '../../core/services/interaction-guard.service';
+import { PublishService } from '../../services/publish/publish.service';
 import { resolveMediaUrl } from '../../core/utils/media-url.util';
 
 @Component({
@@ -26,20 +29,24 @@ export class AlertsPage implements OnInit {
   private readonly interactionGuard = inject(InteractionGuardService);
   private readonly toastCtrl = inject(ToastController);
   private readonly translate = inject(TranslateService);
+  private readonly router = inject(Router);
+  private readonly publishService = inject(PublishService);
 
   @ViewChild('mapEl', { static: false }) mapEl?: ElementRef<HTMLElement>;
 
   alerts: HealthAlert[] = [];
   loading = true;
   activeCategory: 'all' | AlertCategory = 'all';
+  nearActive = false;
 
   reportOpen = false;
   submitting = false;
   locating = false;
+  photoUploading = false;
   form: CreateAlertPayload = this.emptyForm();
 
   private map?: L.Map;
-  private markersLayer?: L.LayerGroup;
+  private markersLayer?: L.MarkerClusterGroup;
   private pickMap?: L.Map;
   private pickMarker?: L.Marker;
 
@@ -67,13 +74,28 @@ export class AlertsPage implements OnInit {
       maxZoom: 18,
       attribution: '© OpenStreetMap',
     }).addTo(this.map);
-    this.markersLayer = L.layerGroup().addTo(this.map);
+    this.markersLayer = L.markerClusterGroup({ maxClusterRadius: 50 });
+    this.map.addLayer(this.markersLayer);
     this.renderMarkers();
   }
 
   setCategory(category: 'all' | AlertCategory): void {
     this.activeCategory = category;
+    this.nearActive = false;
     this.loadAlerts();
+  }
+
+  private mapAlerts(items: HealthAlert[]): HealthAlert[] {
+    return (items || []).map((a) => ({
+      ...a,
+      author: a.author
+        ? {
+            ...a.author,
+            photoURL:
+              resolveMediaUrl(a.author.photoURL) || 'assets/default-profile.png',
+          }
+        : null,
+    }));
   }
 
   private loadAlerts(): void {
@@ -82,17 +104,7 @@ export class AlertsPage implements OnInit {
       this.activeCategory === 'all' ? {} : { category: this.activeCategory };
     this.alertsService.list({ ...filters, limit: 100 }).subscribe({
       next: (items) => {
-        this.alerts = (items || []).map((a) => ({
-          ...a,
-          author: a.author
-            ? {
-                ...a.author,
-                photoURL:
-                  resolveMediaUrl(a.author.photoURL) ||
-                  'assets/default-profile.png',
-              }
-            : null,
-        }));
+        this.alerts = this.mapAlerts(items);
         this.loading = false;
         this.renderMarkers();
       },
@@ -102,6 +114,91 @@ export class AlertsPage implements OnInit {
         this.renderMarkers();
       },
     });
+  }
+
+  /** Charge les alertes les plus proches de ma position (GPS). */
+  nearMe(): void {
+    if (!navigator.geolocation) {
+      void this.toast(this.translate.instant('ALERTS.LOCATION_UNSUPPORTED'), 'danger');
+      return;
+    }
+    this.loading = true;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const cat =
+          this.activeCategory === 'all' ? undefined : this.activeCategory;
+        this.alertsService
+          .near(pos.coords.latitude, pos.coords.longitude, 200, cat)
+          .subscribe({
+            next: (items) => {
+              this.nearActive = true;
+              this.alerts = this.mapAlerts(items);
+              this.loading = false;
+              this.renderMarkers();
+              this.map?.setView(
+                [pos.coords.latitude, pos.coords.longitude],
+                7,
+              );
+            },
+            error: () => {
+              this.loading = false;
+              void this.toast(this.translate.instant('ALERTS.NEAR_ERR'), 'danger');
+            },
+          });
+      },
+      (err) => {
+        this.loading = false;
+        let key = 'ALERTS.LOCATION_ERR';
+        if (err?.code === 1) {
+          key = 'ALERTS.LOCATION_DENIED';
+        } else if (err?.code === 2) {
+          key = 'ALERTS.LOCATION_UNAVAILABLE';
+        } else if (err?.code === 3) {
+          key = 'ALERTS.LOCATION_TIMEOUT';
+        }
+        void this.toast(this.translate.instant(key), 'danger');
+      },
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 },
+    );
+  }
+
+  /** Ouvre la page de détail d'une alerte. */
+  openDetail(a: HealthAlert): void {
+    if (a?.id) {
+      void this.router.navigate(['/tabs/alerts', a.id]);
+    }
+  }
+
+  // ===== Photos =====
+  async handlePhoto(event: any): Promise<void> {
+    const files: File[] = Array.from(event?.target?.files || []);
+    if (event?.target) {
+      event.target.value = '';
+    }
+    if (!files.length) {
+      return;
+    }
+    const current = this.form.imageUrls?.length || 0;
+    const room = Math.max(0, 4 - current);
+    this.photoUploading = true;
+    try {
+      for (const file of files.slice(0, room)) {
+        const url = await this.publishService.uploadImage(file);
+        this.form.imageUrls = [...(this.form.imageUrls || []), url];
+      }
+    } catch {
+      void this.toast(this.translate.instant('ALERTS.PHOTO_ERR'), 'danger');
+    } finally {
+      this.photoUploading = false;
+    }
+  }
+
+  removePhoto(url: string): void {
+    this.form.imageUrls = (this.form.imageUrls || []).filter((u) => u !== url);
+  }
+
+  photoSrc(url: string): string {
+    return resolveMediaUrl(url) || url;
   }
 
   private renderMarkers(): void {
@@ -261,6 +358,7 @@ export class AlertsPage implements OnInit {
       severity: this.form.severity,
       lat: typeof this.form.lat === 'number' ? this.form.lat : undefined,
       lng: typeof this.form.lng === 'number' ? this.form.lng : undefined,
+      imageUrls: this.form.imageUrls?.length ? this.form.imageUrls : undefined,
     };
     this.alertsService.create(payload).subscribe({
       next: () => {

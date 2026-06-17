@@ -38,6 +38,7 @@ export interface CreateAlertPayload {
   lat?: number;
   lng?: number;
   severity?: AlertSeverity;
+  imageUrls?: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -61,7 +62,29 @@ export class AlertsService {
     return this.api.get<HealthAlert[]>(`/alerts${qs ? `?${qs}` : ''}`);
   }
 
+  /** Alertes les plus proches d'un point (tri par distance). */
+  near(
+    lat: number,
+    lng: number,
+    radiusKm = 100,
+    category?: string,
+  ): Observable<HealthAlert[]> {
+    const params = new URLSearchParams();
+    params.set('lat', String(lat));
+    params.set('lng', String(lng));
+    params.set('radiusKm', String(radiusKm));
+    if (category) {
+      params.set('category', category);
+    }
+    return this.api.get<HealthAlert[]>(`/alerts/near?${params.toString()}`);
+  }
+
+  getById(id: string): Observable<HealthAlert> {
+    return this.api.get<HealthAlert>(`/alerts/${id}`);
+  }
+
   create(payload: CreateAlertPayload): Observable<HealthAlert> {
     return this.api.post<HealthAlert, CreateAlertPayload>('/alerts', payload);
   }
 }
+

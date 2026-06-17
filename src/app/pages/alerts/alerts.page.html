@@ -11,18 +11,22 @@
   <!-- Carte -->
   <div class="alerts-map" #mapEl></div>
 
-  <!-- Filtres par catégorie -->
+  <!-- Filtres -->
   <div class="alerts-filters">
-    <button type="button" [class.active]="activeCategory === 'all'" (click)="setCategory('all')">
+    <button type="button" class="chip-near" [class.active]="nearActive" (click)="nearMe()">
+      <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>
+      {{ 'ALERTS.NEAR_ME' | translate }}
+    </button>
+    <button type="button" [class.active]="!nearActive && activeCategory === 'all'" (click)="setCategory('all')">
       {{ 'ALERTS.ALL' | translate }}
     </button>
-    <button type="button" class="chip-human" [class.active]="activeCategory === 'human'" (click)="setCategory('human')">
+    <button type="button" class="chip-human" [class.active]="!nearActive && activeCategory === 'human'" (click)="setCategory('human')">
       {{ 'ALERTS.CAT_human' | translate }}
     </button>
-    <button type="button" class="chip-animal" [class.active]="activeCategory === 'animal'" (click)="setCategory('animal')">
+    <button type="button" class="chip-animal" [class.active]="!nearActive && activeCategory === 'animal'" (click)="setCategory('animal')">
       {{ 'ALERTS.CAT_animal' | translate }}
     </button>
-    <button type="button" class="chip-environment" [class.active]="activeCategory === 'environment'" (click)="setCategory('environment')">
+    <button type="button" class="chip-environment" [class.active]="!nearActive && activeCategory === 'environment'" (click)="setCategory('environment')">
       {{ 'ALERTS.CAT_environment' | translate }}
     </button>
   </div>
@@ -37,7 +41,7 @@
   </div>
 
   <!-- Liste des alertes -->
-  <article class="alert-card" *ngFor="let a of alerts; trackBy: trackById" (click)="focusAlert(a)">
+  <article class="alert-card" *ngFor="let a of alerts; trackBy: trackById" (click)="openDetail(a)">
     <div class="alert-tags">
       <span class="alert-cat alert-cat--{{ a.category }}">{{ ('ALERTS.CAT_' + a.category) | translate }}</span>
       <span class="alert-sev alert-sev--{{ a.severity }}">{{ ('ALERTS.SEV_' + a.severity) | translate }}</span>
@@ -48,6 +52,7 @@
       {{ a.city }}<span *ngIf="a.city && a.country">, </span>{{ a.country }}
     </p>
     <p class="alert-desc" *ngIf="a.description">{{ a.description }}</p>
+    <img class="alert-thumb" *ngIf="a.imageUrls?.length" [src]="photoSrc(a.imageUrls[0])" alt="" loading="lazy" decoding="async" />
     <div class="alert-meta">
       <img [src]="a.author?.photoURL || 'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
       <span>{{ a.author?.firstName }} {{ a.author?.lastName }} · {{ a.createdAt | date: 'short' }}</span>
@@ -101,6 +106,27 @@
             </ion-select>
           </ion-item>
         </ion-list>
+
+        <!-- Photos (optionnel, max 4) -->
+        <button
+          type="button"
+          class="add-photo-btn"
+          [disabled]="photoUploading || (form.imageUrls?.length || 0) >= 4"
+          (click)="alertPhotoInput.click()"
+        >
+          <ion-spinner *ngIf="photoUploading" name="crescent"></ion-spinner>
+          <ion-icon *ngIf="!photoUploading" name="image-outline"></ion-icon>
+          {{ 'ALERTS.ADD_PHOTO' | translate }}
+        </button>
+        <input type="file" #alertPhotoInput accept="image/*" multiple hidden (change)="handlePhoto($event)" />
+        <div class="photo-previews" *ngIf="form.imageUrls?.length">
+          <div class="photo-thumb" *ngFor="let url of form.imageUrls">
+            <img [src]="photoSrc(url)" alt="" />
+            <button type="button" class="photo-remove" (click)="removePhoto(url)" [attr.aria-label]="'ALERTS.REMOVE_PHOTO' | translate">
+              <ion-icon name="close"></ion-icon>
+            </button>
+          </div>
+        </div>
 
         <ion-button expand="block" fill="outline" class="loc-btn" [disabled]="locating" (click)="useMyLocation()">
           <ion-spinner *ngIf="locating" name="crescent" slot="start"></ion-spinner>

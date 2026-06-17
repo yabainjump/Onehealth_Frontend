@@ -108,7 +108,8 @@
     "SOMEONE": "Quelqu'un",
     "LIKE": "a aimé votre publication.",
     "COMMENT": "a commenté votre publication.",
-    "FOLLOW": "a commencé à vous suivre."
+    "FOLLOW": "a commencé à vous suivre.",
+    "ALERT": "a signalé une alerte près de vous."
   },
   "ALERTS": {
     "TITLE": "Alertes One Health",
@@ -142,7 +143,14 @@
     "CAT_environment": "Environnement",
     "SEV_low": "Faible",
     "SEV_medium": "Moyenne",
-    "SEV_high": "Élevée"
+    "SEV_high": "Élevée",
+    "NEAR_ME": "Près de moi",
+    "NEAR_ERR": "Impossible de récupérer ta position. Réessaie.",
+    "ADD_PHOTO": "Ajouter une photo",
+    "PHOTO_ERR": "Échec de l'envoi de la photo",
+    "REMOVE_PHOTO": "Retirer la photo",
+    "DETAIL_TITLE": "Détail de l'alerte",
+    "NOT_FOUND": "Alerte introuvable."
   },
   "DASHBOARD": {
     "SEARCH_PLACEHOLDER": "Rechercher une publication, un auteur, une institution…",

@@ -53,6 +53,8 @@ export class NotificationsPage implements OnInit {
       });
     } else if (notification.type === 'follow' && notification.actorId) {
       void this.router.navigate(['/tabs/profils', notification.actorId]);
+    } else if (notification.type === 'alert' && notification.alertId) {
+      void this.router.navigate(['/tabs/alerts', notification.alertId]);
     }
   }
 

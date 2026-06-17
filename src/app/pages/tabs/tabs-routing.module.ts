@@ -55,6 +55,13 @@ const routes: Routes = [
           import('../alerts/alerts.page').then((m) => m.AlertsPage),
       },
       {
+        path: 'alerts/:id',
+        loadComponent: () =>
+          import('../alert-detail/alert-detail.page').then(
+            (m) => m.AlertDetailPage,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashbord',
         pathMatch: 'full',

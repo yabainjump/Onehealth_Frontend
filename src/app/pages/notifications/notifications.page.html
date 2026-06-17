@@ -37,6 +37,7 @@
         <span *ngIf="n.type === 'like'"> {{ 'NOTIF.LIKE' | translate }}</span>
         <span *ngIf="n.type === 'comment'"> {{ 'NOTIF.COMMENT' | translate }}</span>
         <span *ngIf="n.type === 'follow'"> {{ 'NOTIF.FOLLOW' | translate }}</span>
+        <span *ngIf="n.type === 'alert'"> {{ 'NOTIF.ALERT' | translate }}</span>
       </p>
       <span class="notif-time">{{ n.createdAt | date: 'short' }}</span>
     </div>

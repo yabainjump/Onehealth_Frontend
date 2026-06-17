@@ -1,0 +1,66 @@
+# ============================================================
+#  OneHealth — Frontend Angular (SPA) + Service Worker (PWA)
+#  Apache / LiteSpeed (cPanel)
+# ============================================================
+
+# ------------------------------------------------------------
+#  1) Routing SPA : toute route inconnue -> index.html
+#     (sinon /tabs/alerts/123 renvoie une 404 en rechargeant)
+# ------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Laisser passer les fichiers et dossiers RÉELS (js, css, images, assets…)
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Tout le reste -> index.html (Angular Router prend le relais)
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# ------------------------------------------------------------
+#  2) NE JAMAIS mettre en cache le manifeste du Service Worker
+#     ni index.html. C'est CE qui permet de détecter un nouveau
+#     déploiement immédiatement (puis AppUpdateService rafraîchit).
+# ------------------------------------------------------------
+<IfModule mod_headers.c>
+  <FilesMatch "^(ngsw\.json|ngsw-worker\.js|safety-worker\.js|worker-basic\.min\.js|index\.html)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>
+
+# ------------------------------------------------------------
+#  3) Cache long pour les fichiers HASHÉS (leur nom change à
+#     chaque build : main.<hash>.js, styles.<hash>.css, …)
+# ------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/css               "access plus 1 year"
+  ExpiresByType image/png              "access plus 6 months"
+  ExpiresByType image/jpeg             "access plus 6 months"
+  ExpiresByType image/svg+xml          "access plus 6 months"
+  ExpiresByType image/webp             "access plus 6 months"
+  ExpiresByType font/woff2             "access plus 1 year"
+</IfModule>
+
+# ------------------------------------------------------------
+#  4) Compression (gain de poids au chargement)
+# ------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
+    application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+# ------------------------------------------------------------
+#  5) (Optionnel) Forcer HTTPS — décommente SEULEMENT si cPanel
+#     ne le fait pas déjà (sinon risque de boucle de redirection).
+# ------------------------------------------------------------
+# <IfModule mod_rewrite.c>
+#   RewriteCond %{HTTPS} off
+#   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>

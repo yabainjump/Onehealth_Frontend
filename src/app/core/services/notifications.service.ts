@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ApiService } from './api.service';
 
-export type AppNotificationType = 'like' | 'comment' | 'follow';
+export type AppNotificationType = 'like' | 'comment' | 'follow' | 'alert';
 
 export interface AppNotification {
   id: string;
@@ -11,6 +11,7 @@ export interface AppNotification {
   actorName: string;
   actorPhotoURL: string;
   postId: string | null;
+  alertId: string | null;
   read: boolean;
   createdAt: string;
 }

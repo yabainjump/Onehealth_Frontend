@@ -1,0 +1,49 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/alerts"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'ALERTS.DETAIL_TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ad-content">
+  <div class="ad-loading" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="ad-empty" *ngIf="!loading && !alert">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <p>{{ 'ALERTS.NOT_FOUND' | translate }}</p>
+  </div>
+
+  <article class="ad-card" *ngIf="alert">
+    <div class="alert-tags">
+      <span class="alert-cat alert-cat--{{ alert.category }}">{{ ('ALERTS.CAT_' + alert.category) | translate }}</span>
+      <span class="alert-sev alert-sev--{{ alert.severity }}">{{ ('ALERTS.SEV_' + alert.severity) | translate }}</span>
+    </div>
+
+    <h1>{{ alert.title }}</h1>
+
+    <p class="ad-loc" *ngIf="alert.city || alert.country">
+      <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+      {{ alert.city }}<span *ngIf="alert.city && alert.country">, </span>{{ alert.country }}
+    </p>
+
+    <div class="ad-author">
+      <img [src]="alert.author?.photoURL || 'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
+      <div>
+        <span class="ad-author-name">{{ alert.author?.firstName }} {{ alert.author?.lastName }}</span>
+        <span class="ad-date">{{ alert.createdAt | date: 'medium' }}</span>
+      </div>
+    </div>
+
+    <p class="ad-desc" *ngIf="alert.description">{{ alert.description }}</p>
+
+    <div class="ad-images" *ngIf="images.length">
+      <img *ngFor="let img of images" [src]="img" alt="" loading="lazy" decoding="async" />
+    </div>
+
+    <div id="alert-detail-map" class="ad-map" *ngIf="alert.lat && alert.lng"></div>
+  </article>
+</ion-content>
