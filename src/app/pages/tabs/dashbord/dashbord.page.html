@@ -17,6 +17,11 @@
 
     <!-- Boutons -->
     <ion-buttons slot="end">
+      <!-- Alertes One Health -->
+      <ion-button routerLink="/tabs/alerts" [attr.aria-label]="'ALERTS.NAV' | translate">
+        <ion-icon name="pulse-outline"></ion-icon>
+      </ion-button>
+
       <!-- Bouton pour ajouter une publication -->
       <ion-button (click)="goPushPub($event)" routerDirection="forward">
         <ion-icon name="add-outline"></ion-icon>

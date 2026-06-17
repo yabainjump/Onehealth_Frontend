@@ -220,6 +220,25 @@ textarea,
   text-decoration: underline;
 }
 
+/* Marqueurs de la carte des alertes (Leaflet injecte hors du scope composant) */
+.alert-marker {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+  background: #888888 !important;
+}
+.alert-marker--human {
+  background: #1d51a5 !important;
+}
+.alert-marker--animal {
+  background: #d9822b !important;
+}
+.alert-marker--environment {
+  background: #1f9d57 !important;
+}
+
 /* Titres un peu plus affirmés (hiérarchie visuelle) */
 h1, h2, h3 {
   letter-spacing: -0.01em;

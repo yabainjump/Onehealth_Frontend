@@ -1,0 +1,118 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="success">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/dashbord"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'ALERTS.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="alerts-content">
+  <!-- Carte -->
+  <div class="alerts-map" #mapEl></div>
+
+  <!-- Filtres par catégorie -->
+  <div class="alerts-filters">
+    <button type="button" [class.active]="activeCategory === 'all'" (click)="setCategory('all')">
+      {{ 'ALERTS.ALL' | translate }}
+    </button>
+    <button type="button" class="chip-human" [class.active]="activeCategory === 'human'" (click)="setCategory('human')">
+      {{ 'ALERTS.CAT_human' | translate }}
+    </button>
+    <button type="button" class="chip-animal" [class.active]="activeCategory === 'animal'" (click)="setCategory('animal')">
+      {{ 'ALERTS.CAT_animal' | translate }}
+    </button>
+    <button type="button" class="chip-environment" [class.active]="activeCategory === 'environment'" (click)="setCategory('environment')">
+      {{ 'ALERTS.CAT_environment' | translate }}
+    </button>
+  </div>
+
+  <div class="alerts-loading" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div class="alerts-empty" *ngIf="!loading && alerts.length === 0">
+    <ion-icon name="pulse-outline" aria-hidden="true"></ion-icon>
+    <p>{{ 'ALERTS.EMPTY' | translate }}</p>
+  </div>
+
+  <!-- Liste des alertes -->
+  <article class="alert-card" *ngFor="let a of alerts; trackBy: trackById" (click)="focusAlert(a)">
+    <div class="alert-tags">
+      <span class="alert-cat alert-cat--{{ a.category }}">{{ ('ALERTS.CAT_' + a.category) | translate }}</span>
+      <span class="alert-sev alert-sev--{{ a.severity }}">{{ ('ALERTS.SEV_' + a.severity) | translate }}</span>
+    </div>
+    <h3>{{ a.title }}</h3>
+    <p class="alert-loc" *ngIf="a.city || a.country">
+      <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+      {{ a.city }}<span *ngIf="a.city && a.country">, </span>{{ a.country }}
+    </p>
+    <p class="alert-desc" *ngIf="a.description">{{ a.description }}</p>
+    <div class="alert-meta">
+      <img [src]="a.author?.photoURL || 'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
+      <span>{{ a.author?.firstName }} {{ a.author?.lastName }} · {{ a.createdAt | date: 'short' }}</span>
+    </div>
+  </article>
+
+  <!-- Bouton signaler -->
+  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab-button (click)="openReport()" [attr.aria-label]="'ALERTS.REPORT' | translate">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Modale de signalement -->
+  <ion-modal [isOpen]="reportOpen" (didDismiss)="closeReport()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="success">
+          <ion-title>{{ 'ALERTS.REPORT' | translate }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeReport()">{{ 'COMMON.CLOSE' | translate }}</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding report-form">
+        <ion-list lines="full">
+          <ion-item>
+            <ion-select [label]="'ALERTS.CATEGORY' | translate" labelPlacement="stacked" [(ngModel)]="form.category" interface="popover">
+              <ion-select-option value="human">{{ 'ALERTS.CAT_human' | translate }}</ion-select-option>
+              <ion-select-option value="animal">{{ 'ALERTS.CAT_animal' | translate }}</ion-select-option>
+              <ion-select-option value="environment">{{ 'ALERTS.CAT_environment' | translate }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-input [label]="'ALERTS.FIELD_TITLE' | translate" labelPlacement="stacked" [(ngModel)]="form.title" maxlength="140" [placeholder]="'ALERTS.FIELD_TITLE_PH' | translate"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-textarea [label]="'ALERTS.FIELD_DESC' | translate" labelPlacement="stacked" [(ngModel)]="form.description" autoGrow="true" rows="3" maxlength="2000"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-input [label]="'ALERTS.FIELD_COUNTRY' | translate" labelPlacement="stacked" [(ngModel)]="form.country"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input [label]="'ALERTS.FIELD_CITY' | translate" labelPlacement="stacked" [(ngModel)]="form.city"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-select [label]="'ALERTS.FIELD_SEVERITY' | translate" labelPlacement="stacked" [(ngModel)]="form.severity" interface="popover">
+              <ion-select-option value="low">{{ 'ALERTS.SEV_low' | translate }}</ion-select-option>
+              <ion-select-option value="medium">{{ 'ALERTS.SEV_medium' | translate }}</ion-select-option>
+              <ion-select-option value="high">{{ 'ALERTS.SEV_high' | translate }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+
+        <ion-button expand="block" fill="outline" class="loc-btn" (click)="useMyLocation()">
+          <ion-icon name="locate-outline" slot="start"></ion-icon>
+          {{ 'ALERTS.USE_LOCATION' | translate }}
+        </ion-button>
+        <p class="loc-set" *ngIf="form.lat && form.lng">📍 {{ 'ALERTS.LOCATION_SET' | translate }}</p>
+
+        <ion-button expand="block" class="submit-btn" [disabled]="submitting" (click)="submitReport()">
+          <ion-spinner *ngIf="submitting" name="crescent" slot="start"></ion-spinner>
+          {{ 'ALERTS.SUBMIT' | translate }}
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

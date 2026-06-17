@@ -19,6 +19,10 @@
           <ion-icon [name]="selectedTab === 'dashbord' ? 'home' : 'home-outline'"></ion-icon>
           <span>{{ 'TABS.HOME' | translate }}</span>
         </a>
+        <a class="dn-link" routerLink="/tabs/alerts" [class.active]="selectedTab === 'alerts'">
+          <ion-icon [name]="selectedTab === 'alerts' ? 'pulse' : 'pulse-outline'"></ion-icon>
+          <span>{{ 'ALERTS.NAV' | translate }}</span>
+        </a>
         <a class="dn-link" routerLink="/tabs/home" [class.active]="selectedTab === 'home'">
           <ion-icon [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"></ion-icon>
           <span>{{ 'TABS.MESSAGES' | translate }}</span>

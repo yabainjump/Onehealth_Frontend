@@ -50,6 +50,11 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'alerts',
+        loadComponent: () =>
+          import('../alerts/alerts.page').then((m) => m.AlertsPage),
+      },
+      {
         path: '',
         redirectTo: 'dashbord',
         pathMatch: 'full',

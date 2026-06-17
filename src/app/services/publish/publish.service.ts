@@ -147,6 +147,22 @@ export class PublishService {
     return true;
   }
 
+  /** Modifie le texte d'une publication (auteur uniquement — vérifié côté serveur). */
+  async updatePost(
+    postId: string,
+    payload: { title?: string; content?: string },
+  ): Promise<Post> {
+    const updated = await firstValueFrom(
+      this.api
+        .patch<any, { title?: string; content?: string }>(
+          `/posts/${postId}`,
+          payload,
+        )
+        .pipe(map((value) => this.toLegacyPost(value))),
+    );
+    return updated;
+  }
+
   async getPostById(id: string): Promise<Post | undefined> {
     const post = await firstValueFrom(
       this.api.get<any>(`/posts/${id}`).pipe(
