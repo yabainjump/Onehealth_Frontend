@@ -35,10 +35,13 @@ export class AlertsPage implements OnInit {
 
   reportOpen = false;
   submitting = false;
+  locating = false;
   form: CreateAlertPayload = this.emptyForm();
 
   private map?: L.Map;
   private markersLayer?: L.LayerGroup;
+  private pickMap?: L.Map;
+  private pickMarker?: L.Marker;
 
   ngOnInit(): void {
     this.loadAlerts();
@@ -149,21 +152,94 @@ export class AlertsPage implements OnInit {
 
   closeReport(): void {
     this.reportOpen = false;
+    if (this.pickMap) {
+      this.pickMap.remove();
+      this.pickMap = undefined;
+      this.pickMarker = undefined;
+    }
+  }
+
+  // Mini-carte du formulaire : on l'initialise une fois la modale affichée.
+  onReportPresent(): void {
+    setTimeout(() => this.initPickMap(), 200);
+  }
+
+  private initPickMap(): void {
+    const el = document.getElementById('alert-pick-map');
+    if (!el) {
+      return;
+    }
+    if (this.pickMap) {
+      this.pickMap.invalidateSize();
+      return;
+    }
+    const hasPoint =
+      typeof this.form.lat === 'number' && typeof this.form.lng === 'number';
+    const center: [number, number] = hasPoint
+      ? [this.form.lat as number, this.form.lng as number]
+      : [6.5, 16];
+    this.pickMap = L.map(el, { center, zoom: hasPoint ? 9 : 3 });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap',
+    }).addTo(this.pickMap);
+
+    if (hasPoint) {
+      this.pickMarker = L.marker(center, { icon: this.pickIcon() }).addTo(this.pickMap);
+    }
+
+    this.pickMap.on('click', (e: L.LeafletMouseEvent) => {
+      this.form.lat = e.latlng.lat;
+      this.form.lng = e.latlng.lng;
+      if (this.pickMarker) {
+        this.pickMarker.setLatLng(e.latlng);
+      } else {
+        this.pickMarker = L.marker(e.latlng, { icon: this.pickIcon() }).addTo(
+          this.pickMap as L.Map,
+        );
+      }
+    });
+
+    setTimeout(() => this.pickMap?.invalidateSize(), 250);
+  }
+
+  private pickIcon(): L.DivIcon {
+    return L.divIcon({
+      className: 'pick-marker',
+      html: '<span></span>',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12],
+    });
   }
 
   useMyLocation(): void {
     if (!navigator.geolocation) {
-      void this.toast(this.translate.instant('ALERTS.LOCATION_ERR'), 'danger');
+      void this.toast(this.translate.instant('ALERTS.LOCATION_UNSUPPORTED'), 'danger');
       return;
     }
+    this.locating = true;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        this.locating = false;
         this.form.lat = pos.coords.latitude;
         this.form.lng = pos.coords.longitude;
         void this.toast(this.translate.instant('ALERTS.LOCATION_OK'), 'success');
       },
-      () => void this.toast(this.translate.instant('ALERTS.LOCATION_ERR'), 'danger'),
-      { enableHighAccuracy: true, timeout: 8000 },
+      (err) => {
+        this.locating = false;
+        // Message précis selon la cause (permission / GPS éteint / délai).
+        let key = 'ALERTS.LOCATION_ERR';
+        if (err?.code === 1) {
+          key = 'ALERTS.LOCATION_DENIED';
+        } else if (err?.code === 2) {
+          key = 'ALERTS.LOCATION_UNAVAILABLE';
+        } else if (err?.code === 3) {
+          key = 'ALERTS.LOCATION_TIMEOUT';
+        }
+        void this.toast(this.translate.instant(key), 'danger');
+      },
+      // Précision réseau (rapide, marche en intérieur) + délai large + cache récent.
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 },
     );
   }
 

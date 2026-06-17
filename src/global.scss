@@ -239,6 +239,17 @@ textarea,
   background: #1f9d57 !important;
 }
 
+/* Marqueur de sélection (choisir le lieu sur la mini-carte du formulaire) */
+.pick-marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--ion-color-danger, #eb445a) !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+}
+
 /* Titres un peu plus affirmés (hiérarchie visuelle) */
 h1, h2, h3 {
   letter-spacing: -0.01em;

@@ -163,6 +163,21 @@
   font-size: 0.85rem;
 }
 
+.report-form .pick-hint {
+  margin: 16px 0 6px;
+  font-size: 0.85rem;
+  color: #44516a;
+}
+
+.report-form .pick-map {
+  width: 100%;
+  height: 200px;
+  border-radius: 10px;
+  border: 1px solid #d6deea;
+  overflow: hidden;
+  z-index: 0;
+}
+
 .report-form .submit-btn {
   margin-top: 16px;
 }

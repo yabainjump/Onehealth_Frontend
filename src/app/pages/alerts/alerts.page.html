@@ -62,7 +62,7 @@
   </ion-fab>
 
   <!-- Modale de signalement -->
-  <ion-modal [isOpen]="reportOpen" (didDismiss)="closeReport()">
+  <ion-modal [isOpen]="reportOpen" (didDismiss)="closeReport()" (didPresent)="onReportPresent()">
     <ng-template>
       <ion-header>
         <ion-toolbar color="success">
@@ -102,11 +102,16 @@
           </ion-item>
         </ion-list>
 
-        <ion-button expand="block" fill="outline" class="loc-btn" (click)="useMyLocation()">
-          <ion-icon name="locate-outline" slot="start"></ion-icon>
-          {{ 'ALERTS.USE_LOCATION' | translate }}
+        <ion-button expand="block" fill="outline" class="loc-btn" [disabled]="locating" (click)="useMyLocation()">
+          <ion-spinner *ngIf="locating" name="crescent" slot="start"></ion-spinner>
+          <ion-icon *ngIf="!locating" name="locate-outline" slot="start"></ion-icon>
+          {{ (locating ? 'ALERTS.LOCATING' : 'ALERTS.USE_LOCATION') | translate }}
         </ion-button>
         <p class="loc-set" *ngIf="form.lat && form.lng">📍 {{ 'ALERTS.LOCATION_SET' | translate }}</p>
+
+        <!-- Choisir le lieu en touchant la carte (sans permission GPS) -->
+        <p class="pick-hint">{{ 'ALERTS.PICK_HINT' | translate }}</p>
+        <div id="alert-pick-map" class="pick-map"></div>
 
         <ion-button expand="block" class="submit-btn" [disabled]="submitting" (click)="submitReport()">
           <ion-spinner *ngIf="submitting" name="crescent" slot="start"></ion-spinner>
