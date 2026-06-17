@@ -18,8 +18,8 @@
     <!-- Boutons -->
     <ion-buttons slot="end">
       <!-- Alertes One Health -->
-      <ion-button routerLink="/tabs/alerts" [attr.aria-label]="'ALERTS.NAV' | translate">
-        <ion-icon name="pulse-outline"></ion-icon>
+      <ion-button routerLink="/tabs/alerts">
+        <ion-icon name="pulse-outline" [attr.aria-label]="'ALERTS.NAV' | translate"></ion-icon>
       </ion-button>
 
       <!-- Bouton pour ajouter une publication -->
@@ -117,8 +117,8 @@
 
       <!-- 👇 Ajout: menu trois points (auteur uniquement) -->
       <ion-button class="post-menu-btn" fill="clear"  *ngIf="isOwner(post)"
-        (click)="$event.stopPropagation(); presentPostActions(post)" aria-label="Actions publication">
-        <ion-icon class="law" name="ellipsis-vertical-outline"></ion-icon>
+        (click)="$event.stopPropagation(); presentPostActions(post)">
+        <ion-icon class="law" name="ellipsis-vertical-outline" aria-label="Actions publication"></ion-icon>
       </ion-button>
 
     </div>

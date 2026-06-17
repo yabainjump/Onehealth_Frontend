@@ -19,8 +19,8 @@
       </button>
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button fill="clear" class="toolbar-action" [attr.aria-label]="'CHAT.OPTIONS' | translate" (click)="openOptionsMenu()">
-        <ion-icon name="ellipsis-vertical" aria-hidden="true"></ion-icon>
+      <ion-button fill="clear" class="toolbar-action" (click)="openOptionsMenu()">
+        <ion-icon name="ellipsis-vertical" [attr.aria-label]="'CHAT.OPTIONS' | translate"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
