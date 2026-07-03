@@ -281,6 +281,16 @@ export class ProfilsPage implements OnInit {
     }
   }
 
+  onCoverImageError(event: Event): void {
+    const fallback = 'assets/images/bg1.avif';
+    this.coverPhotoURL = fallback;
+
+    const img = event.target as HTMLImageElement | null;
+    if (img && img.getAttribute('src') !== fallback) {
+      img.src = fallback;
+    }
+  }
+
   openAttachment(post: Post, event?: Event) {
     event?.stopPropagation();
     const url = this.getAttachment(post)?.url;

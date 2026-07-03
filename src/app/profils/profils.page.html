@@ -3,6 +3,7 @@
     <img
       class="hero-cover"
       [src]="coverPhotoURL"
+      (error)="onCoverImageError($event)"
       alt="Photo de mur"
       loading="eager"
       fetchpriority="high"
