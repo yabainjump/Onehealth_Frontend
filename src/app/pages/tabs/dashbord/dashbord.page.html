@@ -158,11 +158,12 @@
     <div class="video-wrapper" *ngIf="hasVideoAttachment(post)">
       <video
         class="post-video"
-        [src]="post.attachment?.url"
+        appPauseOffscreen
+        [src]="videoSrc(post.attachment?.url)"
         [poster]="post.attachment?.posterUrl || null"
         controls
         playsinline
-        preload="none">
+        preload="metadata">
       </video>
     </div>
 
@@ -177,6 +178,14 @@
           {{ 'DASHBOARD.OPEN' | translate }}
         </ion-button>
       </div>
+      <!-- Aperçu inline du PDF (façon LinkedIn) — desktop uniquement -->
+      <iframe
+        *ngIf="isPdfAttachment(post)"
+        class="doc-preview-frame"
+        [src]="pdfPreviewUrl(post)"
+        loading="lazy"
+        title="Aperçu du document"
+      ></iframe>
     </div>
 
     <div class="post-footer">

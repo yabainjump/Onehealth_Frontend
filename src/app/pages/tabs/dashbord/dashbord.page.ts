@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import {
   AlertController,
@@ -82,6 +83,7 @@ export class DashbordPage implements OnInit {
     private readonly chromeVisibility: ChromeVisibilityService,
     private readonly feedSearch: FeedSearchService,
     private readonly usersService: UsersService,
+    private readonly sanitizer: DomSanitizer,
   ) {}
 
   // ===== Suggestions « Qui suivre » (colonne droite, PC, connectés) =====
@@ -172,11 +174,17 @@ export class DashbordPage implements OnInit {
     this.chromeVisibility.setHidden(hidden);
   }
 
-  /** Au départ de l'onglet : on réaffiche toujours le chrome. */
+  /**
+   * Au départ de l'onglet : on réaffiche le chrome et on coupe toute lecture
+   * vidéo en cours (les pages tabs restent en cache) — comportement LinkedIn.
+   */
   ionViewWillLeave(): void {
     this.lastScrollTop = 0;
     this.chromeHidden = false;
     this.chromeVisibility.reset();
+    document
+      .querySelectorAll<HTMLVideoElement>('video.post-video')
+      .forEach((video) => video.pause());
   }
 
   private buildPostUrl(id: string): string {
@@ -461,6 +469,45 @@ export class DashbordPage implements OnInit {
     void this.refreshFeed().then(() => {
       void this.content?.scrollToTop(300);
     });
+  }
+
+  /**
+   * Le fragment #t=0.1 force le navigateur à afficher la première image de
+   * la vidéo même sans poster (sinon, cadre noir avec preload="metadata"
+   * quand la miniature générée côté serveur manque).
+   */
+  videoSrc(url?: string | null): string {
+    return url ? `${url}#t=0.1` : '';
+  }
+
+  isPdfAttachment(post: Post): boolean {
+    const attachment = post.attachment;
+    if (!attachment || attachment.type !== 'document') {
+      return false;
+    }
+    return (
+      (attachment.mimeType || '').toLowerCase().includes('pdf') ||
+      /\.pdf(\?.*)?$/i.test(attachment.fileName || attachment.url || '')
+    );
+  }
+
+  // Mémoïsé : bypassSecurityTrustResourceUrl retourne un nouvel objet à
+  // chaque appel, ce qui ferait recharger l'iframe à chaque cycle Angular.
+  private readonly pdfUrlCache = new Map<string, SafeResourceUrl>();
+
+  pdfPreviewUrl(post: Post): SafeResourceUrl | null {
+    const url = post.attachment?.url;
+    if (!url) {
+      return null;
+    }
+    let safe = this.pdfUrlCache.get(url);
+    if (!safe) {
+      safe = this.sanitizer.bypassSecurityTrustResourceUrl(
+        `${url}#toolbar=0&navpanes=0&view=FitH`,
+      );
+      this.pdfUrlCache.set(url, safe);
+    }
+    return safe;
   }
 
   /** Patche en place un post déjà présent dans les listes en mémoire (édition). */

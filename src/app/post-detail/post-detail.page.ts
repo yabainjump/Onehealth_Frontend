@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommentData, Post, PostAttachment, PublishService } from '../services/publish/publish.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 import { buildPostHtml, hashtagFromClick } from '../shared/utils/post-html.util';
 import { IonInput, ToastController } from '@ionic/angular';
 import { ShareLinkService } from '../core/services/share-link.service';
@@ -173,6 +173,47 @@ longPost:   Record<string, boolean> = {};
     const url = this.getAttachment(post)?.url;
     if (!url) return;
     window.open(url, '_blank', 'noopener');
+  }
+
+  // En quittant la page (gardée en cache par Ionic), on coupe la lecture.
+  ionViewWillLeave(): void {
+    document
+      .querySelectorAll<HTMLVideoElement>('video.post-video')
+      .forEach((video) => video.pause());
+  }
+
+  /** #t=0.1 : force l'affichage de la première image même sans poster. */
+  videoSrc(url?: string | null): string {
+    return url ? `${url}#t=0.1` : '';
+  }
+
+  isPdfAttachment(post: Post | null): boolean {
+    const attachment = this.getAttachment(post);
+    if (!attachment || attachment.type !== 'document') {
+      return false;
+    }
+    return (
+      (attachment.mimeType || '').toLowerCase().includes('pdf') ||
+      /\.pdf(\?.*)?$/i.test(attachment.fileName || attachment.url || '')
+    );
+  }
+
+  // Mémoïsé : un nouvel objet SafeResourceUrl à chaque cycle rechargerait l'iframe.
+  private readonly pdfUrlCache = new Map<string, SafeResourceUrl>();
+
+  pdfPreviewUrl(post: Post | null): SafeResourceUrl | null {
+    const url = this.getAttachment(post)?.url;
+    if (!url) {
+      return null;
+    }
+    let safe = this.pdfUrlCache.get(url);
+    if (!safe) {
+      safe = this.sanitizer.bypassSecurityTrustResourceUrl(
+        `${url}#toolbar=0&navpanes=0&view=FitH`,
+      );
+      this.pdfUrlCache.set(url, safe);
+    }
+    return safe;
   }
 
   // Repli : si la miniature (/api/media/thumb) echoue, on charge l'image originale.

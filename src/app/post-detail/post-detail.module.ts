@@ -9,6 +9,7 @@ import { PostDetailPageRoutingModule } from './post-detail-routing.module';
 
 import { PostDetailPage } from './post-detail.page';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { PauseOffscreenDirective } from 'src/app/shared/directives/pause-offscreen.directive';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
     IonicModule,
     PostDetailPageRoutingModule,
     TranslateModule,
-    ComponentsModule
+    ComponentsModule,
+    PauseOffscreenDirective
   ],
   declarations: [PostDetailPage]
 })

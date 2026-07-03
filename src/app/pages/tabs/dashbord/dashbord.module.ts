@@ -10,6 +10,7 @@ import { DashbordPageRoutingModule } from './dashbord-routing.module';
 
 import { DashbordPage } from './dashbord.page';
 import { ComponentsModule } from 'src/app/components/components.module';
+import { PauseOffscreenDirective } from 'src/app/shared/directives/pause-offscreen.directive';
 
 @NgModule({
   exports: [FormatPostPipe],
@@ -19,7 +20,8 @@ import { ComponentsModule } from 'src/app/components/components.module';
     IonicModule,
     DashbordPageRoutingModule,
     TranslateModule,
-    ComponentsModule
+    ComponentsModule,
+    PauseOffscreenDirective
   ],
   declarations: [DashbordPage, FormatPostPipe]
 })
