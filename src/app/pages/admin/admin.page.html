@@ -40,6 +40,63 @@
 </ion-header>
 
 <ion-content class="admin-content">
+  <div class="admin-shell">
+    <!-- Sidebar de navigation (PC uniquement) -->
+    <aside class="admin-side desktop-only">
+      <p class="side-heading">{{ 'ADMIN.TITLE' | translate }}</p>
+      <button
+        type="button"
+        class="side-link"
+        [class.active]="section === 'overview'"
+        (click)="selectSection('overview')"
+      >
+        <ion-icon name="grid-outline" aria-hidden="true"></ion-icon>
+        {{ 'ADMIN.OVERVIEW' | translate }}
+      </button>
+      <button
+        type="button"
+        class="side-link"
+        [class.active]="section === 'users'"
+        (click)="selectSection('users')"
+      >
+        <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+        {{ 'ADMIN.USERS' | translate }}
+      </button>
+      <button
+        type="button"
+        class="side-link"
+        [class.active]="section === 'certifications'"
+        (click)="selectSection('certifications')"
+      >
+        <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
+        {{ 'ADMIN.CERTIFICATIONS' | translate }}
+        <ion-badge *ngIf="stats?.pendingCertifications" color="warning">
+          {{ stats?.pendingCertifications }}
+        </ion-badge>
+      </button>
+
+      <p class="side-heading small">{{ 'ADMIN.CONTENT' | translate }}</p>
+      <button
+        type="button"
+        class="side-link"
+        [class.active]="section === 'content' && contentMode === 'posts'"
+        (click)="selectSection('content', 'posts')"
+      >
+        <ion-icon name="newspaper-outline" aria-hidden="true"></ion-icon>
+        {{ 'ADMIN.POSTS' | translate }}
+      </button>
+      <button
+        type="button"
+        class="side-link"
+        [class.active]="section === 'content' && contentMode === 'alerts'"
+        (click)="selectSection('content', 'alerts')"
+      >
+        <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+        {{ 'ADMIN.ALERTS' | translate }}
+      </button>
+    </aside>
+
+    <main class="admin-main">
   <!-- ===== Vue d'ensemble ===== -->
   <section *ngIf="section === 'overview'">
     <div class="loading-box" *ngIf="loadingStats">
@@ -114,6 +171,77 @@
       <ion-spinner name="crescent"></ion-spinner>
     </div>
 
+    <!-- Table (PC) : style back-office -->
+    <div class="users-table-wrap desktop-only" *ngIf="!loadingUsers && users.length">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>{{ 'ADMIN.TABLE_USER' | translate }}</th>
+            <th>{{ 'ADMIN.TABLE_ROLE' | translate }}</th>
+            <th>{{ 'ADMIN.TABLE_STATUS' | translate }}</th>
+            <th>{{ 'ADMIN.TABLE_CREATED' | translate }}</th>
+            <th class="th-actions">{{ 'ADMIN.TABLE_ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>
+              <div class="cell-user" (click)="openProfile(user)">
+                <img [src]="photo(user)" alt="" />
+                <div>
+                  <p class="cell-name">
+                    {{ displayName(user) }}
+                    <ion-icon
+                      *ngIf="user.isCertified"
+                      src="assets/icons/verified-badge.svg"
+                      class="verified-badge"
+                      aria-hidden="true"
+                    ></ion-icon>
+                  </p>
+                  <p class="cell-email">{{ user.email }}</p>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="chip" [class.chip-admin]="user.role === 'admin'">
+                {{ (user.role === 'admin' ? 'ADMIN.ROLE_ADMIN' : 'ADMIN.ROLE_USER') | translate }}
+              </span>
+            </td>
+            <td>
+              <span class="chip chip-green" *ngIf="!user.isBanned">{{ 'ADMIN.STATUS_ACTIVE' | translate }}</span>
+              <span class="chip chip-red" *ngIf="user.isBanned">{{ 'ADMIN.STATUS_BANNED' | translate }}</span>
+              <span class="chip chip-blue" *ngIf="user.isCertified">{{ 'ADMIN.STATUS_CERTIFIED' | translate }}</span>
+            </td>
+            <td class="cell-date">{{ user.createdAt | date: 'EEE dd MMM yyyy HH:mm' }}</td>
+            <td class="cell-actions">
+              <ng-container *ngIf="!isSelf(user)">
+                <button
+                  type="button"
+                  class="icon-btn"
+                  [class.danger]="!user.isBanned"
+                  [class.success]="user.isBanned"
+                  [title]="(user.isBanned ? 'ADMIN.UNBAN' : 'ADMIN.BAN') | translate"
+                  (click)="toggleBan(user)"
+                >
+                  <ion-icon name="power-outline" aria-hidden="true"></ion-icon>
+                </button>
+                <button
+                  type="button"
+                  class="icon-btn"
+                  [title]="(user.role === 'admin' ? 'ADMIN.DEMOTE' : 'ADMIN.PROMOTE') | translate"
+                  (click)="toggleRole(user)"
+                >
+                  <ion-icon name="shield-outline" aria-hidden="true"></ion-icon>
+                </button>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Cartes (mobile) -->
+    <div class="mobile-only">
     <div class="item-card" *ngFor="let user of users">
       <img [src]="photo(user)" alt="" class="item-avatar" (click)="openProfile(user)" />
       <div class="item-info" (click)="openProfile(user)">
@@ -149,6 +277,7 @@
           {{ (user.isBanned ? 'ADMIN.UNBAN' : 'ADMIN.BAN') | translate }}
         </ion-button>
       </div>
+    </div>
     </div>
 
     <div class="empty-note" *ngIf="!loadingUsers && !users.length">
@@ -455,4 +584,6 @@
       </div>
     </ng-container>
   </section>
+    </main>
+  </div>
 </ion-content>

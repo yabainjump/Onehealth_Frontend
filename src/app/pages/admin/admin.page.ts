@@ -84,6 +84,16 @@ export class AdminPage implements OnInit {
     }
   }
 
+  /** Navigation via la sidebar (PC) : section + sous-mode éventuel. */
+  selectSection(section: AdminSection, mode?: ContentMode): void {
+    this.section = section;
+    if (mode) {
+      this.contentMode = mode;
+      this.onContentModeChange();
+    }
+    this.onSectionChange();
+  }
+
   onContentModeChange(): void {
     if (this.contentMode === 'posts' && !this.posts.length) {
       void this.loadPosts();

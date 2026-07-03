@@ -380,27 +380,255 @@ ion-segment-button ion-badge {
   }
 }
 
-/* ===== Vue PC (≥1024px) : mise en page large en 2 colonnes ===== */
+/* ===== Utilitaires responsive ===== */
+.desktop-only {
+  display: none;
+}
+
+/* ===== Table utilisateurs (style back-office, PC) ===== */
+.users-table-wrap {
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 16px;
+  overflow-x: auto;
+  box-shadow: 0 1px 6px rgba(18, 34, 64, 0.05);
+  margin-bottom: 12px;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.users-table thead th {
+  background: linear-gradient(90deg, #e8f0fe 0%, #ece9fd 100%);
+  color: #1b2330;
+  font-weight: 700;
+  text-align: left;
+  padding: 14px 16px;
+  white-space: nowrap;
+}
+
+.users-table thead th.th-actions {
+  text-align: right;
+}
+
+.users-table tbody td {
+  padding: 12px 16px;
+  border-top: 1px solid #eef2f8;
+  vertical-align: middle;
+}
+
+.users-table tbody tr:hover {
+  background: #f8fafd;
+}
+
+.cell-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.cell-user img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eef2f8;
+}
+
+.cell-name {
+  margin: 0;
+  font-weight: 700;
+  color: #1b2330;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cell-email {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #707f97;
+}
+
+.cell-date {
+  color: #3949ab;
+  white-space: nowrap;
+}
+
+.cell-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Chips de statut (comme les badges Actif / verified de la maquette) */
+.chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #eef2f8;
+  color: #44516a;
+  margin: 2px 4px 2px 0;
+}
+
+.chip-admin {
+  background: #ece9fd;
+  color: #5b4ac9;
+}
+
+.chip-green {
+  background: #e6f7ee;
+  color: #1f9d57;
+}
+
+.chip-red {
+  background: #fdeaea;
+  color: #d64545;
+}
+
+.chip-blue {
+  background: #e7f0ff;
+  color: #195fc8;
+}
+
+/* Boutons d'action ronds (façon power / menu de la maquette) */
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 0;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 6px;
+  box-shadow: 0 1px 5px rgba(18, 34, 64, 0.14);
+  transition: background 0.12s ease;
+}
+
+.icon-btn ion-icon {
+  font-size: 18px;
+  color: #44516a;
+}
+
+.icon-btn.danger ion-icon {
+  color: #d64545;
+}
+
+.icon-btn.success ion-icon {
+  color: #1f9d57;
+}
+
+.icon-btn:hover {
+  background: #f0f4fa;
+}
+
+/* ===== Vue PC (≥1024px) : sidebar + contenu large ===== */
 @media (min-width: 1024px) {
+  .desktop-only {
+    display: block;
+  }
+
+  .mobile-only {
+    display: none;
+  }
+
+  /* La sidebar remplace les onglets du haut et le sous-onglet Posts/Alertes */
+  .segment-bar,
+  .sub-segment {
+    display: none;
+  }
+
   .admin-content {
-    --padding-start: max(24px, calc((100% - 1140px) / 2));
-    --padding-end: max(24px, calc((100% - 1140px) / 2));
+    --padding-start: max(24px, calc((100% - 1320px) / 2));
+    --padding-end: max(24px, calc((100% - 1320px) / 2));
     --padding-top: 20px;
   }
 
-  .segment-bar ion-segment {
-    max-width: 1140px;
-    margin-inline: auto;
+  .admin-shell {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
   }
 
-  /* KPIs sur une seule rangée */
+  .admin-side {
+    position: sticky;
+    top: 8px;
+    width: 240px;
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 1px solid #e9edf3;
+    border-radius: 16px;
+    padding: 14px 10px;
+    box-shadow: 0 1px 6px rgba(18, 34, 64, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .side-heading {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #8a96a8;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin: 8px 10px 6px;
+  }
+
+  .side-heading.small {
+    margin-top: 16px;
+  }
+
+  .side-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #44516a;
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .side-link ion-icon {
+    font-size: 18px;
+  }
+
+  .side-link ion-badge {
+    margin-left: auto;
+  }
+
+  .side-link:hover {
+    background: #f3f6fb;
+  }
+
+  .side-link.active {
+    background: #e7f0ff;
+    color: #195fc8;
+  }
+
+  .admin-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* KPIs sur une rangée de 3 (x2) */
   .kpi-grid {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  /* Les cartes (utilisateurs, certifications, posts, alertes) passent en
-     2 colonnes ; filtres, sous-onglets, pagination et états vides gardent
-     toute la largeur. */
+  /* Certifications / posts / alertes en 2 colonnes ; le reste pleine largeur */
   section {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -413,7 +641,9 @@ ion-segment-button ion-badge {
   section > .loading-box,
   section > .empty-note,
   section > .pager,
-  section > .kpi-grid {
+  section > .kpi-grid,
+  section > .users-table-wrap,
+  section > .mobile-only {
     grid-column: 1 / -1;
   }
 }
