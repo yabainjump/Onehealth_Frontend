@@ -89,6 +89,12 @@
         <ion-spinner *ngIf="isLoading" name="crescent" slot="start"></ion-spinner>
         {{ 'SIGNUP.SUBMIT' | translate }}
       </ion-button>
+
+      <div class="google-block" *ngIf="showGoogleButton">
+        <div class="divider"><span>{{ 'LOGIN.OR' | translate }}</span></div>
+        <div id="google-signup-btn" class="google-btn-container"></div>
+        <ion-spinner *ngIf="isGoogleLoading" name="crescent" class="google-spinner"></ion-spinner>
+      </div>
     </ion-list>
   </form>
 </ion-content>

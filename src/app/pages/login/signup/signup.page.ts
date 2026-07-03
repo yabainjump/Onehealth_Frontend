@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AuthService } from './../../../services/auth/auth.service';
+import { GoogleAuthService } from '../../../core/services/google-auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -12,14 +13,16 @@ import { AuthService } from './../../../services/auth/auth.service';
   styleUrls: ['./signup.page.scss'],
   standalone: false,
 })
-export class SignupPage implements OnInit {
+export class SignupPage implements OnInit, AfterViewInit {
   signupForm: FormGroup;
   isTypePassword = true;
   isLoading = false;
+  isGoogleLoading = false;
 
   constructor(
     private router: Router,
     private authService: AuthService,
+    private readonly googleAuth: GoogleAuthService,
     private alertController: AlertController,
     private translate: TranslateService,
   ) {
@@ -27,6 +30,31 @@ export class SignupPage implements OnInit {
   }
 
   ngOnInit() {}
+
+  ngAfterViewInit(): void {
+    if (this.googleAuth.isConfigured) {
+      this.googleAuth.renderButton('google-signup-btn');
+      void this.waitForGoogleCredential();
+    }
+  }
+
+  get showGoogleButton(): boolean {
+    return this.googleAuth.isConfigured;
+  }
+
+  private async waitForGoogleCredential(): Promise<void> {
+    const idToken = await this.googleAuth.waitForCredential();
+    this.isGoogleLoading = true;
+    try {
+      await this.authService.loginWithGoogle(idToken);
+      this.router.navigateByUrl('/tabs', { replaceUrl: true });
+    } catch {
+      this.showAlert(this.translate.instant('SIGNUP.GOOGLE_ERROR'));
+    } finally {
+      this.isGoogleLoading = false;
+      void this.waitForGoogleCredential();
+    }
+  }
 
   navigateToLogin() {
     const active = document.activeElement as HTMLElement;

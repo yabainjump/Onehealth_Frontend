@@ -94,6 +94,13 @@
         <ion-spinner *ngIf="isLogin" name="crescent" slot="start"></ion-spinner>
         {{ 'LOGIN.SUBMIT' | translate }}
       </ion-button>
+
+      <div class="google-block" *ngIf="showGoogleButton">
+        <div class="divider"><span>{{ 'LOGIN.OR' | translate }}</span></div>
+        <div id="google-signin-btn" class="google-btn-container"></div>
+        <ion-spinner *ngIf="isGoogleLoading" name="crescent" class="google-spinner"></ion-spinner>
+      </div>
+
       <p class="signup">
         <ion-note>
           {{ 'LOGIN.NO_ACCOUNT' | translate }} <ion-text class="link" (click)="navigateToSignup()" color="primary">{{ 'LOGIN.SIGN_UP' | translate }}</ion-text>

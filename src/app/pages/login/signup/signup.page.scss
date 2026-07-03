@@ -46,6 +46,38 @@ ion-list {
     margin: auto;
   }
 
+  .google-block {
+    margin-top: 2.5vh;
+    position: relative;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    color: var(--ion-color-medium);
+    font-size: 0.8rem;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--ion-color-light-shade, #e0e0e0);
+    }
+  }
+
+  .google-btn-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .google-spinner {
+    display: block;
+    margin: 10px auto 0;
+  }
+
   .alignItems {
     ion-checkbox,
     ion-note {

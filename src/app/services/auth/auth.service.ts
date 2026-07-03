@@ -53,6 +53,15 @@ export class AuthService {
     return this.persistSession(response);
   }
 
+  /** Connexion / inscription via Google (ID token de Google Identity Services). */
+  async loginWithGoogle(idToken: string): Promise<LegacyUser> {
+    const response = await firstValueFrom(
+      this.api.post<any, { idToken: string }>('/auth/google', { idToken }),
+    );
+
+    return this.persistSession(response);
+  }
+
   async register(formValue: any): Promise<{ id: string }> {
     const response = await firstValueFrom(
       this.api.post<any, Record<string, unknown>>('/auth/register', {

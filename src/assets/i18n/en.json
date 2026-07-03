@@ -40,7 +40,9 @@
     "SIGN_UP": "Sign Up",
     "ERROR_GENERIC": "Could not sign you in, please try again.",
     "ERROR_USER_NOT_FOUND": "E-mail address could not be found.",
-    "ERROR_WRONG_PASSWORD": "Please enter a correct password."
+    "ERROR_WRONG_PASSWORD": "Please enter a correct password.",
+    "OR": "or",
+    "GOOGLE_ERROR": "Could not sign in with Google, please try again."
   },
   "SIGNUP": {
     "HELLO": "Hello Dr,",
@@ -58,7 +60,8 @@
     "ACCEPT_TERMS": "I accept the policy and terms",
     "SUBMIT": "Sign Up",
     "ERROR_GENERIC": "Could not sign you up, please try again.",
-    "ERROR_EMAIL_IN_USE": "Email already in use"
+    "ERROR_EMAIL_IN_USE": "Email already in use",
+    "GOOGLE_ERROR": "Could not sign up with Google, please try again."
   },
   "FORGOT": {
     "TITLE_BAR": "Forgot password",

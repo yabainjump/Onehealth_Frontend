@@ -40,7 +40,9 @@
     "SIGN_UP": "S'inscrire",
     "ERROR_GENERIC": "Impossible de vous connecter, veuillez réessayer.",
     "ERROR_USER_NOT_FOUND": "Adresse e-mail introuvable.",
-    "ERROR_WRONG_PASSWORD": "Veuillez saisir un mot de passe correct."
+    "ERROR_WRONG_PASSWORD": "Veuillez saisir un mot de passe correct.",
+    "OR": "ou",
+    "GOOGLE_ERROR": "Connexion avec Google impossible, veuillez réessayer."
   },
   "SIGNUP": {
     "HELLO": "Bonjour Dr,",
@@ -58,7 +60,8 @@
     "ACCEPT_TERMS": "J'accepte la politique et les conditions",
     "SUBMIT": "S'inscrire",
     "ERROR_GENERIC": "Impossible de créer le compte, veuillez réessayer.",
-    "ERROR_EMAIL_IN_USE": "Adresse e-mail déjà utilisée"
+    "ERROR_EMAIL_IN_USE": "Adresse e-mail déjà utilisée",
+    "GOOGLE_ERROR": "Inscription avec Google impossible, veuillez réessayer."
   },
   "FORGOT": {
     "TITLE_BAR": "Mot de passe oublié",

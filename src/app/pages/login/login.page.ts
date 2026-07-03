@@ -1,27 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { firstValueFrom, take } from 'rxjs';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { GoogleAuthService } from 'src/app/core/services/google-auth.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
-  
+
   standalone: false,
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, AfterViewInit {
 
   form: FormGroup;
   isTypePassword: boolean = true;
   isLogin = false;
+  isGoogleLoading = false;
 
   constructor(
     private router: Router,
     private authService: AuthService,
+    private readonly googleAuth: GoogleAuthService,
     private alertController: AlertController,
     private translate: TranslateService
   ) {
@@ -31,6 +34,31 @@ export class LoginPage implements OnInit {
   ngOnInit(): void {
     void this.redirectIfAlreadyAuthenticated();
 
+  }
+
+  ngAfterViewInit(): void {
+    if (this.googleAuth.isConfigured) {
+      this.googleAuth.renderButton('google-signin-btn');
+      void this.waitForGoogleCredential();
+    }
+  }
+
+  get showGoogleButton(): boolean {
+    return this.googleAuth.isConfigured;
+  }
+
+  private async waitForGoogleCredential(): Promise<void> {
+    const idToken = await this.googleAuth.waitForCredential();
+    this.isGoogleLoading = true;
+    try {
+      await this.authService.loginWithGoogle(idToken);
+      this.router.navigateByUrl('/tabs');
+    } catch {
+      this.showAlert(this.translate.instant('LOGIN.GOOGLE_ERROR'));
+    } finally {
+      this.isGoogleLoading = false;
+      void this.waitForGoogleCredential();
+    }
   }
 
   private async redirectIfAlreadyAuthenticated(): Promise<void> {
