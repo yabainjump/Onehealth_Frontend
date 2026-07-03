@@ -22,7 +22,15 @@
       <img [src]="post.author?.photoURL || 'assets/default-profile.png'" loading="lazy" decoding="async" />
     </ion-avatar>
     <div class="post-info">
-      <h2>{{ post.author?.firstName }} {{ post.author?.lastName }}</h2>
+      <h2>
+        {{ post.author?.firstName }} {{ post.author?.lastName }}
+        <ion-icon
+          *ngIf="post.author?.isCertified"
+          src="assets/icons/verified-badge.svg"
+          class="verified-badge"
+          aria-hidden="true"
+        ></ion-icon>
+      </h2>
       <!-- <p>{{ post.timestamp?.toDate() | date: 'short' }}</p> -->
       <p>{{ post.timestamp | date: 'short' }}</p>
     </div>
@@ -141,7 +149,15 @@
         <img [src]="comment.userPhotoURL" loading="lazy" decoding="async" />
       </ion-avatar>
       <ion-label>
-        <h3>{{ comment.username }}</h3>
+        <h3>
+          {{ comment.username }}
+          <ion-icon
+            *ngIf="comment.userIsCertified"
+            src="assets/icons/verified-badge.svg"
+            class="verified-badge"
+            aria-hidden="true"
+          ></ion-icon>
+        </h3>
         <p>{{ comment.text }}</p>
       </ion-label>
     </ion-item>   

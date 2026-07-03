@@ -98,7 +98,15 @@
       </ion-avatar>
 
       <div (click)="openPostDetail(post)" class="post-author-details">
-        <h3 class="law">{{ post.author?.firstName }} {{ post.author?.lastName }}</h3>
+        <h3 class="law">
+          {{ post.author?.firstName }} {{ post.author?.lastName }}
+          <ion-icon
+            *ngIf="post.author?.isCertified"
+            src="assets/icons/verified-badge.svg"
+            class="verified-badge"
+            aria-hidden="true"
+          ></ion-icon>
+        </h3>
         <p>{{ post.author?.institution || ('DASHBOARD.USER_DESCRIPTION' | translate) }}</p>
         <span>{{ post.timestamp | date: 'short' }}</span>
       </div>
@@ -223,7 +231,15 @@
               decoding="async"
             />
             <div class="comment-bubble">
-              <p class="comment-author">{{ comment.userName || ('DASHBOARD.COMMENT_AUTHOR_FALLBACK' | translate) }}</p>
+              <p class="comment-author">
+                {{ comment.userName || ('DASHBOARD.COMMENT_AUTHOR_FALLBACK' | translate) }}
+                <ion-icon
+                  *ngIf="comment.userIsCertified"
+                  src="assets/icons/verified-badge.svg"
+                  class="verified-badge"
+                  aria-hidden="true"
+                ></ion-icon>
+              </p>
               <p class="comment-text">{{ comment.comment }}</p>
               <button
                 type="button"
@@ -297,7 +313,15 @@
             (click)="openSuggestion(u)"
           />
           <div class="sg-meta" (click)="openSuggestion(u)">
-            <strong>{{ u.firstName }} {{ u.lastName }}</strong>
+            <strong>
+              {{ u.firstName }} {{ u.lastName }}
+              <ion-icon
+                *ngIf="u.isCertified"
+                src="assets/icons/verified-badge.svg"
+                class="verified-badge"
+                aria-hidden="true"
+              ></ion-icon>
+            </strong>
             <span>{{ u.institution || u.typeMedecin || '' }}</span>
           </div>
           <button type="button" class="sg-follow" (click)="followSuggestion(u)">

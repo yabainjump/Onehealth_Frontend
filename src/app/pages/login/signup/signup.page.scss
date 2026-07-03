@@ -100,3 +100,33 @@ ion-list {
   padding-top: 96px;
   padding-bottom: 24px;
 }
+
+/* ===== Vue PC (≥1024px) : formulaire en carte centrée ===== */
+@media (min-width: 1024px) {
+  ion-content {
+    overflow: auto;
+  }
+
+  ion-list {
+    transform: none;
+    margin-top: 11vh;
+    margin-bottom: 6vh;
+    max-width: 560px;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 18px 50px rgba(18, 34, 64, 0.16);
+    padding: 30px 34px;
+
+    ion-button {
+      width: 100%;
+    }
+
+    ion-row {
+      margin-bottom: 2.5vh;
+    }
+  }
+
+  .form-list {
+    padding-top: 30px;
+  }
+}

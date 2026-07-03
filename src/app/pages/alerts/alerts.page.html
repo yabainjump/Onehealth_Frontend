@@ -55,7 +55,16 @@
     <img class="alert-thumb" *ngIf="a.imageUrls?.length" [src]="photoSrc(a.imageUrls[0])" alt="" loading="lazy" decoding="async" />
     <div class="alert-meta">
       <img [src]="a.author?.photoURL || 'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
-      <span>{{ a.author?.firstName }} {{ a.author?.lastName }} · {{ a.createdAt | date: 'short' }}</span>
+      <span>
+        {{ a.author?.firstName }} {{ a.author?.lastName }}
+        <ion-icon
+          *ngIf="a.author?.isCertified"
+          src="assets/icons/verified-badge.svg"
+          class="verified-badge"
+          aria-hidden="true"
+        ></ion-icon>
+        · {{ a.createdAt | date: 'short' }}
+      </span>
       <span class="alert-stats">
         <ion-icon name="heart-outline" aria-hidden="true"></ion-icon> {{ a.likesCount || 0 }}
         <ion-icon name="chatbubble-outline" aria-hidden="true"></ion-icon> {{ a.commentsCount || 0 }}

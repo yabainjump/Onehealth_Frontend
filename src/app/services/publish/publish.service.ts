@@ -51,6 +51,7 @@ export interface Post {
     institution: string;
     photoURL?: string;
     isFollowing?: boolean;
+    isCertified?: boolean;
   };
 }
 
@@ -60,6 +61,7 @@ export interface CommentData {
   userId: string;
   userName?: string;
   userPhoto?: string;
+  userIsCertified?: boolean;
   likesCount?: number;
   userHasLiked?: boolean;
   createdAt?: string | Date;
@@ -274,11 +276,13 @@ export class PublishService {
       id: comment?.id || '',
       comment: comment?.text || '',
       userId: comment?.author?.id || '',
+      // Prénom + nom en priorité (le pseudo ne sert que de repli).
       userName:
-        comment?.author?.username ||
-        `${comment?.author?.firstName || ''} ${comment?.author?.lastName || ''}`.trim(),
+        `${comment?.author?.firstName || ''} ${comment?.author?.lastName || ''}`.trim() ||
+        comment?.author?.username,
       userPhoto:
         resolveMediaUrl(comment?.author?.photoURL) || 'assets/default-profile.png',
+      userIsCertified: !!comment?.author?.isCertified,
       likesCount: comment?.likesCount ?? 0,
       userHasLiked: !!comment?.userHasLiked,
       createdAt: comment?.createdAt,
@@ -321,6 +325,7 @@ export class PublishService {
             institution: author.institution || '',
             photoURL: resolveMediaUrl(author.photoURL) || 'assets/default-profile.png',
             isFollowing: !!author.isFollowing,
+            isCertified: !!author.isCertified,
           }
         : undefined,
     };

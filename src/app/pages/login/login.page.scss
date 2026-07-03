@@ -98,3 +98,35 @@ ion-list {
     height: 84px;
   }
 }
+
+/* ===== Vue PC (≥1024px) : formulaire en carte centrée ===== */
+@media (min-width: 1024px) {
+  .login-logo-wrapper {
+    position: static;
+    transform: none;
+    margin: 7vh auto 6px;
+    width: 112px;
+    height: 112px;
+  }
+
+  ion-list {
+    transform: none;
+    max-width: 460px;
+    background: #ffffff;
+    border-radius: 22px;
+    box-shadow: 0 18px 50px rgba(18, 34, 64, 0.16);
+    padding: 30px 34px;
+
+    ion-button {
+      width: 100%;
+    }
+
+    ion-row {
+      margin-bottom: 3vh;
+    }
+
+    .signup {
+      margin-top: 3vh;
+    }
+  }
+}

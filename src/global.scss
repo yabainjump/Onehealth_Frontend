@@ -465,3 +465,12 @@ ion-toast {
     scroll-behavior: auto !important;
   }
 }
+
+/* ===== Badge « profil certifié » (style Twitter/WhatsApp) =====
+   Usage : <ion-icon src="assets/icons/verified-badge.svg" class="verified-badge"></ion-icon> */
+ion-icon.verified-badge {
+  font-size: 1em;
+  vertical-align: -0.15em;
+  flex-shrink: 0;
+  margin-left: 3px;
+}

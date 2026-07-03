@@ -41,7 +41,15 @@
     <div class="ad-author">
       <img [src]="alert.author?.photoURL || 'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
       <div>
-        <span class="ad-author-name">{{ alert.author?.firstName }} {{ alert.author?.lastName }}</span>
+        <span class="ad-author-name">
+          {{ alert.author?.firstName }} {{ alert.author?.lastName }}
+          <ion-icon
+            *ngIf="alert.author?.isCertified"
+            src="assets/icons/verified-badge.svg"
+            class="verified-badge"
+            aria-hidden="true"
+          ></ion-icon>
+        </span>
         <span class="ad-date">{{ alert.createdAt | date: 'medium' }}</span>
       </div>
     </div>
@@ -96,7 +104,15 @@
     <div class="ad-comment" *ngFor="let c of alert.comments; trackBy: trackByComment">
       <img [src]="c.author?.photoURL || 'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
       <div class="ad-comment-body">
-        <span class="ad-comment-name">{{ c.author?.firstName }} {{ c.author?.lastName }}</span>
+        <span class="ad-comment-name">
+          {{ c.author?.firstName }} {{ c.author?.lastName }}
+          <ion-icon
+            *ngIf="c.author?.isCertified"
+            src="assets/icons/verified-badge.svg"
+            class="verified-badge"
+            aria-hidden="true"
+          ></ion-icon>
+        </span>
         <p class="ad-comment-text">{{ c.text }}</p>
         <span class="ad-comment-date">{{ c.createdAt | date: 'short' }}</span>
       </div>

@@ -25,6 +25,32 @@ export type AdminCertificationRequest = CertificationRequest & {
   user: PublicUser | null;
 };
 
+export interface AdminPost {
+  id: string;
+  title: string;
+  content: string;
+  imageUrls: string[];
+  likesCount: number;
+  commentsCount: number;
+  isHidden: boolean;
+  createdAt: string;
+  author: PublicUser | null;
+}
+
+export interface AdminAlert {
+  id: string;
+  category: 'human' | 'animal' | 'environment';
+  title: string;
+  description: string;
+  severity: 'low' | 'medium' | 'high';
+  country: string;
+  city: string;
+  imageUrls: string[];
+  isHidden: boolean;
+  createdAt: string;
+  author: PublicUser | null;
+}
+
 /** Endpoints réservés aux administrateurs (guardés côté backend). */
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -91,6 +117,40 @@ export class AdminService {
       this.api.patch<CertificationRequest, { reason: string }>(
         `/admin/certifications/${requestId}/reject`,
         { reason },
+      ),
+    );
+  }
+
+  listPosts(search = '', page = 1): Promise<PagedResult<AdminPost>> {
+    const params = new URLSearchParams({ page: `${page}`, limit: '20' });
+    if (search) params.set('search', search);
+    return firstValueFrom(
+      this.api.get<PagedResult<AdminPost>>(`/admin/posts?${params.toString()}`),
+    );
+  }
+
+  setPostHidden(postId: string, hidden: boolean): Promise<{ id: string; isHidden: boolean }> {
+    return firstValueFrom(
+      this.api.patch<{ id: string; isHidden: boolean }, { hidden: boolean }>(
+        `/admin/posts/${postId}/visibility`,
+        { hidden },
+      ),
+    );
+  }
+
+  listAlerts(search = '', page = 1): Promise<PagedResult<AdminAlert>> {
+    const params = new URLSearchParams({ page: `${page}`, limit: '20' });
+    if (search) params.set('search', search);
+    return firstValueFrom(
+      this.api.get<PagedResult<AdminAlert>>(`/admin/alerts?${params.toString()}`),
+    );
+  }
+
+  setAlertHidden(alertId: string, hidden: boolean): Promise<{ id: string; isHidden: boolean }> {
+    return firstValueFrom(
+      this.api.patch<{ id: string; isHidden: boolean }, { hidden: boolean }>(
+        `/admin/alerts/${alertId}/visibility`,
+        { hidden },
       ),
     );
   }

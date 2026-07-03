@@ -25,6 +25,7 @@ longPost:   Record<string, boolean> = {};
     text: string;
     username: string;
     userPhotoURL: string;
+    userIsCertified?: boolean;
   }[] = [];
   @ViewChild('commentInput') commentInput?: IonInput;
   commentDraft = '';
@@ -103,6 +104,7 @@ longPost:   Record<string, boolean> = {};
             text: rawComment.comment,
             username: rawComment.userName,
             userPhotoURL: rawComment.userPhoto || 'assets/default-profile.png',
+            userIsCertified: !!rawComment.userIsCertified,
           };
         }
 
@@ -112,13 +114,16 @@ longPost:   Record<string, boolean> = {};
             text: rawComment.comment,
             username: user ? `${user.firstName} ${user.lastName}` : 'Anonyme',
             userPhotoURL: user?.photoURL || 'assets/default-profile.png',
+            userIsCertified: !!user?.isCertified,
           };
         }
 
         return null;
       }),
     );
-    this.commentsWithUsers = enriched.filter((value): value is { text: string; username: string; userPhotoURL: string } => !!value);
+    this.commentsWithUsers = enriched.filter(
+      (value): value is NonNullable<typeof value> => !!value,
+    );
     
   }
 

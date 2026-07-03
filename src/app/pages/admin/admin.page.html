@@ -1,21 +1,29 @@
 <ion-header class="ion-no-border admin-header">
-  <ion-toolbar>
+  <ion-toolbar class="hero-bar">
     <ion-buttons slot="start">
       <ion-button fill="clear" (click)="back()">
         <ion-icon name="arrow-back-outline" slot="icon-only" aria-hidden="true"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ 'ADMIN.TITLE' | translate }}</ion-title>
+    <ion-title>
+      <span class="hero-title">
+        <ion-icon name="shield-checkmark" aria-hidden="true"></ion-icon>
+        {{ 'ADMIN.TITLE' | translate }}
+      </span>
+    </ion-title>
   </ion-toolbar>
   <ion-toolbar class="segment-bar">
     <ion-segment [(ngModel)]="section" (ionChange)="onSectionChange()" mode="md" scrollable>
       <ion-segment-button value="overview">
+        <ion-icon name="grid-outline" aria-hidden="true"></ion-icon>
         <ion-label>{{ 'ADMIN.OVERVIEW' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="users">
+        <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
         <ion-label>{{ 'ADMIN.USERS' | translate }}</ion-label>
       </ion-segment-button>
       <ion-segment-button value="certifications">
+        <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
         <ion-label>
           {{ 'ADMIN.CERTIFICATIONS' | translate }}
           <ion-badge *ngIf="stats?.pendingCertifications" color="warning">
@@ -24,6 +32,7 @@
         </ion-label>
       </ion-segment-button>
       <ion-segment-button value="content">
+        <ion-icon name="albums-outline" aria-hidden="true"></ion-icon>
         <ion-label>{{ 'ADMIN.CONTENT' | translate }}</ion-label>
       </ion-segment-button>
     </ion-segment>
@@ -33,39 +42,39 @@
 <ion-content class="admin-content">
   <!-- ===== Vue d'ensemble ===== -->
   <section *ngIf="section === 'overview'">
-    <div class="kpi-loading" *ngIf="loadingStats">
+    <div class="loading-box" *ngIf="loadingStats">
       <ion-spinner name="crescent"></ion-spinner>
     </div>
     <div class="kpi-grid" *ngIf="!loadingStats && stats">
       <div class="kpi-card">
-        <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+        <span class="kpi-icon blue"><ion-icon name="people" aria-hidden="true"></ion-icon></span>
         <strong>{{ stats.totalUsers }}</strong>
-        <span>{{ 'ADMIN.KPI_USERS' | translate }}</span>
+        <span class="kpi-label">{{ 'ADMIN.KPI_USERS' | translate }}</span>
       </div>
-      <div class="kpi-card certified">
-        <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+      <div class="kpi-card">
+        <span class="kpi-icon green"><ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon></span>
         <strong>{{ stats.certifiedUsers }}</strong>
-        <span>{{ 'ADMIN.KPI_CERTIFIED' | translate }}</span>
+        <span class="kpi-label">{{ 'ADMIN.KPI_CERTIFIED' | translate }}</span>
       </div>
-      <div class="kpi-card pending">
-        <ion-icon name="hourglass-outline" aria-hidden="true"></ion-icon>
+      <div class="kpi-card">
+        <span class="kpi-icon amber"><ion-icon name="hourglass" aria-hidden="true"></ion-icon></span>
         <strong>{{ stats.pendingCertifications }}</strong>
-        <span>{{ 'ADMIN.KPI_PENDING' | translate }}</span>
+        <span class="kpi-label">{{ 'ADMIN.KPI_PENDING' | translate }}</span>
       </div>
-      <div class="kpi-card banned">
-        <ion-icon name="ban-outline" aria-hidden="true"></ion-icon>
+      <div class="kpi-card">
+        <span class="kpi-icon red"><ion-icon name="ban" aria-hidden="true"></ion-icon></span>
         <strong>{{ stats.bannedUsers }}</strong>
-        <span>{{ 'ADMIN.KPI_BANNED' | translate }}</span>
+        <span class="kpi-label">{{ 'ADMIN.KPI_BANNED' | translate }}</span>
       </div>
       <div class="kpi-card">
-        <ion-icon name="newspaper-outline" aria-hidden="true"></ion-icon>
+        <span class="kpi-icon blue"><ion-icon name="newspaper" aria-hidden="true"></ion-icon></span>
         <strong>{{ stats.totalPosts }}</strong>
-        <span>{{ 'ADMIN.KPI_POSTS' | translate }}</span>
+        <span class="kpi-label">{{ 'ADMIN.KPI_POSTS' | translate }}</span>
       </div>
       <div class="kpi-card">
-        <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+        <span class="kpi-icon amber"><ion-icon name="warning" aria-hidden="true"></ion-icon></span>
         <strong>{{ stats.totalAlerts }}</strong>
-        <span>{{ 'ADMIN.KPI_ALERTS' | translate }}</span>
+        <span class="kpi-label">{{ 'ADMIN.KPI_ALERTS' | translate }}</span>
       </div>
     </div>
   </section>
@@ -101,24 +110,24 @@
       </ion-select>
     </div>
 
-    <div class="kpi-loading" *ngIf="loadingUsers">
+    <div class="loading-box" *ngIf="loadingUsers">
       <ion-spinner name="crescent"></ion-spinner>
     </div>
 
-    <div class="user-card" *ngFor="let user of users">
-      <img [src]="photo(user)" alt="" class="user-avatar" (click)="openProfile(user)" />
-      <div class="user-info" (click)="openProfile(user)">
-        <p class="user-name">
+    <div class="item-card" *ngFor="let user of users">
+      <img [src]="photo(user)" alt="" class="item-avatar" (click)="openProfile(user)" />
+      <div class="item-info" (click)="openProfile(user)">
+        <p class="item-title">
           {{ displayName(user) }}
           <ion-icon
             *ngIf="user.isCertified"
-            name="checkmark-circle"
-            class="certified-icon"
+            src="assets/icons/verified-badge.svg"
+            class="verified-badge"
             aria-hidden="true"
           ></ion-icon>
         </p>
-        <p class="user-email">{{ user.email }}</p>
-        <p class="user-tags">
+        <p class="item-sub">{{ user.email }}</p>
+        <p class="item-tags">
           <ion-badge [color]="user.role === 'admin' ? 'tertiary' : 'medium'">
             {{ user.role }}
           </ion-badge>
@@ -127,7 +136,7 @@
           </ion-badge>
         </p>
       </div>
-      <div class="user-actions" *ngIf="!isSelf(user)">
+      <div class="item-actions" *ngIf="!isSelf(user)">
         <ion-button size="small" fill="outline" (click)="toggleRole(user)">
           {{ (user.role === 'admin' ? 'ADMIN.DEMOTE' : 'ADMIN.PROMOTE') | translate }}
         </ion-button>
@@ -176,23 +185,23 @@
       </ion-select>
     </div>
 
-    <div class="kpi-loading" *ngIf="loadingCertifications">
+    <div class="loading-box" *ngIf="loadingCertifications">
       <ion-spinner name="crescent"></ion-spinner>
     </div>
 
-    <div class="cert-request-card" *ngFor="let request of certifications">
-      <div class="cert-request-head" (click)="openProfile(request.user)">
-        <img [src]="photo(request.user)" alt="" class="user-avatar" />
+    <div class="block-card" *ngFor="let request of certifications">
+      <div class="block-head" (click)="openProfile(request.user)">
+        <img [src]="photo(request.user)" alt="" class="item-avatar" />
         <div>
-          <p class="user-name">{{ displayName(request.user) }}</p>
-          <p class="user-email">{{ request.user?.institution || request.user?.typeMedecin || '' }}</p>
-          <p class="user-email">{{ request.createdAt | date: 'medium' }}</p>
+          <p class="item-title">{{ displayName(request.user) }}</p>
+          <p class="item-sub">{{ request.user?.institution || request.user?.typeMedecin || '' }}</p>
+          <p class="item-sub">{{ request.createdAt | date: 'medium' }}</p>
         </div>
       </div>
 
-      <p class="cert-message" *ngIf="request.message">{{ request.message }}</p>
+      <p class="block-text" *ngIf="request.message">{{ request.message }}</p>
 
-      <div class="cert-docs" *ngIf="request.documents.length">
+      <div class="thumb-row" *ngIf="request.documents.length">
         <a
           *ngFor="let doc of request.documents"
           [href]="docSrc(doc)"
@@ -207,11 +216,11 @@
         </a>
       </div>
 
-      <p class="cert-message reject-note" *ngIf="request.status === 'rejected' && request.adminNotes">
+      <p class="block-text reject-note" *ngIf="request.status === 'rejected' && request.adminNotes">
         {{ 'CERT.REJECT_REASON' | translate }} : {{ request.adminNotes }}
       </p>
 
-      <div class="cert-actions" *ngIf="request.status === 'pending'">
+      <div class="block-actions" *ngIf="request.status === 'pending'">
         <ion-button
           size="small"
           color="success"
@@ -239,34 +248,211 @@
     </div>
   </section>
 
-  <!-- ===== Contenu (modération) ===== -->
+  <!-- ===== Contenu : posts + alertes ===== -->
   <section *ngIf="section === 'content'">
-    <div class="kpi-loading" *ngIf="loadingPosts">
-      <ion-spinner name="crescent"></ion-spinner>
-    </div>
+    <ion-segment
+      class="sub-segment"
+      [(ngModel)]="contentMode"
+      (ionChange)="onContentModeChange()"
+      mode="md"
+    >
+      <ion-segment-button value="posts">
+        <ion-label>{{ 'ADMIN.POSTS' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="alerts">
+        <ion-label>{{ 'ADMIN.ALERTS' | translate }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
 
-    <div class="user-card" *ngFor="let post of posts">
-      <img
-        [src]="post.author?.photoURL || 'assets/default-profile.png'"
-        alt=""
-        class="user-avatar"
-      />
-      <div class="user-info">
-        <p class="user-name">
-          {{ post.author?.firstName }} {{ post.author?.lastName }}
-        </p>
-        <p class="user-email post-preview">{{ (post.content || '') | slice: 0:140 }}</p>
-        <p class="user-email">{{ post.timestamp | date: 'short' }}</p>
+    <!-- Posts -->
+    <ng-container *ngIf="contentMode === 'posts'">
+      <div class="filters-row">
+        <ion-searchbar
+          [(ngModel)]="postsSearch"
+          (ionInput)="onPostsSearchChange()"
+          [placeholder]="'ADMIN.SEARCH_POSTS' | translate"
+          mode="md"
+        ></ion-searchbar>
       </div>
-      <div class="user-actions">
-        <ion-button size="small" color="danger" fill="outline" (click)="deletePost(post)">
-          <ion-icon name="trash-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+
+      <div class="loading-box" *ngIf="loadingPosts">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+
+      <div class="block-card" *ngFor="let post of posts" [class.hidden-item]="post.isHidden">
+        <div class="block-head">
+          <img [src]="photo(post.author)" alt="" class="item-avatar" (click)="openProfile(post.author)" />
+          <div class="grow" (click)="openProfile(post.author)">
+            <p class="item-title">{{ displayName(post.author) }}</p>
+            <p class="item-sub">{{ post.createdAt | date: 'short' }}</p>
+          </div>
+          <ion-badge *ngIf="post.isHidden" color="medium">
+            <ion-icon name="eye-off-outline" aria-hidden="true"></ion-icon>
+            {{ 'ADMIN.HIDDEN' | translate }}
+          </ion-badge>
+        </div>
+
+        <p class="block-text">{{ (post.content || post.title || '') | slice: 0:200 }}</p>
+
+        <div class="thumb-row" *ngIf="post.imageUrls.length">
+          <img
+            *ngFor="let url of post.imageUrls.slice(0, 4)"
+            [src]="docSrc(url)"
+            alt=""
+            loading="lazy"
+          />
+        </div>
+
+        <div class="meta-row">
+          <span><ion-icon name="heart-outline" aria-hidden="true"></ion-icon> {{ post.likesCount }}</span>
+          <span><ion-icon name="chatbubble-outline" aria-hidden="true"></ion-icon> {{ post.commentsCount }}</span>
+        </div>
+
+        <div class="block-actions">
+          <ion-button
+            size="small"
+            fill="outline"
+            [color]="post.isHidden ? 'success' : 'warning'"
+            [disabled]="processingContentId === post.id"
+            (click)="togglePostHidden(post)"
+          >
+            <ion-icon
+              [name]="post.isHidden ? 'play-outline' : 'pause-outline'"
+              slot="start"
+              aria-hidden="true"
+            ></ion-icon>
+            {{ (post.isHidden ? 'ADMIN.RESUME' : 'ADMIN.PAUSE') | translate }}
+          </ion-button>
+          <ion-button
+            size="small"
+            color="danger"
+            fill="outline"
+            [disabled]="processingContentId === post.id"
+            (click)="deletePost(post)"
+          >
+            <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>
+            {{ 'ADMIN.DELETE' | translate }}
+          </ion-button>
+        </div>
+      </div>
+
+      <div class="empty-note" *ngIf="!loadingPosts && !posts.length">
+        {{ 'ADMIN.NO_RESULTS' | translate }}
+      </div>
+
+      <div class="pager" *ngIf="postsTotalPages > 1">
+        <ion-button size="small" fill="clear" [disabled]="postsPage <= 1" (click)="changePostsPage(-1)">
+          <ion-icon name="chevron-back-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <span>{{ postsPage }} / {{ postsTotalPages }}</span>
+        <ion-button
+          size="small"
+          fill="clear"
+          [disabled]="postsPage >= postsTotalPages"
+          (click)="changePostsPage(1)"
+        >
+          <ion-icon name="chevron-forward-outline" slot="icon-only" aria-hidden="true"></ion-icon>
         </ion-button>
       </div>
-    </div>
+    </ng-container>
 
-    <div class="empty-note" *ngIf="!loadingPosts && !posts.length">
-      {{ 'ADMIN.NO_RESULTS' | translate }}
-    </div>
+    <!-- Alertes -->
+    <ng-container *ngIf="contentMode === 'alerts'">
+      <div class="filters-row">
+        <ion-searchbar
+          [(ngModel)]="alertsSearch"
+          (ionInput)="onAlertsSearchChange()"
+          [placeholder]="'ADMIN.SEARCH_ALERTS' | translate"
+          mode="md"
+        ></ion-searchbar>
+      </div>
+
+      <div class="loading-box" *ngIf="loadingAlerts">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+
+      <div class="block-card" *ngFor="let alert of alerts" [class.hidden-item]="alert.isHidden">
+        <div class="block-head">
+          <img [src]="photo(alert.author)" alt="" class="item-avatar" (click)="openProfile(alert.author)" />
+          <div class="grow" (click)="openProfile(alert.author)">
+            <p class="item-title">{{ alert.title }}</p>
+            <p class="item-sub">
+              {{ displayName(alert.author) }} • {{ alert.createdAt | date: 'short' }}
+            </p>
+          </div>
+          <ion-badge *ngIf="alert.isHidden" color="medium">
+            <ion-icon name="eye-off-outline" aria-hidden="true"></ion-icon>
+            {{ 'ADMIN.HIDDEN' | translate }}
+          </ion-badge>
+        </div>
+
+        <p class="item-tags">
+          <ion-badge [color]="severityColor(alert.severity)">{{ alert.severity }}</ion-badge>
+          <ion-badge color="primary">{{ alert.category }}</ion-badge>
+          <ion-badge color="light" *ngIf="alert.country">
+            {{ alert.city ? alert.city + ', ' : '' }}{{ alert.country }}
+          </ion-badge>
+        </p>
+
+        <p class="block-text" *ngIf="alert.description">
+          {{ alert.description | slice: 0:200 }}
+        </p>
+
+        <div class="thumb-row" *ngIf="alert.imageUrls.length">
+          <img
+            *ngFor="let url of alert.imageUrls.slice(0, 4)"
+            [src]="docSrc(url)"
+            alt=""
+            loading="lazy"
+          />
+        </div>
+
+        <div class="block-actions">
+          <ion-button
+            size="small"
+            fill="outline"
+            [color]="alert.isHidden ? 'success' : 'warning'"
+            [disabled]="processingContentId === alert.id"
+            (click)="toggleAlertHidden(alert)"
+          >
+            <ion-icon
+              [name]="alert.isHidden ? 'play-outline' : 'pause-outline'"
+              slot="start"
+              aria-hidden="true"
+            ></ion-icon>
+            {{ (alert.isHidden ? 'ADMIN.RESUME' : 'ADMIN.PAUSE') | translate }}
+          </ion-button>
+          <ion-button
+            size="small"
+            color="danger"
+            fill="outline"
+            [disabled]="processingContentId === alert.id"
+            (click)="deleteAlert(alert)"
+          >
+            <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>
+            {{ 'ADMIN.DELETE' | translate }}
+          </ion-button>
+        </div>
+      </div>
+
+      <div class="empty-note" *ngIf="!loadingAlerts && !alerts.length">
+        {{ 'ADMIN.NO_RESULTS' | translate }}
+      </div>
+
+      <div class="pager" *ngIf="alertsTotalPages > 1">
+        <ion-button size="small" fill="clear" [disabled]="alertsPage <= 1" (click)="changeAlertsPage(-1)">
+          <ion-icon name="chevron-back-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <span>{{ alertsPage }} / {{ alertsTotalPages }}</span>
+        <ion-button
+          size="small"
+          fill="clear"
+          [disabled]="alertsPage >= alertsTotalPages"
+          (click)="changeAlertsPage(1)"
+        >
+          <ion-icon name="chevron-forward-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </div>
+    </ng-container>
   </section>
 </ion-content>

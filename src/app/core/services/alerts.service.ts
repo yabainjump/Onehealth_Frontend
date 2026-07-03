@@ -12,6 +12,7 @@ export interface AlertAuthor {
   username: string;
   photoURL: string;
   institution: string;
+  isCertified?: boolean;
 }
 
 export interface AlertComment {
