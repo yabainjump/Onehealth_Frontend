@@ -441,6 +441,9 @@ export class DashbordPage implements OnInit {
   }
 
   // OPTION 1 : en revenant sur l'onglet Accueil, on rafraichit + on remonte.
+  // Exception : au retour de l'éditeur de publication, on met à jour le post
+  // modifié en place plutôt que de recharger toute la page 1 (ce qui ferait
+  // perdre la position de scroll et les pages déjà chargées via infinite-scroll).
   ionViewWillEnter(): void {
     this.lastScrollTop = 0;
     this.chromeHidden = false;
@@ -448,9 +451,37 @@ export class DashbordPage implements OnInit {
     if (!this.feedInitialized) {
       return;
     }
+    const navState = history.state as { updatedPost?: Post } | undefined;
+    const updatedPost = navState?.updatedPost;
+    if (updatedPost?.id) {
+      this.applyUpdatedPost(updatedPost);
+      history.replaceState({ ...history.state, updatedPost: undefined }, '');
+      return;
+    }
     void this.refreshFeed().then(() => {
       void this.content?.scrollToTop(300);
     });
+  }
+
+  /** Patche en place un post déjà présent dans les listes en mémoire (édition). */
+  private applyUpdatedPost(updated: Post): void {
+    const patch = (target: Post) => {
+      target.content = updated.content ?? target.content;
+      target.imageUrl = updated.imageUrl;
+      target.imageUrls = updated.imageUrls;
+      target.fullImageUrl = updated.fullImageUrl;
+      target.fullImageUrls = updated.fullImageUrls;
+      target.rawImageUrls = updated.rawImageUrls;
+      this.decoratePost(target);
+    };
+    const inPosts = this.posts.find((p) => p.id === updated.id);
+    if (inPosts) {
+      patch(inPosts);
+    }
+    const inFiltered = this.filteredPosts.find((p) => p.id === updated.id);
+    if (inFiltered && inFiltered !== inPosts) {
+      patch(inFiltered);
+    }
   }
 
   // OPTION 2 : sondage periodique qui detecte les nouveaux posts SANS toucher

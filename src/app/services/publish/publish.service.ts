@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, firstValueFrom, map, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -166,11 +167,17 @@ export class PublishService {
     return updated;
   }
 
+  /** Résout à `undefined` seulement pour un vrai 404 ; toute autre erreur (réseau, 5xx) est relancée. */
   async getPostById(id: string): Promise<Post | undefined> {
     const post = await firstValueFrom(
       this.api.get<any>(`/posts/${id}`).pipe(
         map((value) => this.toLegacyPost(value)),
-        catchError(() => of(undefined)),
+        catchError((err) => {
+          if (err instanceof HttpErrorResponse && err.status === 404) {
+            return of(undefined);
+          }
+          throw err;
+        }),
       ),
     );
     return post;

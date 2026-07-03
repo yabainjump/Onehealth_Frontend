@@ -1,0 +1,250 @@
+/* ===== Dashboard admin : cohérent avec le reste de l'app ===== */
+.admin-header ion-toolbar {
+  --background: #ffffff;
+  --color: #1b2330;
+  --border-width: 0;
+}
+
+.admin-header ion-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.segment-bar {
+  border-bottom: 1px solid #e9edf3;
+}
+
+ion-segment-button ion-badge {
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.admin-content {
+  --background: #f6f8fc;
+  --padding-start: max(12px, calc((100% - 860px) / 2));
+  --padding-end: max(12px, calc((100% - 860px) / 2));
+  --padding-top: 12px;
+  --padding-bottom: 24px;
+}
+
+.kpi-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+/* KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kpi-card ion-icon {
+  font-size: 24px;
+  color: #195fc8;
+}
+
+.kpi-card strong {
+  font-size: 1.6rem;
+  color: #1b2330;
+}
+
+.kpi-card span {
+  font-size: 0.82rem;
+  color: #707f97;
+}
+
+.kpi-card.certified ion-icon {
+  color: #1f9d57;
+}
+
+.kpi-card.pending ion-icon {
+  color: #d98f00;
+}
+
+.kpi-card.banned ion-icon {
+  color: #d64545;
+}
+
+/* Filtres */
+.filters-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.filters-row ion-searchbar {
+  flex: 1 1 220px;
+  --background: #ffffff;
+  --border-radius: 12px;
+  padding: 0;
+}
+
+.filters-row ion-select {
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+}
+
+/* Cartes utilisateur / post */
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.user-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.user-info p {
+  margin: 0;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #1b2330;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.certified-icon {
+  color: #1f9d57;
+  font-size: 16px;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: #707f97;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-preview {
+  white-space: normal;
+}
+
+.user-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px !important;
+}
+
+.user-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Certifications */
+.cert-request-card {
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.cert-request-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.cert-message {
+  margin: 10px 0 0;
+  color: #44516a;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.reject-note {
+  font-style: italic;
+  color: #d64545;
+}
+
+.cert-docs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cert-docs img {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e9edf3;
+  display: block;
+}
+
+.doc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid #dbe2ec;
+  border-radius: 10px;
+  background: #f8fbff;
+  color: #195fc8;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.cert-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* Divers */
+.empty-note {
+  text-align: center;
+  color: #707f97;
+  padding: 32px 0;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #44516a;
+  font-size: 0.9rem;
+}

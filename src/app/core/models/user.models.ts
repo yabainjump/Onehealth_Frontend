@@ -16,6 +16,9 @@ export interface PublicUser {
   followingCount?: number;
   isFollowing?: boolean;
   role: 'user' | 'admin';
+  isCertified?: boolean;
+  certificationStatus?: 'none' | 'pending' | 'approved' | 'rejected';
+  isBanned?: boolean;
   isOnline?: boolean;
   lastSeenAt?: string;
   createdAt: string;

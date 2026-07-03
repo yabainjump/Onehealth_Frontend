@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from './guards/auth/auth.guard';
+import { AdminGuard } from './guards/admin/admin.guard';
 import { NetworkAwarePreloadingStrategy } from './core/routing/network-aware-preloading.strategy';
 
 const routes: Routes = [
@@ -64,6 +65,16 @@ const routes: Routes = [
     path: 'edit-profile',
     loadChildren: () =>
       import('./pages/edit-profile/edit-profile.module').then((m) => m.EditProfilePageModule),
+  },
+  {
+    path: 'certification',
+    loadComponent: () =>
+      import('./pages/certification/certification.page').then((m) => m.CertificationPage),
+  },
+  {
+    path: 'admin',
+    canActivate: [AdminGuard],
+    loadComponent: () => import('./pages/admin/admin.page').then((m) => m.AdminPage),
   },
   {
     path: 'not-found',

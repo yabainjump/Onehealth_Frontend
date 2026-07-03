@@ -67,7 +67,15 @@
       <span class="online-dot"></span>
     </div>
 
-    <h1>{{ displayName }}</h1>
+    <h1>
+      {{ displayName }}
+      <ion-icon
+        *ngIf="user?.isCertified"
+        name="checkmark-circle"
+        class="certified-badge"
+        [title]="'CERT.BADGE' | translate"
+      ></ion-icon>
+    </h1>
     <p class="subtitle">{{ displayRole }}</p>
 
     <div class="action-row">
@@ -87,6 +95,19 @@
       </button>
       <button class="btn btn-primary" type="button" *ngIf="isOwnProfile" (click)="editProfile()">
         {{ 'PROFILE.EDIT' | translate }}
+      </button>
+      <button
+        class="btn btn-outline"
+        type="button"
+        *ngIf="isOwnProfile && !user?.isCertified"
+        (click)="goCertification()"
+      >
+        <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
+        {{ 'CERT.CTA' | translate }}
+      </button>
+      <button class="btn btn-outline" type="button" *ngIf="isAdmin" (click)="goAdmin()">
+        <ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
+        {{ 'ADMIN.CTA' | translate }}
       </button>
       <button class="btn btn-outline" type="button" (click)="shareProfile($event)">
         {{ 'PROFILE.SHARE' | translate }}

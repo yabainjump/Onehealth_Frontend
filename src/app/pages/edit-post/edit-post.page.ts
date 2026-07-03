@@ -38,6 +38,10 @@ export class EditPostPage implements OnInit {
   hasAttachment = false;
   attachment: Post['attachment'] = null;
 
+  /** Valeurs chargées initialement, pour détecter une sauvegarde sans changement. */
+  private originalContent = '';
+  private originalImages: string[] = [];
+
   ngOnInit(): void {
     this.postId = this.route.snapshot.paramMap.get('id') || '';
     if (!this.postId) {
@@ -49,15 +53,27 @@ export class EditPostPage implements OnInit {
   }
 
   private async load(): Promise<void> {
-    const post = await this.publishService.getPostById(this.postId);
+    let post: Post | undefined;
+    try {
+      post = await this.publishService.getPostById(this.postId);
+    } catch {
+      this.loading = false;
+      await this.toast(this.translate.instant('EDITPOST.LOAD_ERROR'), 'danger');
+      void this.router.navigate(['/tabs/dashbord']);
+      return;
+    }
     if (!post) {
       this.loading = false;
       this.notFound = true;
       return;
     }
-    // Seul l'auteur peut modifier (le backend le vérifie aussi).
-    const uid = (this.authService.getCurrentUserSync()?.uid || '').trim();
-    if (post.author?.id && uid && post.author.id !== uid) {
+    // Seul l'auteur peut modifier (le backend le vérifie aussi). On attend la
+    // résolution de l'identité (checkAuth) au lieu de lire un snapshot
+    // synchrone qui peut encore être vide au démarrage/deep-link, et on
+    // refuse par défaut si l'identité ne peut pas être confirmée.
+    const currentUser = await this.authService.checkAuth();
+    const uid = (currentUser?.uid || '').trim();
+    if (!uid || (post.author?.id && post.author.id !== uid)) {
       await this.toast(this.translate.instant('DASHBOARD.EDIT_ERROR'), 'danger');
       void this.router.navigate(['/tabs/dashbord']);
       return;
@@ -66,6 +82,8 @@ export class EditPostPage implements OnInit {
     this.images = [...(post.rawImageUrls || [])];
     this.attachment = post.attachment || null;
     this.hasAttachment = !!post.attachment;
+    this.originalContent = this.content;
+    this.originalImages = [...this.images];
     this.loading = false;
   }
 
@@ -98,10 +116,10 @@ export class EditPostPage implements OnInit {
     const room = Math.max(0, EditPostPage.MAX_IMAGES - this.images.length);
     this.photoUploading = true;
     try {
-      for (const file of files.slice(0, room)) {
-        const url = await this.publishService.uploadImage(file);
-        this.images = [...this.images, url];
-      }
+      const urls = await Promise.all(
+        files.slice(0, room).map((file) => this.publishService.uploadImage(file)),
+      );
+      this.images = [...this.images, ...urls];
     } catch {
       await this.toast(this.translate.instant('EDITPOST.PHOTO_ERR'), 'danger');
     } finally {
@@ -117,8 +135,26 @@ export class EditPostPage implements OnInit {
     return url;
   }
 
+  /** Vrai si le contenu ou les images diffèrent de ce qui a été chargé. */
+  private get hasChanges(): boolean {
+    if (this.content.trim() !== this.originalContent) {
+      return true;
+    }
+    if (this.hasAttachment) {
+      return false;
+    }
+    if (this.images.length !== this.originalImages.length) {
+      return true;
+    }
+    return this.images.some((url, i) => url !== this.originalImages[i]);
+  }
+
   async save(): Promise<void> {
     if (!this.canSave) {
+      return;
+    }
+    if (!this.hasChanges) {
+      void this.router.navigate(['/tabs/dashbord']);
       return;
     }
     this.saving = true;
@@ -126,9 +162,9 @@ export class EditPostPage implements OnInit {
       const payload = this.hasAttachment
         ? { content: this.content.trim() }
         : { content: this.content.trim(), imageUrls: this.images };
-      await this.publishService.updatePost(this.postId, payload);
+      const updated = await this.publishService.updatePost(this.postId, payload);
       await this.toast(this.translate.instant('DASHBOARD.EDIT_DONE'), 'success');
-      void this.router.navigate(['/tabs/dashbord']);
+      void this.router.navigate(['/tabs/dashbord'], { state: { updatedPost: updated } });
     } catch {
       await this.toast(this.translate.instant('DASHBOARD.EDIT_ERROR'), 'danger');
     } finally {

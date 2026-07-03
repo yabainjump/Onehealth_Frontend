@@ -1,0 +1,272 @@
+<ion-header class="ion-no-border admin-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="back()">
+        <ion-icon name="arrow-back-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'ADMIN.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar class="segment-bar">
+    <ion-segment [(ngModel)]="section" (ionChange)="onSectionChange()" mode="md" scrollable>
+      <ion-segment-button value="overview">
+        <ion-label>{{ 'ADMIN.OVERVIEW' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="users">
+        <ion-label>{{ 'ADMIN.USERS' | translate }}</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="certifications">
+        <ion-label>
+          {{ 'ADMIN.CERTIFICATIONS' | translate }}
+          <ion-badge *ngIf="stats?.pendingCertifications" color="warning">
+            {{ stats?.pendingCertifications }}
+          </ion-badge>
+        </ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="content">
+        <ion-label>{{ 'ADMIN.CONTENT' | translate }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="admin-content">
+  <!-- ===== Vue d'ensemble ===== -->
+  <section *ngIf="section === 'overview'">
+    <div class="kpi-loading" *ngIf="loadingStats">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+    <div class="kpi-grid" *ngIf="!loadingStats && stats">
+      <div class="kpi-card">
+        <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+        <strong>{{ stats.totalUsers }}</strong>
+        <span>{{ 'ADMIN.KPI_USERS' | translate }}</span>
+      </div>
+      <div class="kpi-card certified">
+        <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+        <strong>{{ stats.certifiedUsers }}</strong>
+        <span>{{ 'ADMIN.KPI_CERTIFIED' | translate }}</span>
+      </div>
+      <div class="kpi-card pending">
+        <ion-icon name="hourglass-outline" aria-hidden="true"></ion-icon>
+        <strong>{{ stats.pendingCertifications }}</strong>
+        <span>{{ 'ADMIN.KPI_PENDING' | translate }}</span>
+      </div>
+      <div class="kpi-card banned">
+        <ion-icon name="ban-outline" aria-hidden="true"></ion-icon>
+        <strong>{{ stats.bannedUsers }}</strong>
+        <span>{{ 'ADMIN.KPI_BANNED' | translate }}</span>
+      </div>
+      <div class="kpi-card">
+        <ion-icon name="newspaper-outline" aria-hidden="true"></ion-icon>
+        <strong>{{ stats.totalPosts }}</strong>
+        <span>{{ 'ADMIN.KPI_POSTS' | translate }}</span>
+      </div>
+      <div class="kpi-card">
+        <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+        <strong>{{ stats.totalAlerts }}</strong>
+        <span>{{ 'ADMIN.KPI_ALERTS' | translate }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Utilisateurs ===== -->
+  <section *ngIf="section === 'users'">
+    <div class="filters-row">
+      <ion-searchbar
+        [(ngModel)]="usersSearch"
+        (ionInput)="onSearchChange()"
+        [placeholder]="'ADMIN.SEARCH_USERS' | translate"
+        mode="md"
+      ></ion-searchbar>
+      <ion-select
+        [(ngModel)]="usersRole"
+        (ionChange)="onUserFilterChange()"
+        interface="popover"
+        [placeholder]="'ADMIN.FILTER_ROLE' | translate"
+      >
+        <ion-select-option value="">{{ 'ADMIN.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="user">{{ 'ADMIN.ROLE_USER' | translate }}</ion-select-option>
+        <ion-select-option value="admin">{{ 'ADMIN.ROLE_ADMIN' | translate }}</ion-select-option>
+      </ion-select>
+      <ion-select
+        [(ngModel)]="usersStatus"
+        (ionChange)="onUserFilterChange()"
+        interface="popover"
+        [placeholder]="'ADMIN.FILTER_STATUS' | translate"
+      >
+        <ion-select-option value="">{{ 'ADMIN.ALL' | translate }}</ion-select-option>
+        <ion-select-option value="certified">{{ 'ADMIN.STATUS_CERTIFIED' | translate }}</ion-select-option>
+        <ion-select-option value="banned">{{ 'ADMIN.STATUS_BANNED' | translate }}</ion-select-option>
+      </ion-select>
+    </div>
+
+    <div class="kpi-loading" *ngIf="loadingUsers">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div class="user-card" *ngFor="let user of users">
+      <img [src]="photo(user)" alt="" class="user-avatar" (click)="openProfile(user)" />
+      <div class="user-info" (click)="openProfile(user)">
+        <p class="user-name">
+          {{ displayName(user) }}
+          <ion-icon
+            *ngIf="user.isCertified"
+            name="checkmark-circle"
+            class="certified-icon"
+            aria-hidden="true"
+          ></ion-icon>
+        </p>
+        <p class="user-email">{{ user.email }}</p>
+        <p class="user-tags">
+          <ion-badge [color]="user.role === 'admin' ? 'tertiary' : 'medium'">
+            {{ user.role }}
+          </ion-badge>
+          <ion-badge *ngIf="user.isBanned" color="danger">
+            {{ 'ADMIN.STATUS_BANNED' | translate }}
+          </ion-badge>
+        </p>
+      </div>
+      <div class="user-actions" *ngIf="!isSelf(user)">
+        <ion-button size="small" fill="outline" (click)="toggleRole(user)">
+          {{ (user.role === 'admin' ? 'ADMIN.DEMOTE' : 'ADMIN.PROMOTE') | translate }}
+        </ion-button>
+        <ion-button
+          size="small"
+          [color]="user.isBanned ? 'success' : 'danger'"
+          fill="outline"
+          (click)="toggleBan(user)"
+        >
+          {{ (user.isBanned ? 'ADMIN.UNBAN' : 'ADMIN.BAN') | translate }}
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="empty-note" *ngIf="!loadingUsers && !users.length">
+      {{ 'ADMIN.NO_RESULTS' | translate }}
+    </div>
+
+    <div class="pager" *ngIf="usersTotalPages > 1">
+      <ion-button size="small" fill="clear" [disabled]="usersPage <= 1" (click)="changeUsersPage(-1)">
+        <ion-icon name="chevron-back-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+      </ion-button>
+      <span>{{ usersPage }} / {{ usersTotalPages }}</span>
+      <ion-button
+        size="small"
+        fill="clear"
+        [disabled]="usersPage >= usersTotalPages"
+        (click)="changeUsersPage(1)"
+      >
+        <ion-icon name="chevron-forward-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </div>
+  </section>
+
+  <!-- ===== Certifications ===== -->
+  <section *ngIf="section === 'certifications'">
+    <div class="filters-row">
+      <ion-select
+        [(ngModel)]="certificationsStatus"
+        (ionChange)="onCertificationsFilterChange()"
+        interface="popover"
+      >
+        <ion-select-option value="pending">{{ 'ADMIN.CERT_PENDING' | translate }}</ion-select-option>
+        <ion-select-option value="approved">{{ 'ADMIN.CERT_APPROVED_F' | translate }}</ion-select-option>
+        <ion-select-option value="rejected">{{ 'ADMIN.CERT_REJECTED_F' | translate }}</ion-select-option>
+      </ion-select>
+    </div>
+
+    <div class="kpi-loading" *ngIf="loadingCertifications">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div class="cert-request-card" *ngFor="let request of certifications">
+      <div class="cert-request-head" (click)="openProfile(request.user)">
+        <img [src]="photo(request.user)" alt="" class="user-avatar" />
+        <div>
+          <p class="user-name">{{ displayName(request.user) }}</p>
+          <p class="user-email">{{ request.user?.institution || request.user?.typeMedecin || '' }}</p>
+          <p class="user-email">{{ request.createdAt | date: 'medium' }}</p>
+        </div>
+      </div>
+
+      <p class="cert-message" *ngIf="request.message">{{ request.message }}</p>
+
+      <div class="cert-docs" *ngIf="request.documents.length">
+        <a
+          *ngFor="let doc of request.documents"
+          [href]="docSrc(doc)"
+          target="_blank"
+          rel="noopener"
+        >
+          <img *ngIf="isImage(doc)" [src]="docSrc(doc)" alt="" loading="lazy" />
+          <span class="doc-link" *ngIf="!isImage(doc)">
+            <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+            {{ 'ADMIN.VIEW_DOC' | translate }}
+          </span>
+        </a>
+      </div>
+
+      <p class="cert-message reject-note" *ngIf="request.status === 'rejected' && request.adminNotes">
+        {{ 'CERT.REJECT_REASON' | translate }} : {{ request.adminNotes }}
+      </p>
+
+      <div class="cert-actions" *ngIf="request.status === 'pending'">
+        <ion-button
+          size="small"
+          color="success"
+          [disabled]="processingRequestId === request.id"
+          (click)="approve(request)"
+        >
+          <ion-icon name="checkmark-outline" slot="start" aria-hidden="true"></ion-icon>
+          {{ 'ADMIN.APPROVE' | translate }}
+        </ion-button>
+        <ion-button
+          size="small"
+          color="danger"
+          fill="outline"
+          [disabled]="processingRequestId === request.id"
+          (click)="reject(request)"
+        >
+          <ion-icon name="close-outline" slot="start" aria-hidden="true"></ion-icon>
+          {{ 'ADMIN.REJECT' | translate }}
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="empty-note" *ngIf="!loadingCertifications && !certifications.length">
+      {{ 'ADMIN.NO_RESULTS' | translate }}
+    </div>
+  </section>
+
+  <!-- ===== Contenu (modération) ===== -->
+  <section *ngIf="section === 'content'">
+    <div class="kpi-loading" *ngIf="loadingPosts">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div class="user-card" *ngFor="let post of posts">
+      <img
+        [src]="post.author?.photoURL || 'assets/default-profile.png'"
+        alt=""
+        class="user-avatar"
+      />
+      <div class="user-info">
+        <p class="user-name">
+          {{ post.author?.firstName }} {{ post.author?.lastName }}
+        </p>
+        <p class="user-email post-preview">{{ (post.content || '') | slice: 0:140 }}</p>
+        <p class="user-email">{{ post.timestamp | date: 'short' }}</p>
+      </div>
+      <div class="user-actions">
+        <ion-button size="small" color="danger" fill="outline" (click)="deletePost(post)">
+          <ion-icon name="trash-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="empty-note" *ngIf="!loadingPosts && !posts.length">
+      {{ 'ADMIN.NO_RESULTS' | translate }}
+    </div>
+  </section>
+</ion-content>

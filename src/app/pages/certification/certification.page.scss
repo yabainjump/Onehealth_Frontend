@@ -1,0 +1,182 @@
+/* ===== Page certification : cohérente avec le composer (blanc, cartes) ===== */
+.cert-header ion-toolbar {
+  --background: #ffffff;
+  --color: #1b2330;
+  --border-width: 0;
+  border-bottom: 1px solid #e9edf3;
+}
+
+.cert-header ion-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.cert-content {
+  --background: #f6f8fc;
+  --padding-start: max(16px, calc((100% - 620px) / 2));
+  --padding-end: max(16px, calc((100% - 620px) / 2));
+}
+
+.cert-loading {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.cert-card {
+  background: #ffffff;
+  border: 1px solid #e9edf3;
+  border-radius: 16px;
+  padding: 18px;
+  margin: 16px 0;
+}
+
+.cert-card h2 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1b2330;
+}
+
+.cert-card .hint {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  color: #707f97;
+}
+
+/* Cartes de statut */
+.cert-card.status {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cert-card.status ion-icon {
+  font-size: 34px;
+  flex-shrink: 0;
+}
+
+.cert-card.status p {
+  margin: 0;
+  color: #44516a;
+  font-size: 0.9rem;
+}
+
+.cert-card.approved ion-icon {
+  color: #1f9d57;
+}
+
+.cert-card.pending ion-icon {
+  color: #d98f00;
+}
+
+.cert-card.rejected ion-icon {
+  color: #d64545;
+}
+
+.reject-reason {
+  font-style: italic;
+}
+
+/* Zone de texte */
+.cert-input {
+  --padding-start: 0;
+  --placeholder-color: #8a96a8;
+  --placeholder-opacity: 1;
+  font-size: 1rem;
+  color: #1b2330;
+  margin-bottom: 12px;
+}
+
+/* Justificatifs */
+.doc-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.doc-item {
+  position: relative;
+}
+
+.doc-item img {
+  width: 88px;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  border: 1px solid #e9edf3;
+}
+
+.doc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 220px;
+  padding: 12px;
+  border: 1px solid #dbe2ec;
+  border-radius: 12px;
+  background: #f8fbff;
+  color: #1b2a43;
+  font-size: 0.85rem;
+}
+
+.doc-chip ion-icon {
+  font-size: 22px;
+  color: #195fc8;
+  flex-shrink: 0;
+}
+
+.doc-chip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doc-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(17, 24, 39, 0.72);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.add-doc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px dashed #b9c5d6;
+  border-radius: 12px;
+  background: transparent;
+  color: #44516a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 12px 16px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.add-doc-btn[disabled] {
+  opacity: 0.5;
+}
+
+.add-doc-btn ion-icon,
+.add-doc-btn ion-spinner {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.submit-btn {
+  --background: var(--ion-color-primary);
+  font-weight: 600;
+}

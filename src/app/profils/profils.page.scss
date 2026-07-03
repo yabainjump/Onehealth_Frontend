@@ -118,6 +118,14 @@ h1 {
   font-weight: 700;
 }
 
+/* Badge « profil certifié » à côté du nom */
+h1 .certified-badge {
+  color: #1f9d57;
+  font-size: 24px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
 .subtitle {
   margin: 0;
   text-align: center;

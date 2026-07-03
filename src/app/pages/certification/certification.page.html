@@ -1,0 +1,113 @@
+<ion-header class="ion-no-border cert-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="back()">
+        <ion-icon name="arrow-back-outline" slot="icon-only" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'CERT.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="cert-content">
+  <div class="cert-loading" *ngIf="loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <!-- Profil déjà certifié -->
+    <div class="cert-card status approved" *ngIf="isCertified">
+      <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+      <div>
+        <h2>{{ 'CERT.ALREADY_TITLE' | translate }}</h2>
+        <p>{{ 'CERT.ALREADY_TEXT' | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Statut de la demande existante -->
+    <div
+      class="cert-card status"
+      *ngIf="!isCertified && request"
+      [class.pending]="request.status === 'pending'"
+      [class.rejected]="request.status === 'rejected'"
+    >
+      <ion-icon
+        [name]="request.status === 'pending' ? 'hourglass-outline' : 'close-circle-outline'"
+        aria-hidden="true"
+      ></ion-icon>
+      <div>
+        <h2 *ngIf="request.status === 'pending'">{{ 'CERT.PENDING_TITLE' | translate }}</h2>
+        <p *ngIf="request.status === 'pending'">{{ 'CERT.PENDING_TEXT' | translate }}</p>
+        <h2 *ngIf="request.status === 'rejected'">{{ 'CERT.REJECTED_TITLE' | translate }}</h2>
+        <p *ngIf="request.status === 'rejected' && request.adminNotes" class="reject-reason">
+          {{ 'CERT.REJECT_REASON' | translate }} : {{ request.adminNotes }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Formulaire de demande -->
+    <form class="cert-card" *ngIf="canSubmitNew" (ngSubmit)="submit()">
+      <h2>{{ 'CERT.FORM_TITLE' | translate }}</h2>
+      <p class="hint">{{ 'CERT.FORM_HINT' | translate }}</p>
+
+      <ion-textarea
+        class="cert-input"
+        [autoGrow]="true"
+        [rows]="4"
+        [placeholder]="'CERT.MESSAGE_PLACEHOLDER' | translate"
+        [(ngModel)]="message"
+        name="message"
+        maxlength="1000"
+      ></ion-textarea>
+
+      <!-- Justificatifs -->
+      <div class="doc-list" *ngIf="documents.length">
+        <div class="doc-item" *ngFor="let url of documents; trackBy: trackByUrl">
+          <img *ngIf="isImage(url)" [src]="docSrc(url)" alt="" loading="lazy" />
+          <div class="doc-chip" *ngIf="!isImage(url)">
+            <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+            <span>{{ fileName(url) }}</span>
+          </div>
+          <button
+            type="button"
+            class="doc-remove"
+            (click)="removeDocument(url)"
+            [attr.aria-label]="'COMMON.CANCEL' | translate"
+          >
+            <ion-icon name="close" aria-hidden="true"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="add-doc-btn"
+        [disabled]="uploading || !canAddDocument"
+        (click)="fileInput.click()"
+      >
+        <ion-spinner *ngIf="uploading" name="crescent"></ion-spinner>
+        <ion-icon *ngIf="!uploading" name="cloud-upload-outline" aria-hidden="true"></ion-icon>
+        {{ 'CERT.ADD_DOC' | translate }}
+      </button>
+      <input
+        type="file"
+        #fileInput
+        accept="image/*,.pdf,.doc,.docx"
+        multiple
+        hidden
+        (change)="handleFiles($event)"
+      />
+
+      <ion-button
+        expand="block"
+        shape="round"
+        type="submit"
+        class="submit-btn"
+        [disabled]="!canSend"
+      >
+        <ion-spinner name="crescent" *ngIf="submitting"></ion-spinner>
+        <span *ngIf="!submitting">{{ 'CERT.SUBMIT' | translate }}</span>
+      </ion-button>
+    </form>
+  </ng-container>
+</ion-content>

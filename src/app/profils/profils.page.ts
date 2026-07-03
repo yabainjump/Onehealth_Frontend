@@ -78,6 +78,19 @@ export class ProfilsPage implements OnInit {
     return !!this.currentUserId && this.currentUserId === this.userId;
   }
 
+  /** Vrai si l'utilisateur connecté est administrateur (accès dashboard). */
+  get isAdmin(): boolean {
+    return this.authService.getCurrentUserSync()?.['role'] === 'admin';
+  }
+
+  goCertification(): void {
+    void this.router.navigateByUrl('/certification');
+  }
+
+  goAdmin(): void {
+    void this.router.navigateByUrl('/admin');
+  }
+
   get displayName(): string {
     const fullName = `${this.user?.firstName || ''} ${this.user?.lastName || ''}`.trim();
     return fullName || this.user?.username || 'OneHealth Member';
