@@ -33,3 +33,4 @@ backup_src_before_legacy_restore/
 Thumbs.db
 .idea/
 .vscode/
+src/environments/environment.prod.ts

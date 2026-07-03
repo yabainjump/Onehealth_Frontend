@@ -38,7 +38,7 @@ export class LoginPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.googleAuth.isConfigured) {
-      this.googleAuth.renderButton('google-signin-btn');
+      void this.googleAuth.renderButton('google-signin-btn');
       void this.waitForGoogleCredential();
     }
   }

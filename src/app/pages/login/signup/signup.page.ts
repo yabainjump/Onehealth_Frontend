@@ -33,7 +33,7 @@ export class SignupPage implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.googleAuth.isConfigured) {
-      this.googleAuth.renderButton('google-signup-btn');
+      void this.googleAuth.renderButton('google-signup-btn');
       void this.waitForGoogleCredential();
     }
   }

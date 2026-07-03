@@ -4,5 +4,5 @@ export const environment = {
   botApiUrl: 'https://api.example.com/bot',
   // Client ID OAuth "Web application" (Google Cloud Console > APIs & Services
   // > Identifiants). Meme valeur que GOOGLE_CLIENT_ID cote backend.
-  googleClientId: '',
+  googleClientId: '426659586297-d70l5m48rqt03hl3ugm9lc5skoofo9c9.apps.googleusercontent.com',
 };
