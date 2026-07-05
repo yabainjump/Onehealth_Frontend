@@ -1,6 +1,9 @@
 export const environment = {
   production: true,
   apiBaseUrl: 'https://backend.onehealthnetwork.yaba-in.com/api',
+  // URL publique du site (utilisee pour les liens de partage). Doit rester
+  // l'adresse du FRONTEND, pas du backend.
+  publicWebUrl: 'https://onehealthnetwork.yaba-in.com',
   botApiUrl: 'http://localhost:5000/api/bot',
   // Client ID OAuth "Web application" (Google Cloud Console > APIs & Services
   // > Identifiants). Meme valeur que GOOGLE_CLIENT_ID cote backend.

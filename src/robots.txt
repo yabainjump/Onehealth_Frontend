@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://onehealthnetwork.yaba-in.com/sitemap.xml
+Sitemap: https://backend.onehealthnetwork.yaba-in.com/api/share/sitemap.xml
