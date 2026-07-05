@@ -236,10 +236,10 @@
   background: #f6f8fc;
 }
 
-/* Seul l'aperçu PDF est masqué sur mobile (Chrome Android ne le rend pas en
-   iframe). Le visualiseur Office, lui, fonctionne partout. */
+/* Les visualiseurs externes (Google/Microsoft) fonctionnent sur mobile : on
+   garde l'aperçu partout, un peu plus court sur petit écran. */
 @media (max-width: 767px) {
-  .doc-preview-frame.is-pdf {
-    display: none;
+  .doc-preview-frame {
+    height: 360px;
   }
 }

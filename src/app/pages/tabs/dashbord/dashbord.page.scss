@@ -667,10 +667,10 @@ ion-avatar {
   background: #f6f8fc;
 }
 
-/* Chrome Android ne rend pas les PDF dans une iframe : on masque le seul
-   aperçu PDF sur mobile (le visualiseur Office, lui, fonctionne partout). */
+/* Les visualiseurs externes (Google/Microsoft) fonctionnent sur mobile : on
+   garde l'aperçu partout, un peu plus court sur petit écran. */
 @media (max-width: 767px) {
-  .doc-preview-frame.is-pdf {
-    display: none;
+  .doc-preview-frame {
+    height: 340px;
   }
 }

@@ -198,26 +198,8 @@ longPost:   Record<string, boolean> = {};
     );
   }
 
-  // Mémoïsé : un nouvel objet SafeResourceUrl à chaque cycle rechargerait l'iframe.
-  private readonly pdfUrlCache = new Map<string, SafeResourceUrl>();
-
-  pdfPreviewUrl(post: Post | null): SafeResourceUrl | null {
-    const url = this.getAttachment(post)?.url;
-    if (!url) {
-      return null;
-    }
-    let safe = this.pdfUrlCache.get(url);
-    if (!safe) {
-      safe = this.sanitizer.bypassSecurityTrustResourceUrl(
-        `${url}#toolbar=0&navpanes=0&view=FitH`,
-      );
-      this.pdfUrlCache.set(url, safe);
-    }
-    return safe;
-  }
-
-  // Documents Office (Word, PowerPoint, Excel) : rendus inline via le
-  // visualiseur Microsoft Office Online (aucun navigateur ne les affiche seul).
+  // Documents Office (Word, PowerPoint, Excel) : aucun navigateur ne les affiche
+  // nativement.
   private static readonly OFFICE_DOC = /\.(docx?|pptx?|xlsx?)(\?.*)?$/i;
 
   isOfficeAttachment(post: Post | null): boolean {
@@ -238,8 +220,8 @@ longPost:   Record<string, boolean> = {};
     );
   }
 
-  // Le visualiseur telecharge le fichier depuis les serveurs Microsoft : l'URL
-  // doit etre publique (impossible sur localhost). En dev -> bouton « Ouvrir ».
+  // Les visualiseurs Microsoft/Google telechargent le fichier depuis LEURS
+  // serveurs : l'URL doit etre publique (impossible sur localhost). En dev -> bouton « Ouvrir ».
   isPubliclyReachable(url?: string | null): boolean {
     const value = `${url || ''}`;
     return (
@@ -248,26 +230,33 @@ longPost:   Record<string, boolean> = {};
     );
   }
 
-  canPreviewOffice(post: Post | null): boolean {
+  canPreviewDocument(post: Post | null): boolean {
     return (
-      this.isOfficeAttachment(post) &&
+      (this.isPdfAttachment(post) || this.isOfficeAttachment(post)) &&
       this.isPubliclyReachable(this.getAttachment(post)?.url)
     );
   }
 
-  private readonly officeUrlCache = new Map<string, SafeResourceUrl>();
+  // Mémoïsé : un nouvel objet SafeResourceUrl à chaque cycle rechargerait l'iframe.
+  private readonly docUrlCache = new Map<string, SafeResourceUrl>();
 
-  officeViewerUrl(post: Post | null): SafeResourceUrl | null {
+  // Aperçu inline façon LinkedIn. Le PDF servi par le backend est bloqué en
+  // iframe cross-origin (X-Frame-Options du proxy) et les fichiers Office ne sont
+  // pas affichables nativement : on passe par un visualiseur externe qui va
+  // chercher le fichier côté serveur (Office -> Microsoft, PDF -> Google).
+  documentPreviewUrl(post: Post | null): SafeResourceUrl | null {
     const url = this.getAttachment(post)?.url;
-    if (!url || !this.canPreviewOffice(post)) {
+    if (!url || !this.canPreviewDocument(post)) {
       return null;
     }
-    let safe = this.officeUrlCache.get(url);
+    let safe = this.docUrlCache.get(url);
     if (!safe) {
-      safe = this.sanitizer.bypassSecurityTrustResourceUrl(
-        `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`,
-      );
-      this.officeUrlCache.set(url, safe);
+      const encoded = encodeURIComponent(url);
+      const viewer = this.isOfficeAttachment(post)
+        ? `https://view.officeapps.live.com/op/embed.aspx?src=${encoded}`
+        : `https://docs.google.com/viewer?url=${encoded}&embedded=true`;
+      safe = this.sanitizer.bypassSecurityTrustResourceUrl(viewer);
+      this.docUrlCache.set(url, safe);
     }
     return safe;
   }

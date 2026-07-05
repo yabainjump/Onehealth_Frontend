@@ -491,27 +491,8 @@ export class DashbordPage implements OnInit {
     );
   }
 
-  // Mémoïsé : bypassSecurityTrustResourceUrl retourne un nouvel objet à
-  // chaque appel, ce qui ferait recharger l'iframe à chaque cycle Angular.
-  private readonly pdfUrlCache = new Map<string, SafeResourceUrl>();
-
-  pdfPreviewUrl(post: Post): SafeResourceUrl | null {
-    const url = post.attachment?.url;
-    if (!url) {
-      return null;
-    }
-    let safe = this.pdfUrlCache.get(url);
-    if (!safe) {
-      safe = this.sanitizer.bypassSecurityTrustResourceUrl(
-        `${url}#toolbar=0&navpanes=0&view=FitH`,
-      );
-      this.pdfUrlCache.set(url, safe);
-    }
-    return safe;
-  }
-
   // Documents Office (Word, PowerPoint, Excel) : aucun navigateur ne les affiche
-  // nativement. On les rend inline via le visualiseur Microsoft Office Online.
+  // nativement.
   private static readonly OFFICE_DOC = /\.(docx?|pptx?|xlsx?)(\?.*)?$/i;
 
   isOfficeAttachment(post: Post): boolean {
@@ -543,23 +524,34 @@ export class DashbordPage implements OnInit {
     );
   }
 
-  canPreviewOffice(post: Post): boolean {
-    return this.isOfficeAttachment(post) && this.isPubliclyReachable(post.attachment?.url);
+  canPreviewDocument(post: Post): boolean {
+    return (
+      (this.isPdfAttachment(post) || this.isOfficeAttachment(post)) &&
+      this.isPubliclyReachable(post.attachment?.url)
+    );
   }
 
-  private readonly officeUrlCache = new Map<string, SafeResourceUrl>();
+  // Mémoïsé : bypassSecurityTrustResourceUrl retourne un nouvel objet à chaque
+  // appel, ce qui rechargerait l'iframe à chaque cycle de detection Angular.
+  private readonly docUrlCache = new Map<string, SafeResourceUrl>();
 
-  officeViewerUrl(post: Post): SafeResourceUrl | null {
+  // Aperçu inline façon LinkedIn. Le PDF servi par le backend est bloqué en
+  // iframe cross-origin (X-Frame-Options du proxy) et les fichiers Office ne
+  // sont pas affichables nativement : on passe donc par un visualiseur externe
+  // qui va chercher le fichier côté serveur (Office -> Microsoft, PDF -> Google).
+  documentPreviewUrl(post: Post): SafeResourceUrl | null {
     const url = post.attachment?.url;
-    if (!url || !this.canPreviewOffice(post)) {
+    if (!url || !this.canPreviewDocument(post)) {
       return null;
     }
-    let safe = this.officeUrlCache.get(url);
+    let safe = this.docUrlCache.get(url);
     if (!safe) {
-      safe = this.sanitizer.bypassSecurityTrustResourceUrl(
-        `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`,
-      );
-      this.officeUrlCache.set(url, safe);
+      const encoded = encodeURIComponent(url);
+      const viewer = this.isOfficeAttachment(post)
+        ? `https://view.officeapps.live.com/op/embed.aspx?src=${encoded}`
+        : `https://docs.google.com/viewer?url=${encoded}&embedded=true`;
+      safe = this.sanitizer.bypassSecurityTrustResourceUrl(viewer);
+      this.docUrlCache.set(url, safe);
     }
     return safe;
   }
