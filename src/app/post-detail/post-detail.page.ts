@@ -216,6 +216,62 @@ longPost:   Record<string, boolean> = {};
     return safe;
   }
 
+  // Documents Office (Word, PowerPoint, Excel) : rendus inline via le
+  // visualiseur Microsoft Office Online (aucun navigateur ne les affiche seul).
+  private static readonly OFFICE_DOC = /\.(docx?|pptx?|xlsx?)(\?.*)?$/i;
+
+  isOfficeAttachment(post: Post | null): boolean {
+    const attachment = this.getAttachment(post);
+    if (!attachment || attachment.type !== 'document') {
+      return false;
+    }
+    const name = attachment.fileName || attachment.url || '';
+    const mime = (attachment.mimeType || '').toLowerCase();
+    return (
+      PostDetailPage.OFFICE_DOC.test(name) ||
+      mime.includes('word') ||
+      mime.includes('powerpoint') ||
+      mime.includes('presentation') ||
+      mime.includes('excel') ||
+      mime.includes('spreadsheet') ||
+      mime.includes('officedocument')
+    );
+  }
+
+  // Le visualiseur telecharge le fichier depuis les serveurs Microsoft : l'URL
+  // doit etre publique (impossible sur localhost). En dev -> bouton « Ouvrir ».
+  isPubliclyReachable(url?: string | null): boolean {
+    const value = `${url || ''}`;
+    return (
+      /^https?:\/\//i.test(value) &&
+      !/localhost|127\.0\.0\.1|0\.0\.0\.0/i.test(value)
+    );
+  }
+
+  canPreviewOffice(post: Post | null): boolean {
+    return (
+      this.isOfficeAttachment(post) &&
+      this.isPubliclyReachable(this.getAttachment(post)?.url)
+    );
+  }
+
+  private readonly officeUrlCache = new Map<string, SafeResourceUrl>();
+
+  officeViewerUrl(post: Post | null): SafeResourceUrl | null {
+    const url = this.getAttachment(post)?.url;
+    if (!url || !this.canPreviewOffice(post)) {
+      return null;
+    }
+    let safe = this.officeUrlCache.get(url);
+    if (!safe) {
+      safe = this.sanitizer.bypassSecurityTrustResourceUrl(
+        `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`,
+      );
+      this.officeUrlCache.set(url, safe);
+    }
+    return safe;
+  }
+
   // Repli : si la miniature (/api/media/thumb) echoue, on charge l'image originale.
   onMediaError(event: Event, fallback?: string): void {
     const img = event.target as HTMLImageElement | null;

@@ -667,10 +667,10 @@ ion-avatar {
   background: #f6f8fc;
 }
 
-/* Chrome Android ne rend pas les PDF dans une iframe : on garde la carte
-   cliquable seule sur mobile. */
+/* Chrome Android ne rend pas les PDF dans une iframe : on masque le seul
+   aperçu PDF sur mobile (le visualiseur Office, lui, fonctionne partout). */
 @media (max-width: 767px) {
-  .doc-preview-frame {
+  .doc-preview-frame.is-pdf {
     display: none;
   }
 }

@@ -88,10 +88,18 @@
     <!-- Aperçu inline du PDF (façon LinkedIn) — desktop uniquement -->
     <iframe
       *ngIf="isPdfAttachment(post)"
-      class="doc-preview-frame"
+      class="doc-preview-frame is-pdf"
       [src]="pdfPreviewUrl(post)"
       loading="lazy"
       title="Aperçu du document"
+    ></iframe>
+    <!-- Aperçu inline Word / PowerPoint / Excel via Microsoft Office Online -->
+    <iframe
+      *ngIf="canPreviewOffice(post)"
+      class="doc-preview-frame"
+      [src]="officeViewerUrl(post)"
+      loading="lazy"
+      title="Aperçu du document Office"
     ></iframe>
   </div>
 

@@ -510,6 +510,60 @@ export class DashbordPage implements OnInit {
     return safe;
   }
 
+  // Documents Office (Word, PowerPoint, Excel) : aucun navigateur ne les affiche
+  // nativement. On les rend inline via le visualiseur Microsoft Office Online.
+  private static readonly OFFICE_DOC = /\.(docx?|pptx?|xlsx?)(\?.*)?$/i;
+
+  isOfficeAttachment(post: Post): boolean {
+    const attachment = post.attachment;
+    if (!attachment || attachment.type !== 'document') {
+      return false;
+    }
+    const name = attachment.fileName || attachment.url || '';
+    const mime = (attachment.mimeType || '').toLowerCase();
+    return (
+      DashbordPage.OFFICE_DOC.test(name) ||
+      mime.includes('word') ||
+      mime.includes('powerpoint') ||
+      mime.includes('presentation') ||
+      mime.includes('excel') ||
+      mime.includes('spreadsheet') ||
+      mime.includes('officedocument')
+    );
+  }
+
+  // Les visualiseurs Microsoft/Google telechargent le fichier depuis LEURS
+  // serveurs : l'URL doit donc etre publique (impossible sur localhost). En dev,
+  // on retombe sur le bouton « Ouvrir ».
+  isPubliclyReachable(url?: string | null): boolean {
+    const value = `${url || ''}`;
+    return (
+      /^https?:\/\//i.test(value) &&
+      !/localhost|127\.0\.0\.1|0\.0\.0\.0/i.test(value)
+    );
+  }
+
+  canPreviewOffice(post: Post): boolean {
+    return this.isOfficeAttachment(post) && this.isPubliclyReachable(post.attachment?.url);
+  }
+
+  private readonly officeUrlCache = new Map<string, SafeResourceUrl>();
+
+  officeViewerUrl(post: Post): SafeResourceUrl | null {
+    const url = post.attachment?.url;
+    if (!url || !this.canPreviewOffice(post)) {
+      return null;
+    }
+    let safe = this.officeUrlCache.get(url);
+    if (!safe) {
+      safe = this.sanitizer.bypassSecurityTrustResourceUrl(
+        `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(url)}`,
+      );
+      this.officeUrlCache.set(url, safe);
+    }
+    return safe;
+  }
+
   /** Patche en place un post déjà présent dans les listes en mémoire (édition). */
   private applyUpdatedPost(updated: Post): void {
     const patch = (target: Post) => {
