@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 /** Version des liens sociaux : l'incrementer force les robots a relire les metas. */
-const SHARE_VERSION = '3';
+const SHARE_VERSION = '4';
 
 /** Construit les liens publics du site, interceptes pour les robots par Apache. */
 @Injectable({ providedIn: 'root' })

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ApiService } from './api.service';
+import { TokenStorageService } from './token-storage.service';
 
 export type AppNotificationType = 'like' | 'comment' | 'follow' | 'alert';
 
@@ -19,6 +20,7 @@ export interface AppNotification {
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
   private readonly api = inject(ApiService);
+  private readonly tokenStorage = inject(TokenStorageService);
 
   private readonly _unread = new BehaviorSubject<number>(0);
   /** Nombre de notifications non lues (pour le badge). */
@@ -31,7 +33,13 @@ export class NotificationsService {
   }
 
   /** Rafraîchit le compteur de non-lues (silencieux en cas d'erreur). */
-  refreshUnread(): void {
+  async refreshUnread(): Promise<void> {
+    const token = await this.tokenStorage.getToken();
+    if (!token) {
+      this._unread.next(0);
+      return;
+    }
+
     this.api.get<{ count: number }>('/notifications/unread-count').subscribe({
       next: (res) => this._unread.next(res?.count || 0),
       error: () => {
