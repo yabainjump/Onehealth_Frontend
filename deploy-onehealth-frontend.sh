@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-$HOME/public_html/onehealthnetwork.yaba-in.com}"
+APP_DIR="${APP_DIR:-$HOME/apps/onehealth_frontend}"
 REPO_URL="${REPO_URL:-https://github.com/yabainjump/Onehealth_Frontend.git}"
 WEB_DIR="${WEB_DIR:-$HOME/public_html/onehealthnetwork.yaba-in.com}"
 BRANCH="${BRANCH:-main}"
