@@ -66,12 +66,17 @@ fi
 
 cp -a www/. "$WEB_DIR"/
 
-# Installation explicite : une ancienne version du script remplacait ce
-# fichier et supprimait les regles Open Graph des robots sociaux.
-cp -f "$APP_DIR/src/.htaccess" "$WEB_DIR/.htaccess"
+# `src/.htaccess` est l'unique source de verite. `install` remplace le fichier
+# entier afin qu'aucune ancienne regle ne survive entre deux deploiements.
+install -m 0644 "$APP_DIR/src/.htaccess" "$WEB_DIR/.htaccess"
 
 if ! grep -q "api/share/post" "$WEB_DIR/.htaccess"; then
   echo "Error: social sharing rules are missing from .htaccess"
+  exit 1
+fi
+
+if ! cmp -s "$APP_DIR/src/.htaccess" "$WEB_DIR/.htaccess"; then
+  echo "Error: deployed .htaccess differs from the versioned source"
   exit 1
 fi
 
