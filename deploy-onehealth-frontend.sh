@@ -80,14 +80,24 @@ if ! cmp -s "$APP_DIR/src/.htaccess" "$WEB_DIR/.htaccess"; then
   exit 1
 fi
 
-# Verification reelle via LiteSpeed : un robot social doit etre redirige vers
-# le backend Open Graph. L'identifiant factice suffit pour tester la reecriture.
-SHARE_TEST_URL="${PUBLIC_WEB_URL:-https://onehealthnetwork.yaba-in.com}/post-detail?id=000000000000000000000000&v=$(date +%s)"
-SHARE_STATUS="$(curl -s -o /dev/null -w '%{http_code}' \
+# Verification reelle : le crawler doit recevoir les metas en 200 directement
+# depuis l'URL frontend. SHARE_TEST_POST_ID peut etre surcharge au deploiement.
+SHARE_TEST_POST_ID="${SHARE_TEST_POST_ID:-6a390e1dedc203996a7240ad}"
+SHARE_TEST_URL="${PUBLIC_WEB_URL:-https://onehealthnetwork.yaba-in.com}/posts/$SHARE_TEST_POST_ID?v=$(date +%s)"
+SHARE_TEST_BODY="$(mktemp)"
+trap 'rm -f "$SHARE_TEST_BODY"' EXIT
+SHARE_STATUS="$(curl -s -o "$SHARE_TEST_BODY" -w '%{http_code}' \
   -A 'facebookexternalhit/1.1' "$SHARE_TEST_URL")"
-if [ "$SHARE_STATUS" != "302" ]; then
-  echo "Error: social sharing rewrite returned HTTP $SHARE_STATUS instead of 302"
+if [ "$SHARE_STATUS" != "200" ]; then
+  echo "Error: frontend share page returned HTTP $SHARE_STATUS instead of 200"
   exit 1
 fi
+if ! grep -q '<meta property="og:title"' "$SHARE_TEST_BODY" || \
+   ! grep -q '<meta property="og:image"' "$SHARE_TEST_BODY"; then
+  echo "Error: frontend share page does not contain Open Graph metadata"
+  exit 1
+fi
+rm -f "$SHARE_TEST_BODY"
+trap - EXIT
 
 echo "OneHealth frontend deployment completed."

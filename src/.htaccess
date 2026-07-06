@@ -15,16 +15,19 @@
   #  Robots sociaux (WhatsApp, Facebook, X/Twitter, LinkedIn,
   #  Telegram…) : ils n'exécutent pas le JavaScript d'Angular,
   #  donc aucune balise Open Graph côté SPA. On les redirige
-  #  vers la page de partage du backend qui rend les balises
-  #  (titre, description, image du post). Les visiteurs humains
-  #  ne matchent pas ces User-Agents et restent sur l'app.
+  #  vers le renderer NestJS par proxy interne. Le crawler recoit
+  #  directement un HTML 200 sous l'URL frontend.
   # ----------------------------------------------------------
   RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|facebot|whatsapp|twitterbot|linkedinbot|telegrambot|slackbot|discordbot|pinterest|skypeuripreview|viber|vkshare) [NC]
-  RewriteCond %{THE_REQUEST} "\s/+post-detail\?id=([0-9a-fA-F]{24})" [NC]
-  RewriteRule ^post-detail https://backend.onehealthnetwork.yaba-in.com/api/share/post/%1 [R=302,L,NE]
+  RewriteRule ^posts/([0-9a-fA-F]{24})/?$ http://127.0.0.1:3000/api/share/post/$1 [P,L,NE,E=Proxy-Host:backend.onehealthnetwork.yaba-in.com]
 
   RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|facebot|whatsapp|twitterbot|linkedinbot|telegrambot|slackbot|discordbot|pinterest|skypeuripreview|viber|vkshare) [NC]
-  RewriteRule ^profils/([0-9a-fA-F]{24}) https://backend.onehealthnetwork.yaba-in.com/api/share/profile/$1 [R=302,L,NE]
+  RewriteRule ^profils/([0-9a-fA-F]{24})/?$ http://127.0.0.1:3000/api/share/profile/$1 [P,L,NE,E=Proxy-Host:backend.onehealthnetwork.yaba-in.com]
+
+  # Compatibilite des liens historiques /post-detail?id=...
+  RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|facebot|whatsapp|twitterbot|linkedinbot|telegrambot|slackbot|discordbot|pinterest|skypeuripreview|viber|vkshare) [NC]
+  RewriteCond %{THE_REQUEST} "\s/+post-detail\?id=([0-9a-fA-F]{24})" [NC]
+  RewriteRule ^post-detail http://127.0.0.1:3000/api/share/post/%1 [P,L,NE,E=Proxy-Host:backend.onehealthnetwork.yaba-in.com]
 
   # Laisser passer les fichiers et dossiers RÉELS (js, css, images, assets…)
   # seulement APRES les routes sociales.

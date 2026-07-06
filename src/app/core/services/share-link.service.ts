@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 /** Version des liens sociaux : l'incrementer force les robots a relire les metas. */
-const SHARE_VERSION = '4';
+const SHARE_VERSION = '5';
 
 /** Construit les liens publics du site, interceptes pour les robots par Apache. */
 @Injectable({ providedIn: 'root' })
@@ -13,7 +13,7 @@ export class ShareLinkService {
       return this.buildWebUrl('/welcome');
     }
     return this.buildWebUrl(
-      `/post-detail?id=${encodeURIComponent(normalizedId)}&v=${SHARE_VERSION}`,
+      `/posts/${encodeURIComponent(normalizedId)}?v=${SHARE_VERSION}`,
     );
   }
 
