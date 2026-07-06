@@ -85,19 +85,21 @@ fi
 SHARE_TEST_POST_ID="${SHARE_TEST_POST_ID:-6a390e1dedc203996a7240ad}"
 SHARE_TEST_URL="${PUBLIC_WEB_URL:-https://onehealthnetwork.yaba-in.com}/posts/$SHARE_TEST_POST_ID?v=$(date +%s)"
 SHARE_TEST_BODY="$(mktemp)"
-trap 'rm -f "$SHARE_TEST_BODY"' EXIT
-SHARE_STATUS="$(curl -s -o "$SHARE_TEST_BODY" -w '%{http_code}' \
+SHARE_TEST_HEADERS="$(mktemp)"
+trap 'rm -f "$SHARE_TEST_BODY" "$SHARE_TEST_HEADERS"' EXIT
+SHARE_STATUS="$(curl -s -D "$SHARE_TEST_HEADERS" -o "$SHARE_TEST_BODY" -w '%{http_code}' \
   -A 'facebookexternalhit/1.1' "$SHARE_TEST_URL")"
 if [ "$SHARE_STATUS" != "200" ]; then
   echo "Error: frontend share page returned HTTP $SHARE_STATUS instead of 200"
   exit 1
 fi
-if ! grep -q '<meta property="og:title"' "$SHARE_TEST_BODY" || \
-   ! grep -q '<meta property="og:image"' "$SHARE_TEST_BODY"; then
-  echo "Error: frontend share page does not contain Open Graph metadata"
+if ! grep -qi '^X-OneHealth-Share-Type: article' "$SHARE_TEST_HEADERS" || \
+   ! grep -q '<meta property="og:type" content="article"' "$SHARE_TEST_BODY" || \
+   ! grep -q "/posts/$SHARE_TEST_POST_ID" "$SHARE_TEST_BODY"; then
+  echo "Error: frontend URL returned generic site metadata instead of post metadata"
   exit 1
 fi
-rm -f "$SHARE_TEST_BODY"
+rm -f "$SHARE_TEST_BODY" "$SHARE_TEST_HEADERS"
 trap - EXIT
 
 echo "OneHealth frontend deployment completed."
