@@ -80,4 +80,14 @@ if ! cmp -s "$APP_DIR/src/.htaccess" "$WEB_DIR/.htaccess"; then
   exit 1
 fi
 
+# Verification reelle via LiteSpeed : un robot social doit etre redirige vers
+# le backend Open Graph. L'identifiant factice suffit pour tester la reecriture.
+SHARE_TEST_URL="${PUBLIC_WEB_URL:-https://onehealthnetwork.yaba-in.com}/post-detail?id=000000000000000000000000&v=$(date +%s)"
+SHARE_STATUS="$(curl -s -o /dev/null -w '%{http_code}' \
+  -A 'facebookexternalhit/1.1' "$SHARE_TEST_URL")"
+if [ "$SHARE_STATUS" != "302" ]; then
+  echo "Error: social sharing rewrite returned HTTP $SHARE_STATUS instead of 302"
+  exit 1
+fi
+
 echo "OneHealth frontend deployment completed."
