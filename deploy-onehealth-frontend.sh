@@ -66,8 +66,12 @@ fi
 
 cp -a www/. "$WEB_DIR"/
 
-if [ ! -f "$WEB_DIR/.htaccess" ]; then
-  echo "Error: the frontend build did not provide .htaccess"
+# Installation explicite : une ancienne version du script remplacait ce
+# fichier et supprimait les regles Open Graph des robots sociaux.
+cp -f "$APP_DIR/src/.htaccess" "$WEB_DIR/.htaccess"
+
+if ! grep -q "api/share/post" "$WEB_DIR/.htaccess"; then
+  echo "Error: social sharing rules are missing from .htaccess"
   exit 1
 fi
 

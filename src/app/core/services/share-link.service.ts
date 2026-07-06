@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
-/** Construit les pages HTML de partage rendues par le backend. */
+/** Version des liens sociaux : l'incrementer force les robots a relire les metas. */
+const SHARE_VERSION = '3';
+
+/** Construit les liens publics du site, interceptes pour les robots par Apache. */
 @Injectable({ providedIn: 'root' })
 export class ShareLinkService {
   buildPostShareUrl(postId: string): string {
@@ -9,7 +12,9 @@ export class ShareLinkService {
     if (!normalizedId) {
       return this.buildWebUrl('/welcome');
     }
-    return this.buildApiUrl(`/share/post/${encodeURIComponent(normalizedId)}`);
+    return this.buildWebUrl(
+      `/post-detail?id=${encodeURIComponent(normalizedId)}&v=${SHARE_VERSION}`,
+    );
   }
 
   buildProfileShareUrl(userId: string): string {
@@ -17,7 +22,9 @@ export class ShareLinkService {
     if (!normalizedId) {
       return this.buildWebUrl('/welcome');
     }
-    return this.buildApiUrl(`/share/profile/${encodeURIComponent(normalizedId)}`);
+    return this.buildWebUrl(
+      `/profils/${encodeURIComponent(normalizedId)}?v=${SHARE_VERSION}`,
+    );
   }
 
   // Origine web publique : configuree en priorite (indispensable dans l'app
@@ -37,9 +44,4 @@ export class ShareLinkService {
     return `${this.resolveWebOrigin()}${normalizedPath}`;
   }
 
-  private buildApiUrl(path: string): string {
-    const apiBase = `${environment.apiBaseUrl || ''}`.trim().replace(/\/+$/, '');
-    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-    return `${apiBase}${normalizedPath}`;
-  }
 }
