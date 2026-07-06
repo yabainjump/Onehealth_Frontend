@@ -66,24 +66,9 @@ fi
 
 cp -a www/. "$WEB_DIR"/
 
-cat > "$WEB_DIR/.htaccess" <<'HTACCESS'
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
-</IfModule>
-
-<IfModule mod_headers.c>
-  <FilesMatch "\.(js|css|png|jpg|jpeg|gif|webp|avif|svg|ico|woff2?)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
-  </FilesMatch>
-  <FilesMatch "^(index\.html|ngsw\.json|ngsw-worker\.js)$">
-    Header set Cache-Control "no-cache, no-store, must-revalidate"
-  </FilesMatch>
-</IfModule>
-HTACCESS
+if [ ! -f "$WEB_DIR/.htaccess" ]; then
+  echo "Error: the frontend build did not provide .htaccess"
+  exit 1
+fi
 
 echo "OneHealth frontend deployment completed."
