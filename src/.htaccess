@@ -25,11 +25,11 @@
   #  ne matchent pas ces User-Agents et restent sur l'app.
   # ----------------------------------------------------------
   RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|facebot|whatsapp|twitterbot|linkedinbot|telegrambot|slackbot|discordbot|pinterest|skypeuripreview|viber|vkshare) [NC]
-  RewriteCond %{QUERY_STRING} (?:^|&)id=([0-9a-fA-F]{24}) [NC]
-  RewriteRule ^post-detail/?$ https://backend.onehealthnetwork.yaba-in.com/api/share/post/%1? [R=302,L]
+  RewriteCond %{THE_REQUEST} "\s/+post-detail\?id=([0-9a-fA-F]{24})" [NC]
+  RewriteRule ^post-detail https://backend.onehealthnetwork.yaba-in.com/api/share/post/%1 [R=302,L,NE]
 
   RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|facebot|whatsapp|twitterbot|linkedinbot|telegrambot|slackbot|discordbot|pinterest|skypeuripreview|viber|vkshare) [NC]
-  RewriteRule ^profils/([0-9a-fA-F]{24})/?$ https://backend.onehealthnetwork.yaba-in.com/api/share/profile/$1? [R=302,L]
+  RewriteRule ^profils/([0-9a-fA-F]{24}) https://backend.onehealthnetwork.yaba-in.com/api/share/profile/$1 [R=302,L,NE]
 
   # Tout le reste -> index.html (Angular Router prend le relais)
   RewriteRule ^ index.html [L]
