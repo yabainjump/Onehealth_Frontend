@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { TestSupportModule } from 'src/testing/test-support.module';
 
@@ -8,8 +8,8 @@ describe('EmptyScreenComponent', () => {
   let component: EmptyScreenComponent;
   let fixture: ComponentFixture<EmptyScreenComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [ EmptyScreenComponent ],
       imports: [IonicModule.forRoot(), TestSupportModule]
     }).compileComponents();
@@ -17,7 +17,7 @@ describe('EmptyScreenComponent', () => {
     fixture = TestBed.createComponent(EmptyScreenComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

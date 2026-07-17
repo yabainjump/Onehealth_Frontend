@@ -1,12 +1,27 @@
 import { ChatService } from './../../services/chat/chat.service';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, NavigationExtras, Router } from '@angular/router';
-import { IonContent, ModalController, PopoverController } from '@ionic/angular';
-import { Observable, Subscription, map, take } from 'rxjs';
+import {
+  AlertController,
+  IonContent,
+  ModalController,
+  PopoverController,
+} from '@ionic/angular';
+import {
+  Observable,
+  Subscription,
+  firstValueFrom,
+  map,
+  take,
+} from 'rxjs';
 import { ApiService } from 'src/app/services/api/api.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { InteractionGuardService } from 'src/app/core/services/interaction-guard.service';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  RudolfMessage,
+  RudolfService,
+} from 'src/app/core/services/rudolf.service';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +37,7 @@ export class HomePage implements OnInit, OnDestroy {
   private routerSub?: Subscription;
   @ViewChild('new_chat') modal: ModalController;
   @ViewChild('popover') popover: PopoverController;
-  @ViewChild('contentChat', { static: false }) contentChat: IonContent;
+  @ViewChild('mainContent', { static: false }) mainContent: IonContent;
   segment = 'chats';
   query: string;
   searchs: Observable<any[]>;
@@ -45,7 +60,9 @@ export class HomePage implements OnInit, OnDestroy {
     private api: ApiService,
     private authService: AuthService,
     private translate: TranslateService,
-    private interactionGuard: InteractionGuardService
+    private interactionGuard: InteractionGuardService,
+    private rudolfService: RudolfService,
+    private alertController: AlertController,
   ) {}
   
 
@@ -121,7 +138,13 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   isLoading = true;
-  chats: { message: string; sender: string }[] = [];
+  rudolfMessages: RudolfMessage[] = [];
+  rudolfInput = '';
+  rudolfConfigured = true;
+  rudolfLoading = false;
+  rudolfSending = false;
+  rudolfLoaded = false;
+  rudolfError = '';
 
   
 
@@ -132,6 +155,7 @@ export class HomePage implements OnInit, OnDestroy {
       return;
     }
     this.getRooms();
+    void this.loadRudolfConversation();
     this.chatService
       .getCurrentUserProfil()
       .subscribe((user) => (this.currentUser = user[0]));
@@ -156,8 +180,8 @@ export class HomePage implements OnInit, OnDestroy {
     this.routerSub?.unsubscribe();
   }
 
-  scrollToBottom() {
-    if (this.chats) this.contentChat.scrollToBottom(500);
+  private scrollRudolfToBottom(): void {
+    setTimeout(() => void this.mainContent?.scrollToBottom(300), 0);
   }
 
   searchMed(event) {
@@ -217,6 +241,101 @@ export class HomePage implements OnInit, OnDestroy {
 
   onSegmentChanged(event: any) {
     this.segment = event.detail.value;
+    if (this.segment === 'rudolf' && !this.rudolfLoaded) {
+      void this.loadRudolfConversation();
+    }
+  }
+
+  async loadRudolfConversation(): Promise<void> {
+    if (this.rudolfLoading) return;
+    this.rudolfLoading = true;
+    this.rudolfError = '';
+    try {
+      const conversation = await firstValueFrom(
+        this.rudolfService.getConversation(),
+      );
+      this.rudolfConfigured = conversation.configured;
+      this.rudolfMessages = conversation.messages || [];
+      this.rudolfLoaded = true;
+      this.scrollRudolfToBottom();
+    } catch {
+      this.rudolfError = this.translate.instant('RUDOLF.LOAD_ERROR');
+    } finally {
+      this.rudolfLoading = false;
+    }
+  }
+
+  async sendRudolfMessage(): Promise<void> {
+    const message = this.rudolfInput.trim();
+    if (!message || this.rudolfSending || !this.rudolfConfigured) return;
+
+    const optimisticMessage: RudolfMessage = {
+      role: 'user',
+      content: message,
+      createdAt: new Date().toISOString(),
+    };
+    this.rudolfMessages = [...this.rudolfMessages, optimisticMessage];
+    this.rudolfInput = '';
+    this.rudolfSending = true;
+    this.rudolfError = '';
+    this.scrollRudolfToBottom();
+
+    try {
+      const response = await firstValueFrom(
+        this.rudolfService.sendMessage(message),
+      );
+      this.rudolfMessages = [...this.rudolfMessages, response.message];
+      this.rudolfLoaded = true;
+    } catch (error: any) {
+      this.rudolfMessages = this.rudolfMessages.filter(
+        (item) => item !== optimisticMessage,
+      );
+      this.rudolfInput = message;
+      this.rudolfError = this.translate.instant(
+        error?.status === 429 ? 'RUDOLF.LIMIT_ERROR' : 'RUDOLF.SEND_ERROR',
+      );
+    } finally {
+      this.rudolfSending = false;
+      this.scrollRudolfToBottom();
+    }
+  }
+
+  useRudolfSuggestion(suggestion: string): void {
+    this.rudolfInput = suggestion;
+    void this.sendRudolfMessage();
+  }
+
+  getRudolfSuggestion(key: string): string {
+    return this.translate.instant(key);
+  }
+
+  async confirmRudolfReset(): Promise<void> {
+    const alert = await this.alertController.create({
+      header: this.translate.instant('RUDOLF.RESET_TITLE'),
+      message: this.translate.instant('RUDOLF.RESET_TEXT'),
+      buttons: [
+        {
+          text: this.translate.instant('RUDOLF.CANCEL'),
+          role: 'cancel',
+        },
+        {
+          text: this.translate.instant('RUDOLF.RESET_CONFIRM'),
+          role: 'destructive',
+          handler: () => void this.resetRudolfConversation(),
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  private async resetRudolfConversation(): Promise<void> {
+    try {
+      await firstValueFrom(this.rudolfService.resetConversation());
+      this.rudolfMessages = [];
+      this.rudolfError = '';
+    } catch {
+      this.rudolfError = this.translate.instant('RUDOLF.SEND_ERROR');
+    }
   }
 
   blurActive() {
@@ -293,8 +412,7 @@ export class HomePage implements OnInit, OnDestroy {
     return `${user?.uid || user?.id || user?.email || _index}`;
   }
 
-  trackByChatIndex(index: number): number {
-    return index;
+  trackByRudolfMessage(index: number, message: RudolfMessage): string {
+    return `${message.createdAt}-${message.role}-${index}`;
   }
 }
-
