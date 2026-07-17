@@ -29,33 +29,35 @@
 }
 
 .rudolf-shell {
-  width: min(100%, 820px);
+  width: min(100%, 760px);
   min-height: 100%;
   margin: 0 auto;
-  padding: 18px 16px 120px;
+  padding: 12px 16px 28px;
 }
 
 .rudolf-identity {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: linear-gradient(135deg, #effaf3 0%, #ffffff 100%);
-  border: 1px solid #d8eadf;
-  border-radius: 16px;
+  gap: 11px;
+  padding: 4px 2px 12px;
+  border-bottom: 1px solid #e2e7ef;
 
   .rudolf-avatar {
     display: grid;
     place-items: center;
-    width: 48px;
-    height: 48px;
-    flex: 0 0 48px;
-    border-radius: 15px;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 50%;
     color: #fff;
-    background: linear-gradient(145deg, #16824d, #0d6038);
-    box-shadow: 0 8px 20px rgba(13, 96, 56, 0.2);
-    font-size: 1.45rem;
+    background: var(--ion-color-primary);
+    box-shadow: 0 4px 12px rgba(29, 81, 165, 0.2);
+    font-size: 1.2rem;
     font-weight: 800;
+  }
+
+  .rudolf-profile {
+    min-width: 0;
   }
 
   h2,
@@ -64,14 +66,14 @@
   }
 
   h2 {
-    color: #123d2a;
-    font-size: 1.15rem;
+    color: var(--ion-text-color);
+    font-size: 1rem;
   }
 
   p {
-    margin-top: 3px;
-    color: #60736a;
-    font-size: 0.86rem;
+    margin-top: 2px;
+    color: #697586;
+    font-size: 0.78rem;
     line-height: 1.35;
   }
 
@@ -82,70 +84,97 @@
 
 .rudolf-notice {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
-  margin: 12px 4px 20px;
-  color: #66746d;
-  font-size: 0.78rem;
+  margin: 10px 0 18px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  color: #526174;
+  background: rgba(29, 81, 165, 0.06);
+  font-size: 0.74rem;
   line-height: 1.4;
 
   ion-icon {
     flex: 0 0 auto;
-    margin-top: 1px;
-    color: var(--ion-color-success);
-    font-size: 1rem;
+    color: var(--ion-color-primary);
+    font-size: 1.05rem;
   }
 }
 
 .rudolf-welcome,
 .rudolf-state {
-  max-width: 620px;
-  margin: 44px auto 24px;
+  max-width: 580px;
+  margin: clamp(20px, 7vh, 54px) auto 20px;
   text-align: center;
 }
 
 .rudolf-welcome {
   .welcome-mark {
-    font-size: 2.5rem;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto;
+    border-radius: 50%;
+    color: var(--ion-color-primary);
+    background: rgba(29, 81, 165, 0.1);
+
+    ion-icon {
+      font-size: 2rem;
+    }
   }
 
   h3 {
-    margin: 12px 0 8px;
-    color: #183f2d;
+    margin: 14px 0 6px;
+    color: #1b2330;
+    font-size: 1.12rem;
   }
 
   p {
     margin: 0 auto;
-    max-width: 540px;
-    color: #68776f;
-    line-height: 1.55;
+    max-width: 500px;
+    color: #687586;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 }
 
 .rudolf-suggestions {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 24px;
+  gap: 8px;
+  margin-top: 20px;
 
   button {
-    min-height: 72px;
-    padding: 12px;
-    border: 1px solid #d6e5dc;
-    border-radius: 13px;
-    color: #24503b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 50px;
+    padding: 11px 14px;
+    border: 1px solid #dce3ec;
+    border-radius: 12px;
+    color: #294766;
     background: #fff;
     font: inherit;
-    font-size: 0.82rem;
-    line-height: 1.35;
+    font-size: 0.8rem;
+    line-height: 1.3;
+    text-align: left;
     cursor: pointer;
-    transition: border-color 150ms ease, transform 150ms ease,
+    transition:
+      border-color 150ms ease,
+      transform 150ms ease,
       box-shadow 150ms ease;
+
+    ion-icon {
+      flex: 0 0 auto;
+      color: var(--ion-color-primary);
+      font-size: 1rem;
+    }
 
     &:hover,
     &:focus-visible {
-      border-color: var(--ion-color-success);
-      box-shadow: 0 6px 18px rgba(24, 130, 77, 0.1);
+      border-color: var(--ion-color-primary);
+      box-shadow: 0 5px 14px rgba(29, 81, 165, 0.1);
       transform: translateY(-1px);
     }
   }
@@ -162,7 +191,8 @@
 .rudolf-messages {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
+  padding: 4px 0 12px;
 }
 
 .rudolf-message {
@@ -170,27 +200,28 @@
 
   .message-author {
     margin: 0 8px 5px;
-    color: #77857e;
+    color: #788495;
     font-size: 0.72rem;
     font-weight: 700;
   }
 
   .message-bubble {
     padding: 13px 15px;
-    border-radius: 16px;
+    border-radius: 14px;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
-    line-height: 1.55;
-    box-shadow: 0 3px 12px rgba(25, 48, 37, 0.06);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.05);
   }
 
   &.from-rudolf {
     align-self: flex-start;
 
     .message-bubble {
-      color: #263d32;
+      color: #263445;
       background: #fff;
-      border: 1px solid #dfe8e3;
+      border: 1px solid #dfe4eb;
       border-bottom-left-radius: 5px;
     }
   }
@@ -204,7 +235,7 @@
 
     .message-bubble {
       color: #fff;
-      background: linear-gradient(145deg, #17834e, #116a40);
+      background: var(--ion-color-primary);
       border-bottom-right-radius: 5px;
     }
   }
@@ -253,7 +284,7 @@
 }
 
 .rudolf-error {
-  margin: 14px 4px 0;
+  margin: 10px 0 0;
   padding: 10px 12px;
   border-radius: 10px;
   color: #8e2424;
@@ -261,39 +292,69 @@
   font-size: 0.82rem;
 }
 
+.rudolf-footer {
+  background: #fff;
+  border-top: 1px solid #e1e6ee;
+  box-shadow: 0 -3px 12px rgba(16, 24, 40, 0.05);
+}
+
 .rudolf-composer {
-  position: sticky;
-  bottom: 0;
-  z-index: 5;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: end;
-  gap: 9px;
-  margin-top: 24px;
-  padding: 12px 12px 8px;
-  border: 1px solid #dce7e1;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 12px 32px rgba(34, 65, 50, 0.13);
-  backdrop-filter: blur(12px);
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 9px 14px 7px;
+
+  .rudolf-input-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 3px 4px 3px 12px;
+    border: 1px solid #d5dce6;
+    border-radius: 22px;
+    background: #f8fafc;
+    transition:
+      border-color var(--app-transition),
+      box-shadow var(--app-transition);
+
+    &:focus-within {
+      border-color: var(--ion-color-primary);
+      box-shadow: 0 0 0 3px rgba(29, 81, 165, 0.1);
+    }
+  }
 
   ion-textarea {
-    --padding-top: 8px;
+    --padding-top: 9px;
     --padding-bottom: 8px;
-    --padding-start: 8px;
-    --padding-end: 8px;
-    max-height: 150px;
+    --padding-start: 0;
+    --padding-end: 0;
+    --placeholder-color: #7d8795;
+    --placeholder-opacity: 1;
+    min-height: 42px;
+    max-height: 112px;
+    color: #1b2330;
+    font-size: 0.9rem;
   }
 
   ion-button {
-    margin-bottom: 5px;
+    width: 40px;
+    height: 40px;
+    margin: 1px;
+    --padding-start: 0;
+    --padding-end: 0;
+    --box-shadow: none;
   }
 
   small {
-    grid-column: 1 / -1;
-    padding: 0 7px;
-    color: #7c8982;
-    font-size: 0.68rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 5px;
+    color: #7b8694;
+    font-size: 0.64rem;
+
+    ion-icon {
+      font-size: 0.7rem;
+    }
   }
 }
 
@@ -378,41 +439,54 @@
 
 @media (max-width: 640px) {
   .rudolf-shell {
-    padding: 12px 10px 110px;
+    padding: 10px 12px 22px;
   }
 
   .rudolf-identity {
-    padding: 13px;
-  }
-
-  .rudolf-suggestions {
-    grid-template-columns: 1fr;
-
-    button {
-      min-height: 54px;
+    p {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
   }
 
   .rudolf-message {
     max-width: 92%;
   }
+
+  .rudolf-composer {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
 }
 
 ion-header.title-header {
   ion-toolbar {
+    --min-height: 54px;
     font-family: var(--ion-font-family) !important;
+
     ion-title {
       letter-spacing: 0.2px;
       font-weight: 700;
-      font-size: 1.35rem !important;
+      font-size: 1.15rem !important;
     }
   }
+
   ion-segment {
     --background: var(--ion-color-primary);
+
     ion-segment-button {
-      font-size: 1rem;
+      min-width: 0;
+      font-size: 0.82rem;
+      font-weight: 600;
       --color: var(--ion-color-light);
       --color-checked: #fff;
+
+      ion-label {
+        overflow: visible;
+        white-space: nowrap;
+      }
     }
   }
 }
@@ -495,7 +569,7 @@ ion-item {
         /* reculer un peu la bulle par rapport à la flèche de détail */
         margin-right: 18px; /* ajuste 8–16px selon ton goût */
         // /* optionnel si tu veux la reculer encore : */
-        transform: translateX(28px); 
+        transform: translateX(28px);
       }
     }
   }

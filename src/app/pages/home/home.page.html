@@ -1,10 +1,14 @@
-<div class="msg-2pane" [class.convo-open]="conversationOpen" [class.rudolf-active]="segment === 'rudolf'">
-<div class="msg-board">
-<div class="msg-list-pane">
-<ion-header class="title-header">
-  <ion-toolbar color="success">
-    <ion-title>{{ 'HOME.TITLE' | translate }}</ion-title>
-    <!-- <ion-buttons slot="end">
+<div
+  class="msg-2pane"
+  [class.convo-open]="conversationOpen"
+  [class.rudolf-active]="segment === 'rudolf'"
+>
+  <div class="msg-board">
+    <div class="msg-list-pane">
+      <ion-header class="title-header">
+        <ion-toolbar color="success">
+          <ion-title>{{ 'HOME.TITLE' | translate }}</ion-title>
+          <!-- <ion-buttons slot="end">
       <ion-button fill="clear" id="popover">
         <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
       </ion-button>
@@ -18,223 +22,321 @@
         </ion-content>
       </ng-template>
     </ion-popover> -->
-  </ion-toolbar>
-  <ion-segment [value]="segment" mode="md" (ionChange)="onSegmentChanged($event)">
-    <ion-segment-button value="rudolf">
-      <ion-label>{{ 'HOME.RUDOLF' | translate }}</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="chats">
-      <ion-label>{{ 'HOME.CHATS' | translate }}</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="calls">
-      <ion-label>{{ 'HOME.CALLS' | translate }}</ion-label>
-    </ion-segment-button>
-  </ion-segment>
-</ion-header>
-
-<ion-content #mainContent color="light">
-
-  <app-empty-screen *ngIf="segment === 'chats' && (chatRooms | async)?.length === 0" [model]="model">
-  </app-empty-screen>
-
-  <ng-container *ngIf="segment ==='chats' && (chatRooms | async) as rooms">
-
-    <ion-list *ngIf="rooms?.length > 0">
-
-      <ion-list-header class="ion-padding-bottom" color="light">
-        {{ 'HOME.RECENT_CHATS' | translate }}
-      </ion-list-header>
-
-      <ion-item *ngFor="let item of rooms; trackBy: trackByRoomId" (click)="getChat(item)" [detail]="true">
-        <ng-container *ngIf="(item?.user | async) as user">
-          <ion-avatar slot="start">
-            <img [src]="pickPhoto(user)" alt="avatar utilisateur" loading="lazy" decoding="async" />
-          </ion-avatar>
-
-          <ion-label>
-            <div class="row-top">
-              <span class="name">{{ pickName(user) }}</span>
-
-              <!-- heure/date basée d'abord sur le lastMsg, sinon fallback room -->
-              <ion-note class="time" slot="end" *ngIf="(item?.lastMsg | async) as last; else roomTime">
-                {{ formatRoomTime(($any(last)?.createdAt) || item?.lastMessageAt || item?.updatedAt) }}
-              </ion-note>
-              <ng-template #roomTime>
-                <ion-note class="time" slot="end">
-                  {{ formatRoomTime(item?.lastMessageAt || item?.updatedAt) }}
-                </ion-note>
-              </ng-template>
-            </div>
-
-            <div class="row-bottom">
-              <!-- extrait du dernier message (Vous: … / 📷 Photo) -->
-              <span class="preview" *ngIf="(item?.lastMsg | async) as last; else roomPreview">
-                {{ formatPreview(last, item) }}
-              </span>
-              <ng-template #roomPreview>
-                <span class="preview">{{ formatPreview(null, item) }}</span>
-              </ng-template>
-
-              <ion-badge *ngIf="unreadCount(item) > 0"  class="badge">
-                {{ unreadCount(item) }}
-              </ion-badge>
-            </div>
-          </ion-label>
-        </ng-container>
-      </ion-item>
-    </ion-list>
-
-  </ng-container>
-
-  <section class="rudolf-shell" *ngIf="segment === 'rudolf'">
-    <header class="rudolf-identity">
-      <div class="rudolf-avatar" aria-hidden="true">R</div>
-      <div>
-        <h2>{{ 'RUDOLF.TITLE' | translate }}</h2>
-        <p>{{ 'RUDOLF.DESCRIPTION' | translate }}</p>
-      </div>
-      <ion-button
-        *ngIf="rudolfMessages.length > 0"
-        fill="clear"
-        color="medium"
-        size="small"
-        [attr.aria-label]="'RUDOLF.RESET' | translate"
-        (click)="confirmRudolfReset()">
-        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-      </ion-button>
-    </header>
-
-    <div class="rudolf-notice">
-      <ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
-      <span>{{ 'RUDOLF.DISCLAIMER' | translate }}</span>
-    </div>
-
-    <div class="rudolf-state" *ngIf="rudolfLoading">
-      <ion-spinner name="crescent"></ion-spinner>
-    </div>
-
-    <div class="rudolf-state rudolf-config-error" *ngIf="!rudolfLoading && !rudolfConfigured">
-      <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
-      <p>{{ 'RUDOLF.NOT_CONFIGURED' | translate }}</p>
-    </div>
-
-    <div class="rudolf-welcome" *ngIf="!rudolfLoading && rudolfConfigured && rudolfMessages.length === 0">
-      <div class="welcome-mark" aria-hidden="true">🌍</div>
-      <h3>{{ 'RUDOLF.WELCOME_TITLE' | translate }}</h3>
-      <p>{{ 'RUDOLF.WELCOME_TEXT' | translate }}</p>
-      <div class="rudolf-suggestions">
-        <button type="button" (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_1'))">
-          {{ 'RUDOLF.SUGGESTION_1' | translate }}
-        </button>
-        <button type="button" (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_2'))">
-          {{ 'RUDOLF.SUGGESTION_2' | translate }}
-        </button>
-        <button type="button" (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_3'))">
-          {{ 'RUDOLF.SUGGESTION_3' | translate }}
-        </button>
-      </div>
-    </div>
-
-    <div class="rudolf-messages" aria-live="polite">
-      <article
-        *ngFor="let item of rudolfMessages; trackBy: trackByRudolfMessage"
-        class="rudolf-message"
-        [class.from-user]="item.role === 'user'"
-        [class.from-rudolf]="item.role === 'assistant'">
-        <div class="message-author">
-          {{ item.role === 'assistant' ? ('RUDOLF.TITLE' | translate) : ('RUDOLF.YOU' | translate) }}
-        </div>
-        <div class="message-bubble">{{ item.content }}</div>
-      </article>
-
-      <article class="rudolf-message from-rudolf" *ngIf="rudolfSending">
-        <div class="message-author">{{ 'RUDOLF.TITLE' | translate }}</div>
-        <div class="message-bubble typing-bubble">
-          <span></span><span></span><span></span>
-          <em>{{ 'RUDOLF.THINKING' | translate }}</em>
-        </div>
-      </article>
-    </div>
-
-    <div class="rudolf-error" *ngIf="rudolfError" role="alert">
-      {{ rudolfError }}
-    </div>
-
-    <form class="rudolf-composer" (ngSubmit)="sendRudolfMessage()">
-      <ion-textarea
-        name="rudolfMessage"
-        [(ngModel)]="rudolfInput"
-        [disabled]="rudolfSending || !rudolfConfigured"
-        [placeholder]="'RUDOLF.PLACEHOLDER' | translate"
-        [counter]="true"
-        [maxlength]="2000"
-        [autoGrow]="true"
-        rows="1">
-      </ion-textarea>
-      <ion-button
-        type="submit"
-        shape="round"
-        [disabled]="!rudolfInput.trim() || rudolfSending || !rudolfConfigured"
-        [attr.aria-label]="'RUDOLF.SEND' | translate">
-        <ion-icon slot="icon-only" name="send"></ion-icon>
-      </ion-button>
-      <small>{{ 'RUDOLF.PRIVACY' | translate }}</small>
-    </form>
-  </section>
-
-
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom" *ngIf="segment === 'chats'">
-    <ion-fab-button [attr.aria-label]="'HOME.NEW_CONVERSATION' | translate" (click)="newChat()">
-      <ion-icon name="add" aria-hidden="true"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-
-  <ion-modal #new_chat [isOpen]="open_new_chat" (willDismiss)="onWillDismiss($event)">
-    <ng-template>
-      <ion-header>
-        <ion-toolbar color="light">
-          <ion-title>{{ 'HOME.NEW_CONVERSATION' | translate }}</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="cancel()">{{ 'COMMON.CLOSE' | translate }}</ion-button>
-          </ion-buttons>
         </ion-toolbar>
-
-        <!-- plus de select de spécialité -->
-        <ion-searchbar (ionInput)="searchUsers($event)" show-clear-button="always"
-          [debounce]="250"
-          [placeholder]="'HOME.SEARCH_USER' | translate">
-        </ion-searchbar>
+        <ion-segment
+          [value]="segment"
+          mode="md"
+          (ionChange)="onSegmentChanged($event)"
+        >
+          <ion-segment-button value="rudolf">
+            <ion-label>{{ 'HOME.RUDOLF' | translate }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="chats">
+            <ion-label>{{ 'HOME.CHATS' | translate }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="calls">
+            <ion-label>{{ 'HOME.CALLS' | translate }}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
       </ion-header>
 
-      <ion-content color="light" *ngIf="(users | async) as user$">
-        <ion-list class="ion-margin-top" [style.background]="'transparent'" lines="none">
-          <ion-item *ngFor="let u of user$; trackBy: trackByUserId" (click)="startChat(u)" button detail="false">
-            <ion-avatar slot="start">
-              <img [src]="pickPhoto(u)" alt="avatar utilisateur" loading="lazy" decoding="async" />
-            </ion-avatar>
-            <ion-label>
-              <div class="name">{{ pickName(u) }}</div>
-              <!-- <div class="meta ion-text-muted">{{ u?.email }}</div> -->
-            </ion-label>
-          </ion-item>
+      <ion-content #mainContent color="light">
+        <app-empty-screen
+          *ngIf="segment === 'chats' && (chatRooms | async)?.length === 0"
+          [model]="model"
+        >
+        </app-empty-screen>
 
+        <ng-container
+          *ngIf="segment ==='chats' && (chatRooms | async) as rooms"
+        >
+          <ion-list *ngIf="rooms?.length > 0">
+            <ion-list-header class="ion-padding-bottom" color="light">
+              {{ 'HOME.RECENT_CHATS' | translate }}
+            </ion-list-header>
 
-        </ion-list>
+            <ion-item
+              *ngFor="let item of rooms; trackBy: trackByRoomId"
+              (click)="getChat(item)"
+              [detail]="true"
+            >
+              <ng-container *ngIf="(item?.user | async) as user">
+                <ion-avatar slot="start">
+                  <img
+                    [src]="pickPhoto(user)"
+                    alt="avatar utilisateur"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </ion-avatar>
+
+                <ion-label>
+                  <div class="row-top">
+                    <span class="name">{{ pickName(user) }}</span>
+
+                    <!-- heure/date basée d'abord sur le lastMsg, sinon fallback room -->
+                    <ion-note
+                      class="time"
+                      slot="end"
+                      *ngIf="(item?.lastMsg | async) as last; else roomTime"
+                    >
+                      {{ formatRoomTime(($any(last)?.createdAt) ||
+                      item?.lastMessageAt || item?.updatedAt) }}
+                    </ion-note>
+                    <ng-template #roomTime>
+                      <ion-note class="time" slot="end">
+                        {{ formatRoomTime(item?.lastMessageAt ||
+                        item?.updatedAt) }}
+                      </ion-note>
+                    </ng-template>
+                  </div>
+
+                  <div class="row-bottom">
+                    <!-- extrait du dernier message (Vous: … / 📷 Photo) -->
+                    <span
+                      class="preview"
+                      *ngIf="(item?.lastMsg | async) as last; else roomPreview"
+                    >
+                      {{ formatPreview(last, item) }}
+                    </span>
+                    <ng-template #roomPreview>
+                      <span class="preview"
+                        >{{ formatPreview(null, item) }}</span
+                      >
+                    </ng-template>
+
+                    <ion-badge *ngIf="unreadCount(item) > 0" class="badge">
+                      {{ unreadCount(item) }}
+                    </ion-badge>
+                  </div>
+                </ion-label>
+              </ng-container>
+            </ion-item>
+          </ion-list>
+        </ng-container>
+
+        <section class="rudolf-shell" *ngIf="segment === 'rudolf'">
+          <header class="rudolf-identity">
+            <div class="rudolf-avatar" aria-hidden="true">R</div>
+            <div class="rudolf-profile">
+              <h2>{{ 'RUDOLF.TITLE' | translate }}</h2>
+              <p>{{ 'RUDOLF.DESCRIPTION' | translate }}</p>
+            </div>
+            <ion-button
+              *ngIf="rudolfMessages.length > 0"
+              fill="clear"
+              color="medium"
+              size="small"
+              [attr.aria-label]="'RUDOLF.RESET' | translate"
+              (click)="confirmRudolfReset()"
+            >
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </header>
+
+          <div class="rudolf-notice">
+            <ion-icon
+              name="shield-checkmark-outline"
+              aria-hidden="true"
+            ></ion-icon>
+            <span>{{ 'RUDOLF.DISCLAIMER' | translate }}</span>
+          </div>
+
+          <div class="rudolf-state" *ngIf="rudolfLoading">
+            <ion-spinner name="crescent"></ion-spinner>
+          </div>
+
+          <div
+            class="rudolf-state rudolf-config-error"
+            *ngIf="!rudolfLoading && !rudolfConfigured"
+          >
+            <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+            <p>{{ 'RUDOLF.NOT_CONFIGURED' | translate }}</p>
+          </div>
+
+          <div
+            class="rudolf-welcome"
+            *ngIf="!rudolfLoading && rudolfConfigured && rudolfMessages.length === 0"
+          >
+            <div class="welcome-mark" aria-hidden="true">
+              <ion-icon name="globe-outline"></ion-icon>
+            </div>
+            <h3>{{ 'RUDOLF.WELCOME_TITLE' | translate }}</h3>
+            <p>{{ 'RUDOLF.WELCOME_TEXT' | translate }}</p>
+            <div class="rudolf-suggestions">
+              <button
+                type="button"
+                (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_1'))"
+              >
+                <span>{{ 'RUDOLF.SUGGESTION_1' | translate }}</span>
+                <ion-icon
+                  name="arrow-forward-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+              </button>
+              <button
+                type="button"
+                (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_2'))"
+              >
+                <span>{{ 'RUDOLF.SUGGESTION_2' | translate }}</span>
+                <ion-icon
+                  name="arrow-forward-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+              </button>
+              <button
+                type="button"
+                (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_3'))"
+              >
+                <span>{{ 'RUDOLF.SUGGESTION_3' | translate }}</span>
+                <ion-icon
+                  name="arrow-forward-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="rudolf-messages" aria-live="polite">
+            <article
+              *ngFor="let item of rudolfMessages; trackBy: trackByRudolfMessage"
+              class="rudolf-message"
+              [class.from-user]="item.role === 'user'"
+              [class.from-rudolf]="item.role === 'assistant'"
+            >
+              <div class="message-author">
+                {{ item.role === 'assistant' ? ('RUDOLF.TITLE' | translate) :
+                ('RUDOLF.YOU' | translate) }}
+              </div>
+              <div class="message-bubble">{{ item.content }}</div>
+            </article>
+
+            <article class="rudolf-message from-rudolf" *ngIf="rudolfSending">
+              <div class="message-author">{{ 'RUDOLF.TITLE' | translate }}</div>
+              <div class="message-bubble typing-bubble">
+                <span></span><span></span><span></span>
+                <em>{{ 'RUDOLF.THINKING' | translate }}</em>
+              </div>
+            </article>
+          </div>
+
+          <div class="rudolf-error" *ngIf="rudolfError" role="alert">
+            {{ rudolfError }}
+          </div>
+        </section>
+
+        <ion-fab
+          slot="fixed"
+          horizontal="end"
+          vertical="bottom"
+          *ngIf="segment === 'chats'"
+        >
+          <ion-fab-button
+            [attr.aria-label]="'HOME.NEW_CONVERSATION' | translate"
+            (click)="newChat()"
+          >
+            <ion-icon name="add" aria-hidden="true"></ion-icon>
+          </ion-fab-button>
+        </ion-fab>
+
+        <ion-modal
+          #new_chat
+          [isOpen]="open_new_chat"
+          (willDismiss)="onWillDismiss($event)"
+        >
+          <ng-template>
+            <ion-header>
+              <ion-toolbar color="light">
+                <ion-title>{{ 'HOME.NEW_CONVERSATION' | translate }}</ion-title>
+                <ion-buttons slot="end">
+                  <ion-button (click)="cancel()"
+                    >{{ 'COMMON.CLOSE' | translate }}</ion-button
+                  >
+                </ion-buttons>
+              </ion-toolbar>
+
+              <!-- plus de select de spécialité -->
+              <ion-searchbar
+                (ionInput)="searchUsers($event)"
+                show-clear-button="always"
+                [debounce]="250"
+                [placeholder]="'HOME.SEARCH_USER' | translate"
+              >
+              </ion-searchbar>
+            </ion-header>
+
+            <ion-content color="light" *ngIf="(users | async) as user$">
+              <ion-list
+                class="ion-margin-top"
+                [style.background]="'transparent'"
+                lines="none"
+              >
+                <ion-item
+                  *ngFor="let u of user$; trackBy: trackByUserId"
+                  (click)="startChat(u)"
+                  button
+                  detail="false"
+                >
+                  <ion-avatar slot="start">
+                    <img
+                      [src]="pickPhoto(u)"
+                      alt="avatar utilisateur"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </ion-avatar>
+                  <ion-label>
+                    <div class="name">{{ pickName(u) }}</div>
+                    <!-- <div class="meta ion-text-muted">{{ u?.email }}</div> -->
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-modal>
       </ion-content>
-    </ng-template>
-  </ion-modal>
 
-
-</ion-content>
-</div>
-
-  <!-- Volet droit (PC) : la conversation s'ouvre ici ; plein écran sur mobile -->
-  <div class="msg-convo-pane">
-    <ion-router-outlet></ion-router-outlet>
-    <div class="msg-empty" *ngIf="!conversationOpen">
-      <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon>
-      <p>{{ 'HOME.SELECT_CONVERSATION' | translate }}</p>
+      <ion-footer
+        class="rudolf-footer ion-no-border"
+        *ngIf="segment === 'rudolf'"
+      >
+        <form class="rudolf-composer" (ngSubmit)="sendRudolfMessage()">
+          <div class="rudolf-input-row">
+            <ion-textarea
+              name="rudolfMessage"
+              [(ngModel)]="rudolfInput"
+              [disabled]="rudolfSending || !rudolfConfigured"
+              [placeholder]="'RUDOLF.PLACEHOLDER' | translate"
+              [maxlength]="2000"
+              [autoGrow]="true"
+              rows="1"
+            >
+            </ion-textarea>
+            <ion-button
+              type="submit"
+              fill="solid"
+              shape="round"
+              [disabled]="!rudolfInput.trim() || rudolfSending || !rudolfConfigured"
+              [attr.aria-label]="'RUDOLF.SEND' | translate"
+            >
+              <ion-icon slot="icon-only" name="send"></ion-icon>
+            </ion-button>
+          </div>
+          <small>
+            <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+            {{ 'RUDOLF.PRIVACY' | translate }}
+          </small>
+        </form>
+      </ion-footer>
     </div>
-  </div>
+
+    <!-- Volet droit (PC) : la conversation s'ouvre ici ; plein écran sur mobile -->
+    <div class="msg-convo-pane">
+      <ion-router-outlet></ion-router-outlet>
+      <div class="msg-empty" *ngIf="!conversationOpen">
+        <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon>
+        <p>{{ 'HOME.SELECT_CONVERSATION' | translate }}</p>
+      </div>
+    </div>
   </div>
 </div>
