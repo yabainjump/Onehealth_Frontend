@@ -116,32 +116,6 @@
         </ng-container>
 
         <section class="rudolf-shell" *ngIf="segment === 'rudolf'">
-          <header class="rudolf-identity">
-            <div class="rudolf-avatar" aria-hidden="true">R</div>
-            <div class="rudolf-profile">
-              <h2>{{ 'RUDOLF.TITLE' | translate }}</h2>
-              <p>{{ 'RUDOLF.DESCRIPTION' | translate }}</p>
-            </div>
-            <ion-button
-              *ngIf="rudolfMessages.length > 0"
-              fill="clear"
-              color="medium"
-              size="small"
-              [attr.aria-label]="'RUDOLF.RESET' | translate"
-              (click)="confirmRudolfReset()"
-            >
-              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-            </ion-button>
-          </header>
-
-          <div class="rudolf-notice">
-            <ion-icon
-              name="shield-checkmark-outline"
-              aria-hidden="true"
-            ></ion-icon>
-            <span>{{ 'RUDOLF.DISCLAIMER' | translate }}</span>
-          </div>
-
           <div class="rudolf-state" *ngIf="rudolfLoading">
             <ion-spinner name="crescent"></ion-spinner>
           </div>
@@ -158,61 +132,60 @@
             class="rudolf-welcome"
             *ngIf="!rudolfLoading && rudolfConfigured && rudolfMessages.length === 0"
           >
-            <div class="welcome-mark" aria-hidden="true">
-              <ion-icon name="globe-outline"></ion-icon>
-            </div>
+            <div class="rudolf-avatar" aria-hidden="true">R</div>
             <h3>{{ 'RUDOLF.WELCOME_TITLE' | translate }}</h3>
             <p>{{ 'RUDOLF.WELCOME_TEXT' | translate }}</p>
+            <ion-note>{{ 'RUDOLF.DISCLAIMER' | translate }}</ion-note>
             <div class="rudolf-suggestions">
-              <button
+              <ion-chip
                 type="button"
+                outline="true"
+                color="primary"
                 (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_1'))"
               >
-                <span>{{ 'RUDOLF.SUGGESTION_1' | translate }}</span>
-                <ion-icon
-                  name="arrow-forward-outline"
-                  aria-hidden="true"
-                ></ion-icon>
-              </button>
-              <button
+                <ion-label>{{ 'RUDOLF.SUGGESTION_1' | translate }}</ion-label>
+              </ion-chip>
+              <ion-chip
                 type="button"
+                outline="true"
+                color="primary"
                 (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_2'))"
               >
-                <span>{{ 'RUDOLF.SUGGESTION_2' | translate }}</span>
-                <ion-icon
-                  name="arrow-forward-outline"
-                  aria-hidden="true"
-                ></ion-icon>
-              </button>
-              <button
+                <ion-label>{{ 'RUDOLF.SUGGESTION_2' | translate }}</ion-label>
+              </ion-chip>
+              <ion-chip
                 type="button"
+                outline="true"
+                color="primary"
                 (click)="useRudolfSuggestion(getRudolfSuggestion('RUDOLF.SUGGESTION_3'))"
               >
-                <span>{{ 'RUDOLF.SUGGESTION_3' | translate }}</span>
-                <ion-icon
-                  name="arrow-forward-outline"
-                  aria-hidden="true"
-                ></ion-icon>
-              </button>
+                <ion-label>{{ 'RUDOLF.SUGGESTION_3' | translate }}</ion-label>
+              </ion-chip>
             </div>
           </div>
 
           <div class="rudolf-messages" aria-live="polite">
+            <ion-button
+              class="rudolf-reset"
+              *ngIf="rudolfMessages.length > 0"
+              fill="clear"
+              color="medium"
+              size="small"
+              [attr.aria-label]="'RUDOLF.RESET' | translate"
+              (click)="confirmRudolfReset()"
+            >
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
             <article
               *ngFor="let item of rudolfMessages; trackBy: trackByRudolfMessage"
               class="rudolf-message"
               [class.from-user]="item.role === 'user'"
               [class.from-rudolf]="item.role === 'assistant'"
             >
-              <div class="message-author">
-                {{ item.role === 'assistant' ? ('RUDOLF.TITLE' | translate) :
-                ('RUDOLF.YOU' | translate) }}
-              </div>
               <div class="message-bubble">{{ item.content }}</div>
             </article>
 
             <article class="rudolf-message from-rudolf" *ngIf="rudolfSending">
-              <div class="message-author">{{ 'RUDOLF.TITLE' | translate }}</div>
               <div class="message-bubble typing-bubble">
                 <span></span><span></span><span></span>
                 <em>{{ 'RUDOLF.THINKING' | translate }}</em>
@@ -300,33 +273,35 @@
         class="rudolf-footer ion-no-border"
         *ngIf="segment === 'rudolf'"
       >
-        <form class="rudolf-composer" (ngSubmit)="sendRudolfMessage()">
-          <div class="rudolf-input-row">
-            <ion-textarea
-              name="rudolfMessage"
-              [(ngModel)]="rudolfInput"
-              [disabled]="rudolfSending || !rudolfConfigured"
-              [placeholder]="'RUDOLF.PLACEHOLDER' | translate"
-              [maxlength]="2000"
-              [autoGrow]="true"
-              rows="1"
-            >
-            </ion-textarea>
-            <ion-button
+        <ion-toolbar class="rudolf-composer-toolbar">
+          <form class="rudolf-composer" (ngSubmit)="sendRudolfMessage()">
+            <div class="rudolf-input-wrap">
+              <ion-textarea
+                name="rudolfMessage"
+                [(ngModel)]="rudolfInput"
+                [disabled]="rudolfSending || !rudolfConfigured"
+                [placeholder]="'RUDOLF.PLACEHOLDER' | translate"
+                [maxlength]="2000"
+                [autoGrow]="true"
+                rows="1"
+              >
+              </ion-textarea>
+            </div>
+            <button
               type="submit"
-              fill="solid"
-              shape="round"
+              class="rudolf-send"
               [disabled]="!rudolfInput.trim() || rudolfSending || !rudolfConfigured"
               [attr.aria-label]="'RUDOLF.SEND' | translate"
             >
-              <ion-icon slot="icon-only" name="send"></ion-icon>
-            </ion-button>
-          </div>
-          <small>
-            <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
-            {{ 'RUDOLF.PRIVACY' | translate }}
-          </small>
-        </form>
+              <ion-spinner *ngIf="rudolfSending" name="crescent"></ion-spinner>
+              <ion-icon
+                *ngIf="!rudolfSending"
+                name="send"
+                aria-hidden="true"
+              ></ion-icon>
+            </button>
+          </form>
+        </ion-toolbar>
       </ion-footer>
     </div>
 

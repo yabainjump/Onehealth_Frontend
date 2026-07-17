@@ -4,9 +4,7 @@
 
 /* Barre d'onglets (mobile) : glisse vers le bas au scroll */
 ion-tab-bar {
-  transition:
-    margin-bottom 0.28s ease,
-    opacity 0.28s ease;
+  transition: margin-bottom 0.28s ease, opacity 0.28s ease;
 }
 
 ion-tab-bar.tabbar-hidden {
@@ -24,14 +22,14 @@ ion-tab-bar.tabbar-hidden {
 
 /* Barre de nav PC masquée par défaut (affichée seulement ≥1024px) */
 .desktop-nav {
-  display: none !important;
+  display: none;
 }
 
 /* ===================== Desktop (≥ 1024px) ===================== */
-@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+@media (min-width: 1024px) {
   /* Barre fixe en haut (ion-tabs est en position:absolute et la recouvrirait sinon) */
   .desktop-nav {
-    display: block !important;
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
@@ -103,9 +101,7 @@ ion-tab-bar.tabbar-hidden {
     color: #5f6b7c;
     font-size: 0.72rem;
     font-weight: 500;
-    transition:
-      background 0.15s ease,
-      color 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
   }
 
   .dn-link ion-icon {
@@ -158,7 +154,7 @@ ion-tab-bar.tabbar-hidden {
   }
 
   /* Barre d'onglets du bas masquée sur PC (navigation en haut) */
-  .app-shell ion-tab-bar {
-    display: none !important;
+  ion-tab-bar {
+    display: none;
   }
 }
