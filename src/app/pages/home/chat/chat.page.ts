@@ -1,10 +1,18 @@
 import { ChatService } from './../../../services/chat/chat.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, NavController, ToastController } from '@ionic/angular';
 import { firstValueFrom, Observable, take } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { openSafeHttpUrl } from '../../../core/utils/safe-url.util';
 
 @Component({
   selector: 'app-chat',
@@ -13,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
   
   standalone: false,
 })
-export class ChatPage implements OnInit, OnDestroy {
+export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
   private static readonly MAX_ATTACHMENT_BYTES = 50 * 1024 * 1024;
 
   @ViewChild(IonContent, { static: false }) content: IonContent;
@@ -248,7 +256,7 @@ export class ChatPage implements OnInit, OnDestroy {
     if (!targetUrl) {
       return;
     }
-    window.open(targetUrl, '_blank', 'noopener');
+    openSafeHttpUrl(targetUrl);
   }
 
   formatFileSize(size?: number) {

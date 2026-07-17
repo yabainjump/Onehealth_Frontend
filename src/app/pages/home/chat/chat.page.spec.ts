@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
+import { TestSupportModule } from 'src/testing/test-support.module';
 
 import { ChatPage } from './chat.page';
 
@@ -10,7 +11,7 @@ describe('ChatPage', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ChatPage ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), TestSupportModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChatPage);

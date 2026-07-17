@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-chat-box',
@@ -7,13 +7,9 @@ import { Component, Input, OnInit } from '@angular/core';
   
   standalone: false,
 })
-export class ChatBoxComponent implements OnInit {
+export class ChatBoxComponent {
 
   @Input() chat: any;
   @Input() current_user_id: any;
-
-  constructor() { }
-
-  ngOnInit() {}
 
 }

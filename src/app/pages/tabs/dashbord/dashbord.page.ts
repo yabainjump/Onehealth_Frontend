@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import {
@@ -23,6 +23,7 @@ import { ShareLinkService } from 'src/app/core/services/share-link.service';
 import { InteractionGuardService } from 'src/app/core/services/interaction-guard.service';
 import { TranslateService } from '@ngx-translate/core';
 import { hashtagFromClick } from 'src/app/shared/utils/post-html.util';
+import { openSafeHttpUrl } from 'src/app/core/utils/safe-url.util';
 import { ChromeVisibilityService } from 'src/app/core/services/chrome-visibility.service';
 import { FeedSearchService } from 'src/app/core/services/feed-search.service';
 import { UsersService } from 'src/app/core/services/users.service';
@@ -35,7 +36,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./dashbord.page.scss'],
   standalone: false,
 })
-export class DashbordPage implements OnInit {
+export class DashbordPage implements OnInit, OnDestroy {
   @ViewChild('popover') popover: PopoverController;
   @ViewChild(IonContent) content?: IonContent;
 
@@ -1076,7 +1077,7 @@ export class DashbordPage implements OnInit {
     event?.stopPropagation();
     const url = this.getAttachment(post)?.url;
     if (!url) return;
-    window.open(url, '_blank', 'noopener');
+    openSafeHttpUrl(url);
   }
 
   private normalizeSearchValue(value: unknown): string {

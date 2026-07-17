@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-empty-screen',
@@ -7,12 +7,8 @@ import { Component, Input, OnInit } from '@angular/core';
   
   standalone: false,
 })
-export class EmptyScreenComponent implements OnInit {
+export class EmptyScreenComponent {
 
   @Input() model: any;
-
-  constructor() { }
-
-  ngOnInit() {}
 
 }

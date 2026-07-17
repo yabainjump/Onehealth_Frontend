@@ -4,10 +4,8 @@ import { NavigationEnd, NavigationExtras, Router } from '@angular/router';
 import { IonContent, ModalController, PopoverController } from '@ionic/angular';
 import { Observable, Subscription, map, take } from 'rxjs';
 import { ApiService } from 'src/app/services/api/api.service';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { InteractionGuardService } from 'src/app/core/services/interaction-guard.service';
-import { environment } from 'src/environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -46,7 +44,6 @@ export class HomePage implements OnInit, OnDestroy {
     public chatService: ChatService,
     private api: ApiService,
     private authService: AuthService,
-    private http: HttpClient,
     private translate: TranslateService,
     private interactionGuard: InteractionGuardService
   ) {}
@@ -124,7 +121,6 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   isLoading = true;
-  textToSend = '';
   chats: { message: string; sender: string }[] = [];
 
   
@@ -162,58 +158,6 @@ export class HomePage implements OnInit, OnDestroy {
 
   scrollToBottom() {
     if (this.chats) this.contentChat.scrollToBottom(500);
-  }
-
-  async sendMessage() {
-    const botApiUrl = (environment.botApiUrl || '').trim();
-    if (!botApiUrl) {
-      alert('Service momentanement indisponible');
-      return;
-    }
-
-    if (environment.production && !botApiUrl.toLowerCase().startsWith('https://')) {
-      alert('Configuration securite invalide (HTTPS requis).');
-      return;
-    }
-    this.chats = [
-      ...this.chats,
-      {
-        message: this.textToSend,
-        sender: this.chatService.currentUserId,
-      },
-    ];
-    this.scrollToBottom();
-    this.http
-      .post<any>(
-        botApiUrl,
-        {
-          username: this.currentUser?.name || this.currentUser?.username || 'User',
-          query: this.textToSend,
-          user_id: this.chatService.currentUserId,
-          sended_at: new Date().toISOString(),
-        },
-        {
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
-      .subscribe(
-        (data) => {
-
-          this.chats = [
-            ...this.chats,
-            {
-              message: data['query_response'],
-              sender: '',
-            },
-          ];
-        },
-        (error) => {
-          console.error(error);
-          alert('An error occured! Please try again');
-        }
-      );
-    this.textToSend = '';
-   
   }
 
   searchMed(event) {
@@ -353,5 +297,4 @@ export class HomePage implements OnInit, OnDestroy {
     return index;
   }
 }
-
 

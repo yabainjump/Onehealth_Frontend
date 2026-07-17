@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-user-list',
@@ -7,17 +7,13 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   
   standalone: false,
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent {
 
   @Input() item: any;
-  @Output() onClick: EventEmitter<any> = new EventEmitter();
-
-  constructor() { }
-
-  ngOnInit() {}
+  @Output() selected: EventEmitter<any> = new EventEmitter();
 
   redirect() {
-    this.onClick.emit(this.item);
+    this.selected.emit(this.item);
   }
 
 }

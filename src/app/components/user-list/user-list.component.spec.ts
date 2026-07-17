@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
+import { TestSupportModule } from 'src/testing/test-support.module';
 
 import { UserListComponent } from './user-list.component';
 
@@ -10,7 +11,7 @@ describe('UserListComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ UserListComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot(), TestSupportModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(UserListComponent);

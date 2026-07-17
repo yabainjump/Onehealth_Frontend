@@ -8,6 +8,7 @@ import { ShareLinkService } from '../core/services/share-link.service';
 import { AuthService } from '../services/auth/auth.service';
 import { InteractionGuardService } from '../core/services/interaction-guard.service';
 import { TranslateService } from '@ngx-translate/core';
+import { openSafeHttpUrl } from '../core/utils/safe-url.util';
 
 @Component({
   selector: 'app-post-detail',
@@ -172,7 +173,7 @@ longPost:   Record<string, boolean> = {};
   openAttachment(post: Post | null) {
     const url = this.getAttachment(post)?.url;
     if (!url) return;
-    window.open(url, '_blank', 'noopener');
+    openSafeHttpUrl(url);
   }
 
   // En quittant la page (gardée en cache par Ionic), on coupe la lecture.

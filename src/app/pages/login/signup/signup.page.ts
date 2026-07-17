@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
@@ -13,7 +13,7 @@ import { GoogleAuthService } from '../../../core/services/google-auth.service';
   styleUrls: ['./signup.page.scss'],
   standalone: false,
 })
-export class SignupPage implements OnInit, AfterViewInit {
+export class SignupPage implements AfterViewInit {
   signupForm: FormGroup;
   isTypePassword = true;
   isLoading = false;
@@ -28,8 +28,6 @@ export class SignupPage implements OnInit, AfterViewInit {
   ) {
     this.initForm();
   }
-
-  ngOnInit() {}
 
   ngAfterViewInit(): void {
     if (this.googleAuth.isConfigured) {

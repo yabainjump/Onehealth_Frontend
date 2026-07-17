@@ -1,5 +1,5 @@
 import { AuthService } from './../../../services/auth/auth.service';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
   
   standalone: false,
 })
-export class SignupdPage implements OnInit {
+export class SignupdPage {
 
   signupForm: FormGroup;
   isTypePassword: boolean = true;
@@ -25,9 +25,6 @@ export class SignupdPage implements OnInit {
     private translate: TranslateService
   ) {
     this.initForm();
-  }
-
-  ngOnInit() {
   }
 
   initForm() {

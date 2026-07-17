@@ -4,7 +4,6 @@ export const environment = {
   // URL publique du site (utilisee pour les liens de partage). Doit rester
   // l'adresse du FRONTEND, pas du backend.
   publicWebUrl: 'https://onehealthnetwork.yaba-in.com',
-  botApiUrl: 'https://api.example.com/bot',
   // Client ID OAuth "Web application" (Google Cloud Console > APIs & Services
   // > Identifiants). Meme valeur que GOOGLE_CLIENT_ID cote backend.
   googleClientId: '426659586297-d70l5m48rqt03hl3ugm9lc5skoofo9c9.apps.googleusercontent.com',

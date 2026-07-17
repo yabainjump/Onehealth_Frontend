@@ -15,6 +15,7 @@ import { PublishService, Post, PostAttachment } from 'src/app/services/publish/p
 import { TranslateService } from '@ngx-translate/core';
 import { InteractionGuardService } from '../core/services/interaction-guard.service';
 import { buildPostHtml, hashtagFromClick } from '../shared/utils/post-html.util';
+import { openSafeHttpUrl } from '../core/utils/safe-url.util';
 
 @Component({
   selector: 'app-profils',
@@ -295,7 +296,7 @@ export class ProfilsPage implements OnInit {
     event?.stopPropagation();
     const url = this.getAttachment(post)?.url;
     if (!url) return;
-    window.open(url, '_blank', 'noopener');
+    openSafeHttpUrl(url);
   }
 
   async onCoverSelected(event: Event) {
