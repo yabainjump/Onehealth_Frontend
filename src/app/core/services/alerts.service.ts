@@ -4,6 +4,7 @@ import { ApiService } from './api.service';
 
 export type AlertCategory = 'human' | 'animal' | 'environment';
 export type AlertSeverity = 'low' | 'medium' | 'high';
+export type AlertVerificationStatus = 'pending' | 'verified' | 'rejected';
 
 export interface AlertAuthor {
   id: string;
@@ -32,6 +33,8 @@ export interface HealthAlert {
   lat: number | null;
   lng: number | null;
   severity: AlertSeverity;
+  verificationStatus: AlertVerificationStatus;
+  reviewedAt: string | null;
   imageUrls: string[];
   author: AlertAuthor | null;
   likesCount: number;
@@ -64,6 +67,7 @@ export class AlertsService {
       category?: string;
       severity?: string;
       country?: string;
+      verificationStatus?: string;
       limit?: number;
     } = {},
   ): Observable<HealthAlert[]> {
@@ -71,6 +75,9 @@ export class AlertsService {
     if (filters.category) params.set('category', filters.category);
     if (filters.severity) params.set('severity', filters.severity);
     if (filters.country) params.set('country', filters.country);
+    if (filters.verificationStatus) {
+      params.set('verificationStatus', filters.verificationStatus);
+    }
     if (filters.limit) params.set('limit', String(filters.limit));
     const qs = params.toString();
     return this.api.get<HealthAlert[]>(`/alerts${qs ? `?${qs}` : ''}`);
@@ -82,6 +89,7 @@ export class AlertsService {
     lng: number,
     radiusKm = 100,
     category?: string,
+    verificationStatus?: string,
   ): Observable<HealthAlert[]> {
     const params = new URLSearchParams();
     params.set('lat', String(lat));
@@ -89,6 +97,9 @@ export class AlertsService {
     params.set('radiusKm', String(radiusKm));
     if (category) {
       params.set('category', category);
+    }
+    if (verificationStatus) {
+      params.set('verificationStatus', verificationStatus);
     }
     return this.api.get<HealthAlert[]>(`/alerts/near?${params.toString()}`);
   }
@@ -134,4 +145,3 @@ export class AlertsService {
     return this.api.delete<HealthAlert>(`/alerts/${id}/comments/${commentId}`);
   }
 }
-

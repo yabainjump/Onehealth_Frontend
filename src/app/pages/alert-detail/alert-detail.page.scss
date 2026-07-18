@@ -67,12 +67,31 @@
 }
 
 .alert-cat,
-.alert-sev {
+.alert-sev,
+.alert-status {
   display: inline-block;
   padding: 3px 9px;
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
+}
+
+.alert-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  background: #fff5dc;
+  color: #9a6717;
+}
+
+.alert-status--verified {
+  background: #e3f7ed;
+  color: #147449;
+}
+
+.alert-status ion-icon {
+  font-size: 13px;
 }
 
 .alert-cat--human {

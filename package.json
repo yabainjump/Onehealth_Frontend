@@ -1,8 +1,8 @@
 {
   "name": "onehealth_frontend",
   "version": "0.0.1",
-  "author": "Ionic Framework",
-  "homepage": "https://ionicframework.com/",
+  "author": "One Health Network",
+  "homepage": "https://onehealthnetwork.yaba-in.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -69,5 +69,5 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.9.0"
   },
-  "description": "An Ionic project"
+  "description": "Réseau mondial One Health avec publications, alertes sanitaires cartographiées, messagerie et assistant Rudolf AI."
 }

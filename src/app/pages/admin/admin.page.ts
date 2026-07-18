@@ -75,11 +75,19 @@ export class AdminPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.currentAdminId = (await this.authService.checkAuth())?.uid || '';
-    await Promise.all([this.loadStats(), this.loadUsers(), this.loadCertifications()]);
+    await Promise.all([
+      this.loadStats(),
+      this.loadUsers(),
+      this.loadCertifications(),
+    ]);
   }
 
   onSectionChange(): void {
-    if (this.section === 'content' && !this.posts.length && !this.alerts.length) {
+    if (
+      this.section === 'content' &&
+      !this.posts.length &&
+      !this.alerts.length
+    ) {
       void this.loadPosts();
     }
   }
@@ -168,7 +176,9 @@ export class AdminPage implements OnInit {
   }
 
   photo(user: PublicUser | null): string {
-    return resolveMediaUrl(user?.photoURL || '') || 'assets/default-profile.png';
+    return (
+      resolveMediaUrl(user?.photoURL || '') || 'assets/default-profile.png'
+    );
   }
 
   displayName(user: PublicUser | null): string {
@@ -176,7 +186,9 @@ export class AdminPage implements OnInit {
       return '—';
     }
     return (
-      `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username || user.email
+      `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+      user.username ||
+      user.email
     );
   }
 
@@ -189,7 +201,9 @@ export class AdminPage implements OnInit {
     const confirm = await this.alertCtrl.create({
       header: this.translate.instant('ADMIN.ROLE_CONFIRM_TITLE'),
       message: this.translate.instant(
-        newRole === 'admin' ? 'ADMIN.ROLE_PROMOTE_MSG' : 'ADMIN.ROLE_DEMOTE_MSG',
+        newRole === 'admin'
+          ? 'ADMIN.ROLE_PROMOTE_MSG'
+          : 'ADMIN.ROLE_DEMOTE_MSG',
       ),
       buttons: [
         { text: this.translate.instant('COMMON.CANCEL'), role: 'cancel' },
@@ -205,7 +219,10 @@ export class AdminPage implements OnInit {
     await confirm.present();
   }
 
-  private async applyRole(user: PublicUser, role: 'user' | 'admin'): Promise<void> {
+  private async applyRole(
+    user: PublicUser,
+    role: 'user' | 'admin',
+  ): Promise<void> {
     try {
       const updated = await this.adminService.updateUserRole(user.id, role);
       Object.assign(user, updated);
@@ -261,7 +278,9 @@ export class AdminPage implements OnInit {
   async loadCertifications(): Promise<void> {
     this.loadingCertifications = true;
     try {
-      const result = await this.adminService.listCertifications(this.certificationsStatus);
+      const result = await this.adminService.listCertifications(
+        this.certificationsStatus,
+      );
       this.certifications = result.items;
     } catch {
       await this.toast(this.translate.instant('ADMIN.LOAD_ERR'), 'danger');
@@ -282,8 +301,13 @@ export class AdminPage implements OnInit {
     this.processingRequestId = request.id;
     try {
       await this.adminService.approveCertification(request.id);
-      this.certifications = this.certifications.filter((r) => r.id !== request.id);
-      await this.toast(this.translate.instant('ADMIN.CERT_APPROVED'), 'success');
+      this.certifications = this.certifications.filter(
+        (r) => r.id !== request.id,
+      );
+      await this.toast(
+        this.translate.instant('ADMIN.CERT_APPROVED'),
+        'success',
+      );
       void this.loadStats();
     } catch {
       await this.toast(this.translate.instant('ADMIN.ACTION_ERR'), 'danger');
@@ -299,7 +323,9 @@ export class AdminPage implements OnInit {
         {
           name: 'reason',
           type: 'textarea',
-          placeholder: this.translate.instant('ADMIN.REJECT_REASON_PLACEHOLDER'),
+          placeholder: this.translate.instant(
+            'ADMIN.REJECT_REASON_PLACEHOLDER',
+          ),
         },
       ],
       buttons: [
@@ -327,8 +353,13 @@ export class AdminPage implements OnInit {
     this.processingRequestId = request.id;
     try {
       await this.adminService.rejectCertification(request.id, reason);
-      this.certifications = this.certifications.filter((r) => r.id !== request.id);
-      await this.toast(this.translate.instant('ADMIN.CERT_REJECTED'), 'success');
+      this.certifications = this.certifications.filter(
+        (r) => r.id !== request.id,
+      );
+      await this.toast(
+        this.translate.instant('ADMIN.CERT_REJECTED'),
+        'success',
+      );
       void this.loadStats();
     } catch {
       await this.toast(this.translate.instant('ADMIN.ACTION_ERR'), 'danger');
@@ -377,10 +408,15 @@ export class AdminPage implements OnInit {
   async togglePostHidden(post: AdminPost): Promise<void> {
     this.processingContentId = post.id;
     try {
-      const result = await this.adminService.setPostHidden(post.id, !post.isHidden);
+      const result = await this.adminService.setPostHidden(
+        post.id,
+        !post.isHidden,
+      );
       post.isHidden = result.isHidden;
       await this.toast(
-        this.translate.instant(post.isHidden ? 'ADMIN.PAUSED' : 'ADMIN.RESUMED'),
+        this.translate.instant(
+          post.isHidden ? 'ADMIN.PAUSED' : 'ADMIN.RESUMED',
+        ),
         'success',
       );
     } catch {
@@ -435,7 +471,11 @@ export class AdminPage implements OnInit {
         this.alertsSearch.trim(),
         this.alertsPage,
       );
-      this.alerts = result.items;
+      this.alerts = result.items.map((alert) => ({
+        ...alert,
+        verificationStatus: alert.verificationStatus || 'pending',
+        reviewedAt: alert.reviewedAt || null,
+      }));
       this.alertsTotal = result.total;
     } catch {
       await this.toast(this.translate.instant('ADMIN.LOAD_ERR'), 'danger');
@@ -460,10 +500,15 @@ export class AdminPage implements OnInit {
   async toggleAlertHidden(alert: AdminAlert): Promise<void> {
     this.processingContentId = alert.id;
     try {
-      const result = await this.adminService.setAlertHidden(alert.id, !alert.isHidden);
+      const result = await this.adminService.setAlertHidden(
+        alert.id,
+        !alert.isHidden,
+      );
       alert.isHidden = result.isHidden;
       await this.toast(
-        this.translate.instant(alert.isHidden ? 'ADMIN.PAUSED' : 'ADMIN.RESUMED'),
+        this.translate.instant(
+          alert.isHidden ? 'ADMIN.PAUSED' : 'ADMIN.RESUMED',
+        ),
         'success',
       );
     } catch {
@@ -471,6 +516,37 @@ export class AdminPage implements OnInit {
     } finally {
       this.processingContentId = '';
     }
+  }
+
+  async setAlertVerification(
+    alert: AdminAlert,
+    status: AdminAlert['verificationStatus'],
+  ): Promise<void> {
+    this.processingContentId = alert.id;
+    try {
+      const result = await this.adminService.setAlertVerification(
+        alert.id,
+        status,
+      );
+      alert.verificationStatus = result.verificationStatus;
+      alert.reviewedAt = result.reviewedAt;
+      await this.toast(
+        this.translate.instant('ADMIN.ALERT_STATUS_DONE'),
+        'success',
+      );
+    } catch {
+      await this.toast(this.translate.instant('ADMIN.ACTION_ERR'), 'danger');
+    } finally {
+      this.processingContentId = '';
+    }
+  }
+
+  verificationColor(status: AdminAlert['verificationStatus']): string {
+    return status === 'verified'
+      ? 'success'
+      : status === 'rejected'
+        ? 'danger'
+        : 'warning';
   }
 
   async deleteAlert(alert: AdminAlert): Promise<void> {
@@ -504,7 +580,11 @@ export class AdminPage implements OnInit {
   }
 
   severityColor(severity: string): string {
-    return severity === 'high' ? 'danger' : severity === 'medium' ? 'warning' : 'medium';
+    return severity === 'high'
+      ? 'danger'
+      : severity === 'medium'
+        ? 'warning'
+        : 'medium';
   }
 
   back(): void {

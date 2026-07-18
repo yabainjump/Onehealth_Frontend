@@ -47,6 +47,8 @@ export interface AdminAlert {
   city: string;
   imageUrls: string[];
   isHidden: boolean;
+  verificationStatus: 'pending' | 'verified' | 'rejected';
+  reviewedAt: string | null;
   createdAt: string;
   author: PublicUser | null;
 }
@@ -57,16 +59,20 @@ export class AdminService {
   private readonly api = inject(ApiService);
 
   getStats(): Promise<AdminStats> {
-    return firstValueFrom(this.api.get<AdminStats>(`/admin/stats?_=${Date.now()}`));
+    return firstValueFrom(
+      this.api.get<AdminStats>(`/admin/stats?_=${Date.now()}`),
+    );
   }
 
-  listUsers(options: {
-    search?: string;
-    role?: string;
-    status?: string;
-    page?: number;
-    limit?: number;
-  } = {}): Promise<PagedResult<PublicUser>> {
+  listUsers(
+    options: {
+      search?: string;
+      role?: string;
+      status?: string;
+      page?: number;
+      limit?: number;
+    } = {},
+  ): Promise<PagedResult<PublicUser>> {
     const params = new URLSearchParams();
     if (options.search) params.set('search', options.search);
     if (options.role) params.set('role', options.role);
@@ -74,21 +80,29 @@ export class AdminService {
     params.set('page', `${options.page ?? 1}`);
     params.set('limit', `${options.limit ?? 20}`);
     return firstValueFrom(
-      this.api.get<PagedResult<PublicUser>>(`/admin/users?${params.toString()}`),
+      this.api.get<PagedResult<PublicUser>>(
+        `/admin/users?${params.toString()}`,
+      ),
     );
   }
 
   updateUserRole(userId: string, role: 'user' | 'admin'): Promise<PublicUser> {
     return firstValueFrom(
-      this.api.patch<PublicUser, { role: string }>(`/admin/users/${userId}/role`, { role }),
+      this.api.patch<PublicUser, { role: string }>(
+        `/admin/users/${userId}/role`,
+        { role },
+      ),
     );
   }
 
   setUserBanned(userId: string, banned: boolean): Promise<PublicUser> {
     return firstValueFrom(
-      this.api.patch<PublicUser, { banned: boolean }>(`/admin/users/${userId}/ban`, {
-        banned,
-      }),
+      this.api.patch<PublicUser, { banned: boolean }>(
+        `/admin/users/${userId}/ban`,
+        {
+          banned,
+        },
+      ),
     );
   }
 
@@ -112,7 +126,10 @@ export class AdminService {
     );
   }
 
-  rejectCertification(requestId: string, reason: string): Promise<CertificationRequest> {
+  rejectCertification(
+    requestId: string,
+    reason: string,
+  ): Promise<CertificationRequest> {
     return firstValueFrom(
       this.api.patch<CertificationRequest, { reason: string }>(
         `/admin/certifications/${requestId}/reject`,
@@ -129,7 +146,10 @@ export class AdminService {
     );
   }
 
-  setPostHidden(postId: string, hidden: boolean): Promise<{ id: string; isHidden: boolean }> {
+  setPostHidden(
+    postId: string,
+    hidden: boolean,
+  ): Promise<{ id: string; isHidden: boolean }> {
     return firstValueFrom(
       this.api.patch<{ id: string; isHidden: boolean }, { hidden: boolean }>(
         `/admin/posts/${postId}/visibility`,
@@ -142,11 +162,16 @@ export class AdminService {
     const params = new URLSearchParams({ page: `${page}`, limit: '20' });
     if (search) params.set('search', search);
     return firstValueFrom(
-      this.api.get<PagedResult<AdminAlert>>(`/admin/alerts?${params.toString()}`),
+      this.api.get<PagedResult<AdminAlert>>(
+        `/admin/alerts?${params.toString()}`,
+      ),
     );
   }
 
-  setAlertHidden(alertId: string, hidden: boolean): Promise<{ id: string; isHidden: boolean }> {
+  setAlertHidden(
+    alertId: string,
+    hidden: boolean,
+  ): Promise<{ id: string; isHidden: boolean }> {
     return firstValueFrom(
       this.api.patch<{ id: string; isHidden: boolean }, { hidden: boolean }>(
         `/admin/alerts/${alertId}/visibility`,
@@ -155,11 +180,35 @@ export class AdminService {
     );
   }
 
+  setAlertVerification(
+    alertId: string,
+    status: AdminAlert['verificationStatus'],
+  ): Promise<{
+    id: string;
+    verificationStatus: AdminAlert['verificationStatus'];
+    reviewedAt: string;
+  }> {
+    return firstValueFrom(
+      this.api.patch<
+        {
+          id: string;
+          verificationStatus: AdminAlert['verificationStatus'];
+          reviewedAt: string;
+        },
+        { status: AdminAlert['verificationStatus'] }
+      >(`/admin/alerts/${alertId}/verification`, { status }),
+    );
+  }
+
   deletePost(postId: string): Promise<{ success: boolean }> {
-    return firstValueFrom(this.api.delete<{ success: boolean }>(`/admin/posts/${postId}`));
+    return firstValueFrom(
+      this.api.delete<{ success: boolean }>(`/admin/posts/${postId}`),
+    );
   }
 
   deleteAlert(alertId: string): Promise<{ success: boolean }> {
-    return firstValueFrom(this.api.delete<{ success: boolean }>(`/admin/alerts/${alertId}`));
+    return firstValueFrom(
+      this.api.delete<{ success: boolean }>(`/admin/alerts/${alertId}`),
+    );
   }
 }

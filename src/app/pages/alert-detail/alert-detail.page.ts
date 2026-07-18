@@ -55,7 +55,9 @@ export class AlertDetailPage implements OnInit {
   private alertId = '';
 
   ngOnInit(): void {
-    this.currentUserId = (this.authService.getCurrentUserSync()?.uid || '').trim();
+    this.currentUserId = (
+      this.authService.getCurrentUserSync()?.uid || ''
+    ).trim();
     this.authService.getAuthState().subscribe((user) => {
       this.currentUserId = (user?.uid || '').trim();
     });
@@ -82,17 +84,22 @@ export class AlertDetailPage implements OnInit {
   }
 
   get isAuthor(): boolean {
-    return !!this.alert?.author?.id && this.alert.author.id === this.currentUserId;
+    return (
+      !!this.alert?.author?.id && this.alert.author.id === this.currentUserId
+    );
   }
 
   private applyAlert(a: HealthAlert): void {
     this.alert = {
       ...a,
+      verificationStatus: a.verificationStatus || 'pending',
+      reviewedAt: a.reviewedAt || null,
       author: a.author
         ? {
             ...a.author,
             photoURL:
-              resolveMediaUrl(a.author.photoURL) || 'assets/default-profile.png',
+              resolveMediaUrl(a.author.photoURL) ||
+              'assets/default-profile.png',
           }
         : null,
       comments: (a.comments || []).map((c) => ({
@@ -158,7 +165,9 @@ export class AlertDetailPage implements OnInit {
   }
 
   canDeleteComment(c: AlertComment): boolean {
-    return this.isAuthor || (!!c.author?.id && c.author.id === this.currentUserId);
+    return (
+      this.isAuthor || (!!c.author?.id && c.author.id === this.currentUserId)
+    );
   }
 
   async deleteComment(c: AlertComment): Promise<void> {
@@ -241,7 +250,10 @@ export class AlertDetailPage implements OnInit {
       return;
     }
     if (!(this.editForm.title || '').trim()) {
-      void this.toast(this.translate.instant('ALERTS.TITLE_REQUIRED'), 'danger');
+      void this.toast(
+        this.translate.instant('ALERTS.TITLE_REQUIRED'),
+        'danger',
+      );
       return;
     }
     this.editSubmitting = true;

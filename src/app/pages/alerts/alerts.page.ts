@@ -1,4 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -9,6 +16,7 @@ import 'leaflet.markercluster';
 
 import {
   AlertCategory,
+  AlertVerificationStatus,
   AlertsService,
   CreateAlertPayload,
   HealthAlert,
@@ -24,7 +32,7 @@ import { resolveMediaUrl } from '../../core/utils/media-url.util';
   templateUrl: './alerts.page.html',
   styleUrls: ['./alerts.page.scss'],
 })
-export class AlertsPage implements OnInit {
+export class AlertsPage implements OnInit, OnDestroy {
   private readonly alertsService = inject(AlertsService);
   private readonly interactionGuard = inject(InteractionGuardService);
   private readonly toastCtrl = inject(ToastController);
@@ -36,8 +44,13 @@ export class AlertsPage implements OnInit {
 
   alerts: HealthAlert[] = [];
   loading = true;
+  loadError = false;
   activeCategory: 'all' | AlertCategory = 'all';
+  activeVerificationStatus:
+    'all' | Exclude<AlertVerificationStatus, 'rejected'> = 'all';
   nearActive = false;
+  mobileView: 'list' | 'map' = 'list';
+  selectedAlertId = '';
 
   reportOpen = false;
   submitting = false;
@@ -49,9 +62,20 @@ export class AlertsPage implements OnInit {
   private markersLayer?: L.MarkerClusterGroup;
   private pickMap?: L.Map;
   private pickMarker?: L.Marker;
+  private readonly markersByAlertId = new Map<string, L.Marker>();
 
   ngOnInit(): void {
     this.loadAlerts();
+  }
+
+  ngOnDestroy(): void {
+    this.map?.remove();
+    this.pickMap?.remove();
+    this.map = undefined;
+    this.pickMap = undefined;
+    this.markersLayer = undefined;
+    this.pickMarker = undefined;
+    this.markersByAlertId.clear();
   }
 
   // La carte ne s'initialise qu'une fois la page affichée (sinon Leaflet
@@ -85,14 +109,32 @@ export class AlertsPage implements OnInit {
     this.loadAlerts();
   }
 
+  setVerificationStatus(
+    status: 'all' | Exclude<AlertVerificationStatus, 'rejected'>,
+  ): void {
+    this.activeVerificationStatus = status;
+    this.nearActive = false;
+    this.loadAlerts();
+  }
+
+  setMobileView(view: 'list' | 'map'): void {
+    this.mobileView = view;
+    if (view === 'map') {
+      setTimeout(() => this.map?.invalidateSize(), 50);
+    }
+  }
+
   private mapAlerts(items: HealthAlert[]): HealthAlert[] {
     return (items || []).map((a) => ({
       ...a,
+      verificationStatus: a.verificationStatus || 'pending',
+      reviewedAt: a.reviewedAt || null,
       author: a.author
         ? {
             ...a.author,
             photoURL:
-              resolveMediaUrl(a.author.photoURL) || 'assets/default-profile.png',
+              resolveMediaUrl(a.author.photoURL) ||
+              'assets/default-profile.png',
           }
         : null,
     }));
@@ -100,26 +142,42 @@ export class AlertsPage implements OnInit {
 
   private loadAlerts(): void {
     this.loading = true;
+    this.loadError = false;
     const filters =
       this.activeCategory === 'all' ? {} : { category: this.activeCategory };
-    this.alertsService.list({ ...filters, limit: 100 }).subscribe({
-      next: (items) => {
-        this.alerts = this.mapAlerts(items);
-        this.loading = false;
-        this.renderMarkers();
-      },
-      error: () => {
-        this.alerts = [];
-        this.loading = false;
-        this.renderMarkers();
-      },
-    });
+    const verificationFilter =
+      this.activeVerificationStatus === 'all'
+        ? {}
+        : { verificationStatus: this.activeVerificationStatus };
+    this.alertsService
+      .list({ ...filters, ...verificationFilter, limit: 100 })
+      .subscribe({
+        next: (items) => {
+          this.alerts = this.mapAlerts(items);
+          this.loading = false;
+          this.selectedAlertId = this.alerts[0]?.id || '';
+          this.renderMarkers();
+        },
+        error: () => {
+          this.alerts = [];
+          this.loading = false;
+          this.loadError = true;
+          this.renderMarkers();
+        },
+      });
+  }
+
+  retryLoad(): void {
+    this.loadAlerts();
   }
 
   /** Charge les alertes les plus proches de ma position (GPS). */
   nearMe(): void {
     if (!navigator.geolocation) {
-      void this.toast(this.translate.instant('ALERTS.LOCATION_UNSUPPORTED'), 'danger');
+      void this.toast(
+        this.translate.instant('ALERTS.LOCATION_UNSUPPORTED'),
+        'danger',
+      );
       return;
     }
     this.loading = true;
@@ -127,22 +185,34 @@ export class AlertsPage implements OnInit {
       (pos) => {
         const cat =
           this.activeCategory === 'all' ? undefined : this.activeCategory;
+        const verificationStatus =
+          this.activeVerificationStatus === 'all'
+            ? undefined
+            : this.activeVerificationStatus;
         this.alertsService
-          .near(pos.coords.latitude, pos.coords.longitude, 200, cat)
+          .near(
+            pos.coords.latitude,
+            pos.coords.longitude,
+            200,
+            cat,
+            verificationStatus,
+          )
           .subscribe({
             next: (items) => {
               this.nearActive = true;
               this.alerts = this.mapAlerts(items);
               this.loading = false;
+              this.loadError = false;
+              this.selectedAlertId = this.alerts[0]?.id || '';
               this.renderMarkers();
-              this.map?.setView(
-                [pos.coords.latitude, pos.coords.longitude],
-                7,
-              );
+              this.map?.setView([pos.coords.latitude, pos.coords.longitude], 7);
             },
             error: () => {
               this.loading = false;
-              void this.toast(this.translate.instant('ALERTS.NEAR_ERR'), 'danger');
+              void this.toast(
+                this.translate.instant('ALERTS.NEAR_ERR'),
+                'danger',
+              );
             },
           });
       },
@@ -206,6 +276,7 @@ export class AlertsPage implements OnInit {
       return;
     }
     this.markersLayer.clearLayers();
+    this.markersByAlertId.clear();
     const withCoords = this.alerts.filter(
       (a) => typeof a.lat === 'number' && typeof a.lng === 'number',
     );
@@ -216,26 +287,55 @@ export class AlertsPage implements OnInit {
         iconSize: [20, 20],
         iconAnchor: [10, 10],
       });
-      L.marker([a.lat as number, a.lng as number], { icon })
+      const marker = L.marker([a.lat as number, a.lng as number], { icon })
         .bindPopup(
           `<strong>${this.escape(a.title)}</strong><br>${this.escape(
             [a.city, a.country].filter(Boolean).join(', '),
           )}`,
         )
         .addTo(this.markersLayer);
+      marker.on('click', () => this.selectAlert(a, true));
+      if (a.id) {
+        this.markersByAlertId.set(a.id, marker);
+      }
     }
     if (withCoords.length) {
       const bounds = L.latLngBounds(
-        withCoords.map((a) => [a.lat as number, a.lng as number] as [number, number]),
+        withCoords.map(
+          (a) => [a.lat as number, a.lng as number] as [number, number],
+        ),
       );
       this.map.fitBounds(bounds.pad(0.25), { maxZoom: 8 });
     }
   }
 
   focusAlert(a: HealthAlert): void {
+    this.selectAlert(a, false);
+  }
+
+  selectAlert(a: HealthAlert, scrollToCard = false): void {
+    this.selectedAlertId = a.id;
     if (this.map && typeof a.lat === 'number' && typeof a.lng === 'number') {
       this.map.setView([a.lat, a.lng], 9);
+      this.markersByAlertId.get(a.id)?.openPopup();
     }
+    if (scrollToCard && this.mobileView === 'list') {
+      document
+        .getElementById(`alert-card-${a.id}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  get verifiedCount(): number {
+    return this.alerts.filter(
+      (alert) => alert.verificationStatus === 'verified',
+    ).length;
+  }
+
+  get locatedCount(): number {
+    return this.alerts.filter(
+      (alert) => typeof alert.lat === 'number' && typeof alert.lng === 'number',
+    ).length;
   }
 
   // ===== Signalement =====
@@ -282,7 +382,9 @@ export class AlertsPage implements OnInit {
     }).addTo(this.pickMap);
 
     if (hasPoint) {
-      this.pickMarker = L.marker(center, { icon: this.pickIcon() }).addTo(this.pickMap);
+      this.pickMarker = L.marker(center, { icon: this.pickIcon() }).addTo(
+        this.pickMap,
+      );
     }
 
     this.pickMap.on('click', (e: L.LeafletMouseEvent) => {
@@ -311,7 +413,10 @@ export class AlertsPage implements OnInit {
 
   useMyLocation(): void {
     if (!navigator.geolocation) {
-      void this.toast(this.translate.instant('ALERTS.LOCATION_UNSUPPORTED'), 'danger');
+      void this.toast(
+        this.translate.instant('ALERTS.LOCATION_UNSUPPORTED'),
+        'danger',
+      );
       return;
     }
     this.locating = true;
@@ -320,7 +425,19 @@ export class AlertsPage implements OnInit {
         this.locating = false;
         this.form.lat = pos.coords.latitude;
         this.form.lng = pos.coords.longitude;
-        void this.toast(this.translate.instant('ALERTS.LOCATION_OK'), 'success');
+        const point = L.latLng(pos.coords.latitude, pos.coords.longitude);
+        this.pickMap?.setView(point, 12);
+        if (this.pickMarker) {
+          this.pickMarker.setLatLng(point);
+        } else if (this.pickMap) {
+          this.pickMarker = L.marker(point, { icon: this.pickIcon() }).addTo(
+            this.pickMap,
+          );
+        }
+        void this.toast(
+          this.translate.instant('ALERTS.LOCATION_OK'),
+          'success',
+        );
       },
       (err) => {
         this.locating = false;
@@ -345,7 +462,10 @@ export class AlertsPage implements OnInit {
       return;
     }
     if (!this.form.title?.trim()) {
-      void this.toast(this.translate.instant('ALERTS.TITLE_REQUIRED'), 'danger');
+      void this.toast(
+        this.translate.instant('ALERTS.TITLE_REQUIRED'),
+        'danger',
+      );
       return;
     }
     this.submitting = true;
@@ -364,7 +484,10 @@ export class AlertsPage implements OnInit {
       next: () => {
         this.submitting = false;
         this.reportOpen = false;
-        void this.toast(this.translate.instant('ALERTS.REPORT_DONE'), 'success');
+        void this.toast(
+          this.translate.instant('ALERTS.REPORT_DONE'),
+          'success',
+        );
         this.loadAlerts();
       },
       error: () => {
@@ -393,10 +516,12 @@ export class AlertsPage implements OnInit {
     return `${value || ''}`.replace(
       /[&<>"]/g,
       (c) =>
-        (({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }) as Record<
-          string,
-          string
-        >)[c],
+        (
+          ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }) as Record<
+            string,
+            string
+          >
+        )[c],
     );
   }
 

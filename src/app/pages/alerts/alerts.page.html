@@ -8,114 +8,400 @@
 </ion-header>
 
 <ion-content class="alerts-content">
-  <!-- Carte -->
-  <div class="alerts-map" #mapEl></div>
+  <div class="alerts-page-shell">
+    <section class="alerts-intro" aria-labelledby="alerts-heading">
+      <div>
+        <span class="alerts-eyebrow">
+          <ion-icon name="pulse-outline" aria-hidden="true"></ion-icon>
+          One Health
+        </span>
+        <h2 id="alerts-heading">{{ 'ALERTS.LIVE_TITLE' | translate }}</h2>
+        <p>{{ 'ALERTS.SUBTITLE' | translate }}</p>
+      </div>
+      <div class="alerts-summary" aria-label="Résumé des alertes affichées">
+        <span
+          ><strong>{{ alerts.length }}</strong>{{ 'ALERTS.RESULTS' | translate
+          }}</span
+        >
+        <span
+          ><strong>{{ verifiedCount }}</strong>{{ 'ALERTS.STATUS_verified' |
+          translate }}</span
+        >
+        <span
+          ><strong>{{ locatedCount }}</strong>{{ 'ALERTS.LOCATED' | translate
+          }}</span
+        >
+      </div>
+    </section>
 
-  <!-- Filtres -->
-  <div class="alerts-filters">
-    <button type="button" class="chip-near" [class.active]="nearActive" (click)="nearMe()">
-      <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>
-      {{ 'ALERTS.NEAR_ME' | translate }}
-    </button>
-    <button type="button" [class.active]="!nearActive && activeCategory === 'all'" (click)="setCategory('all')">
-      {{ 'ALERTS.ALL' | translate }}
-    </button>
-    <button type="button" class="chip-human" [class.active]="!nearActive && activeCategory === 'human'" (click)="setCategory('human')">
-      {{ 'ALERTS.CAT_human' | translate }}
-    </button>
-    <button type="button" class="chip-animal" [class.active]="!nearActive && activeCategory === 'animal'" (click)="setCategory('animal')">
-      {{ 'ALERTS.CAT_animal' | translate }}
-    </button>
-    <button type="button" class="chip-environment" [class.active]="!nearActive && activeCategory === 'environment'" (click)="setCategory('environment')">
-      {{ 'ALERTS.CAT_environment' | translate }}
-    </button>
-  </div>
-
-  <div class="alerts-loading" *ngIf="loading">
-    <ion-spinner name="crescent"></ion-spinner>
-  </div>
-
-  <div class="alerts-empty" *ngIf="!loading && alerts.length === 0">
-    <ion-icon name="pulse-outline" aria-hidden="true"></ion-icon>
-    <p>{{ 'ALERTS.EMPTY' | translate }}</p>
-  </div>
-
-  <!-- Liste des alertes -->
-  <article class="alert-card" *ngFor="let a of alerts; trackBy: trackById" (click)="openDetail(a)">
-    <div class="alert-tags">
-      <span class="alert-cat alert-cat--{{ a.category }}">{{ ('ALERTS.CAT_' + a.category) | translate }}</span>
-      <span class="alert-sev alert-sev--{{ a.severity }}">{{ ('ALERTS.SEV_' + a.severity) | translate }}</span>
+    <div
+      class="mobile-view-switch"
+      role="group"
+      [attr.aria-label]="'ALERTS.DISPLAY_MODE' | translate"
+    >
+      <button
+        type="button"
+        [class.active]="mobileView === 'list'"
+        (click)="setMobileView('list')"
+      >
+        <ion-icon name="list-outline" aria-hidden="true"></ion-icon>
+        {{ 'ALERTS.VIEW_LIST' | translate }}
+      </button>
+      <button
+        type="button"
+        [class.active]="mobileView === 'map'"
+        (click)="setMobileView('map')"
+      >
+        <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
+        {{ 'ALERTS.VIEW_MAP' | translate }}
+      </button>
     </div>
-    <h3>{{ a.title }}</h3>
-    <p class="alert-loc" *ngIf="a.city || a.country">
-      <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
-      {{ a.city }}<span *ngIf="a.city && a.country">, </span>{{ a.country }}
-    </p>
-    <p class="alert-desc" *ngIf="a.description">{{ a.description }}</p>
-    <img class="alert-thumb" *ngIf="a.imageUrls?.length" [src]="photoSrc(a.imageUrls[0])" alt="" loading="lazy" decoding="async" />
-    <div class="alert-meta">
-      <img [src]="a.author?.photoURL || 'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
-      <span>
-        {{ a.author?.firstName }} {{ a.author?.lastName }}
-        <ion-icon
-          *ngIf="a.author?.isCertified"
-          src="assets/icons/verified-badge.svg"
-          class="verified-badge"
-          aria-hidden="true"
-        ></ion-icon>
-        · {{ a.createdAt | date: 'short' }}
-      </span>
-      <span class="alert-stats">
-        <ion-icon name="heart-outline" aria-hidden="true"></ion-icon> {{ a.likesCount || 0 }}
-        <ion-icon name="chatbubble-outline" aria-hidden="true"></ion-icon> {{ a.commentsCount || 0 }}
-      </span>
+
+    <section
+      class="alerts-filter-panel"
+      [attr.aria-label]="'ALERTS.FILTERS' | translate"
+    >
+      <div class="filter-line">
+        <span class="filter-label">{{ 'ALERTS.CATEGORY' | translate }}</span>
+        <div class="alerts-filters">
+          <button
+            type="button"
+            class="chip-near"
+            [class.active]="nearActive"
+            (click)="nearMe()"
+          >
+            <ion-icon name="locate-outline" aria-hidden="true"></ion-icon>
+            {{ 'ALERTS.NEAR_ME' | translate }}
+          </button>
+          <button
+            type="button"
+            [class.active]="!nearActive && activeCategory === 'all'"
+            (click)="setCategory('all')"
+          >
+            {{ 'ALERTS.ALL' | translate }}
+          </button>
+          <button
+            type="button"
+            [class.active]="!nearActive && activeCategory === 'human'"
+            (click)="setCategory('human')"
+          >
+            {{ 'ALERTS.CAT_human' | translate }}
+          </button>
+          <button
+            type="button"
+            [class.active]="!nearActive && activeCategory === 'animal'"
+            (click)="setCategory('animal')"
+          >
+            {{ 'ALERTS.CAT_animal' | translate }}
+          </button>
+          <button
+            type="button"
+            [class.active]="!nearActive && activeCategory === 'environment'"
+            (click)="setCategory('environment')"
+          >
+            {{ 'ALERTS.CAT_environment' | translate }}
+          </button>
+        </div>
+      </div>
+      <div class="filter-line filter-line--status">
+        <span class="filter-label"
+          >{{ 'ALERTS.VERIFICATION' | translate }}</span
+        >
+        <div class="alerts-filters alerts-filters--status">
+          <button
+            type="button"
+            [class.active]="activeVerificationStatus === 'all'"
+            (click)="setVerificationStatus('all')"
+          >
+            {{ 'ALERTS.STATUS_ALL' | translate }}
+          </button>
+          <button
+            type="button"
+            class="status-verified"
+            [class.active]="activeVerificationStatus === 'verified'"
+            (click)="setVerificationStatus('verified')"
+          >
+            <ion-icon
+              name="shield-checkmark-outline"
+              aria-hidden="true"
+            ></ion-icon>
+            {{ 'ALERTS.STATUS_verified' | translate }}
+          </button>
+          <button
+            type="button"
+            class="status-pending"
+            [class.active]="activeVerificationStatus === 'pending'"
+            (click)="setVerificationStatus('pending')"
+          >
+            <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+            {{ 'ALERTS.STATUS_pending' | translate }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="alerts-workspace">
+      <aside class="map-panel" [class.mobile-hidden]="mobileView !== 'map'">
+        <header class="panel-heading">
+          <div>
+            <span>{{ 'ALERTS.LIVE_MAP' | translate }}</span>
+            <small
+              >{{ locatedCount }} {{ 'ALERTS.LOCATED' | translate | lowercase
+              }}</small
+            >
+          </div>
+          <ion-icon name="map-outline" aria-hidden="true"></ion-icon>
+        </header>
+        <div
+          class="alerts-map"
+          #mapEl
+          [attr.aria-label]="'ALERTS.LIVE_MAP' | translate"
+        ></div>
+        <div class="map-legend" aria-hidden="true">
+          <span class="legend-human">{{ 'ALERTS.CAT_human' | translate }}</span>
+          <span class="legend-animal"
+            >{{ 'ALERTS.CAT_animal' | translate }}</span
+          >
+          <span class="legend-environment"
+            >{{ 'ALERTS.CAT_environment' | translate }}</span
+          >
+        </div>
+      </aside>
+
+      <section class="feed-panel" [class.mobile-hidden]="mobileView !== 'list'">
+        <header class="panel-heading feed-heading">
+          <div>
+            <span>{{ 'ALERTS.RECENT_ALERTS' | translate }}</span>
+            <small
+              >{{ alerts.length }} {{ 'ALERTS.RESULTS' | translate | lowercase
+              }}</small
+            >
+          </div>
+          <button
+            type="button"
+            class="refresh-btn"
+            (click)="retryLoad()"
+            [attr.aria-label]="'ALERTS.REFRESH' | translate"
+          >
+            <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
+          </button>
+        </header>
+
+        <div class="alerts-loading" *ngIf="loading">
+          <div class="alert-skeleton" *ngFor="let item of [1, 2, 3]">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <div class="alerts-error" *ngIf="!loading && loadError">
+          <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+          <p>{{ 'ALERTS.LOAD_ERROR' | translate }}</p>
+          <button type="button" (click)="retryLoad()">
+            {{ 'ALERTS.RETRY' | translate }}
+          </button>
+        </div>
+
+        <div
+          class="alerts-empty"
+          *ngIf="!loading && !loadError && alerts.length === 0"
+        >
+          <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+          <h3>{{ 'ALERTS.EMPTY' | translate }}</h3>
+          <p>{{ 'ALERTS.EMPTY_HINT' | translate }}</p>
+        </div>
+
+        <div class="alerts-list" *ngIf="!loading && !loadError">
+          <article
+            class="alert-card"
+            *ngFor="let a of alerts; trackBy: trackById"
+            [id]="'alert-card-' + a.id"
+            [class.selected]="selectedAlertId === a.id"
+            role="link"
+            tabindex="0"
+            (mouseenter)="focusAlert(a)"
+            (focusin)="focusAlert(a)"
+            (click)="openDetail(a)"
+            (keydown.enter)="openDetail(a)"
+          >
+            <img
+              class="alert-thumb"
+              *ngIf="a.imageUrls?.length"
+              [src]="photoSrc(a.imageUrls[0])"
+              [alt]="a.title"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="alert-card-body">
+              <div class="alert-tags">
+                <span class="alert-cat alert-cat--{{ a.category }}"
+                  >{{ ('ALERTS.CAT_' + a.category) | translate }}</span
+                >
+                <span class="alert-sev alert-sev--{{ a.severity }}"
+                  >{{ ('ALERTS.SEV_' + a.severity) | translate }}</span
+                >
+                <span
+                  class="alert-status alert-status--{{ a.verificationStatus }}"
+                >
+                  <ion-icon
+                    [name]="a.verificationStatus === 'verified' ? 'shield-checkmark-outline' : 'time-outline'"
+                    aria-hidden="true"
+                  ></ion-icon>
+                  {{ ('ALERTS.STATUS_' + a.verificationStatus) | translate }}
+                </span>
+              </div>
+              <h3>{{ a.title }}</h3>
+              <p class="alert-loc" *ngIf="a.city || a.country">
+                <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+                {{ a.city }}<span *ngIf="a.city && a.country">, </span>{{
+                a.country }}
+              </p>
+              <p class="alert-desc" *ngIf="a.description">
+                {{ a.description }}
+              </p>
+              <div class="alert-meta">
+                <img
+                  [src]="a.author?.photoURL || 'assets/default-profile.png'"
+                  [alt]="(a.author?.firstName || '') + ' ' + (a.author?.lastName || '')"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="alert-author">
+                  <strong>
+                    {{ a.author?.firstName }} {{ a.author?.lastName }}
+                    <ion-icon
+                      *ngIf="a.author?.isCertified"
+                      src="assets/icons/verified-badge.svg"
+                      class="verified-badge"
+                      aria-hidden="true"
+                    ></ion-icon>
+                  </strong>
+                  <small>{{ a.createdAt | date: 'short' }}</small>
+                </span>
+                <span class="alert-stats">
+                  <span
+                    ><ion-icon
+                      name="heart-outline"
+                      aria-hidden="true"
+                    ></ion-icon
+                    >{{ a.likesCount || 0 }}</span
+                  >
+                  <span
+                    ><ion-icon
+                      name="chatbubble-outline"
+                      aria-hidden="true"
+                    ></ion-icon
+                    >{{ a.commentsCount || 0 }}</span
+                  >
+                  <ion-icon
+                    class="card-arrow"
+                    name="chevron-forward-outline"
+                    aria-hidden="true"
+                  ></ion-icon>
+                </span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
     </div>
-  </article>
+  </div>
 
   <!-- Bouton signaler -->
   <ion-fab slot="fixed" horizontal="end" vertical="bottom">
-    <ion-fab-button (click)="openReport()" [attr.aria-label]="'ALERTS.REPORT' | translate">
+    <ion-fab-button
+      (click)="openReport()"
+      [attr.aria-label]="'ALERTS.REPORT' | translate"
+    >
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
   <!-- Modale de signalement -->
-  <ion-modal [isOpen]="reportOpen" (didDismiss)="closeReport()" (didPresent)="onReportPresent()">
+  <ion-modal
+    [isOpen]="reportOpen"
+    (didDismiss)="closeReport()"
+    (didPresent)="onReportPresent()"
+  >
     <ng-template>
       <ion-header>
         <ion-toolbar color="success">
           <ion-title>{{ 'ALERTS.REPORT' | translate }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="closeReport()">{{ 'COMMON.CLOSE' | translate }}</ion-button>
+            <ion-button (click)="closeReport()"
+              >{{ 'COMMON.CLOSE' | translate }}</ion-button
+            >
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding report-form">
         <ion-list lines="full">
           <ion-item>
-            <ion-select [label]="'ALERTS.CATEGORY' | translate" labelPlacement="stacked" [(ngModel)]="form.category" interface="popover">
-              <ion-select-option value="human">{{ 'ALERTS.CAT_human' | translate }}</ion-select-option>
-              <ion-select-option value="animal">{{ 'ALERTS.CAT_animal' | translate }}</ion-select-option>
-              <ion-select-option value="environment">{{ 'ALERTS.CAT_environment' | translate }}</ion-select-option>
+            <ion-select
+              [label]="'ALERTS.CATEGORY' | translate"
+              labelPlacement="stacked"
+              [(ngModel)]="form.category"
+              interface="popover"
+            >
+              <ion-select-option value="human"
+                >{{ 'ALERTS.CAT_human' | translate }}</ion-select-option
+              >
+              <ion-select-option value="animal"
+                >{{ 'ALERTS.CAT_animal' | translate }}</ion-select-option
+              >
+              <ion-select-option value="environment"
+                >{{ 'ALERTS.CAT_environment' | translate }}</ion-select-option
+              >
             </ion-select>
           </ion-item>
           <ion-item>
-            <ion-input [label]="'ALERTS.FIELD_TITLE' | translate" labelPlacement="stacked" [(ngModel)]="form.title" maxlength="140" [placeholder]="'ALERTS.FIELD_TITLE_PH' | translate"></ion-input>
+            <ion-input
+              [label]="'ALERTS.FIELD_TITLE' | translate"
+              labelPlacement="stacked"
+              [(ngModel)]="form.title"
+              maxlength="140"
+              [placeholder]="'ALERTS.FIELD_TITLE_PH' | translate"
+            ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-textarea [label]="'ALERTS.FIELD_DESC' | translate" labelPlacement="stacked" [(ngModel)]="form.description" autoGrow="true" rows="3" maxlength="2000"></ion-textarea>
+            <ion-textarea
+              [label]="'ALERTS.FIELD_DESC' | translate"
+              labelPlacement="stacked"
+              [(ngModel)]="form.description"
+              autoGrow="true"
+              rows="3"
+              maxlength="2000"
+            ></ion-textarea>
           </ion-item>
           <ion-item>
-            <ion-input [label]="'ALERTS.FIELD_COUNTRY' | translate" labelPlacement="stacked" [(ngModel)]="form.country"></ion-input>
+            <ion-input
+              [label]="'ALERTS.FIELD_COUNTRY' | translate"
+              labelPlacement="stacked"
+              [(ngModel)]="form.country"
+            ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-input [label]="'ALERTS.FIELD_CITY' | translate" labelPlacement="stacked" [(ngModel)]="form.city"></ion-input>
+            <ion-input
+              [label]="'ALERTS.FIELD_CITY' | translate"
+              labelPlacement="stacked"
+              [(ngModel)]="form.city"
+            ></ion-input>
           </ion-item>
           <ion-item>
-            <ion-select [label]="'ALERTS.FIELD_SEVERITY' | translate" labelPlacement="stacked" [(ngModel)]="form.severity" interface="popover">
-              <ion-select-option value="low">{{ 'ALERTS.SEV_low' | translate }}</ion-select-option>
-              <ion-select-option value="medium">{{ 'ALERTS.SEV_medium' | translate }}</ion-select-option>
-              <ion-select-option value="high">{{ 'ALERTS.SEV_high' | translate }}</ion-select-option>
+            <ion-select
+              [label]="'ALERTS.FIELD_SEVERITY' | translate"
+              labelPlacement="stacked"
+              [(ngModel)]="form.severity"
+              interface="popover"
+            >
+              <ion-select-option value="low"
+                >{{ 'ALERTS.SEV_low' | translate }}</ion-select-option
+              >
+              <ion-select-option value="medium"
+                >{{ 'ALERTS.SEV_medium' | translate }}</ion-select-option
+              >
+              <ion-select-option value="high"
+                >{{ 'ALERTS.SEV_high' | translate }}</ion-select-option
+              >
             </ion-select>
           </ion-item>
         </ion-list>
@@ -131,29 +417,67 @@
           <ion-icon *ngIf="!photoUploading" name="image-outline"></ion-icon>
           {{ 'ALERTS.ADD_PHOTO' | translate }}
         </button>
-        <input type="file" #alertPhotoInput accept="image/*" multiple hidden (change)="handlePhoto($event)" />
+        <input
+          type="file"
+          #alertPhotoInput
+          accept="image/*"
+          multiple
+          hidden
+          (change)="handlePhoto($event)"
+        />
         <div class="photo-previews" *ngIf="form.imageUrls?.length">
           <div class="photo-thumb" *ngFor="let url of form.imageUrls">
             <img [src]="photoSrc(url)" alt="" />
-            <button type="button" class="photo-remove" (click)="removePhoto(url)" [attr.aria-label]="'ALERTS.REMOVE_PHOTO' | translate">
+            <button
+              type="button"
+              class="photo-remove"
+              (click)="removePhoto(url)"
+              [attr.aria-label]="'ALERTS.REMOVE_PHOTO' | translate"
+            >
               <ion-icon name="close"></ion-icon>
             </button>
           </div>
         </div>
 
-        <ion-button expand="block" fill="outline" class="loc-btn" [disabled]="locating" (click)="useMyLocation()">
-          <ion-spinner *ngIf="locating" name="crescent" slot="start"></ion-spinner>
-          <ion-icon *ngIf="!locating" name="locate-outline" slot="start"></ion-icon>
-          {{ (locating ? 'ALERTS.LOCATING' : 'ALERTS.USE_LOCATION') | translate }}
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="loc-btn"
+          [disabled]="locating"
+          (click)="useMyLocation()"
+        >
+          <ion-spinner
+            *ngIf="locating"
+            name="crescent"
+            slot="start"
+          ></ion-spinner>
+          <ion-icon
+            *ngIf="!locating"
+            name="locate-outline"
+            slot="start"
+          ></ion-icon>
+          {{ (locating ? 'ALERTS.LOCATING' : 'ALERTS.USE_LOCATION') | translate
+          }}
         </ion-button>
-        <p class="loc-set" *ngIf="form.lat && form.lng">📍 {{ 'ALERTS.LOCATION_SET' | translate }}</p>
+        <p class="loc-set" *ngIf="form.lat && form.lng">
+          📍 {{ 'ALERTS.LOCATION_SET' | translate }}
+        </p>
 
         <!-- Choisir le lieu en touchant la carte (sans permission GPS) -->
         <p class="pick-hint">{{ 'ALERTS.PICK_HINT' | translate }}</p>
         <div id="alert-pick-map" class="pick-map"></div>
 
-        <ion-button expand="block" class="submit-btn" [disabled]="submitting" (click)="submitReport()">
-          <ion-spinner *ngIf="submitting" name="crescent" slot="start"></ion-spinner>
+        <ion-button
+          expand="block"
+          class="submit-btn"
+          [disabled]="submitting"
+          (click)="submitReport()"
+        >
+          <ion-spinner
+            *ngIf="submitting"
+            name="crescent"
+            slot="start"
+          ></ion-spinner>
           {{ 'ALERTS.SUBMIT' | translate }}
         </ion-button>
       </ion-content>

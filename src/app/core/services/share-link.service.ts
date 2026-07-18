@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 /** Version des liens sociaux : l'incrementer force les robots a relire les metas. */
-const SHARE_VERSION = '5';
+const SHARE_VERSION = '6';
 
 /** Construit les liens publics du site, interceptes pour les robots par Apache. */
 @Injectable({ providedIn: 'root' })
@@ -30,9 +30,10 @@ export class ShareLinkService {
   // Origine web publique : configuree en priorite (indispensable dans l'app
   // native Capacitor ou window.location.origin vaut "capacitor://localhost").
   private resolveWebOrigin(): string {
-    const configured = `${(environment as { publicWebUrl?: string }).publicWebUrl || ''}`
-      .trim()
-      .replace(/\/+$/, '');
+    const configured =
+      `${(environment as { publicWebUrl?: string }).publicWebUrl || ''}`
+        .trim()
+        .replace(/\/+$/, '');
     if (configured) {
       return configured;
     }
@@ -43,5 +44,4 @@ export class ShareLinkService {
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
     return `${this.resolveWebOrigin()}${normalizedPath}`;
   }
-
 }
