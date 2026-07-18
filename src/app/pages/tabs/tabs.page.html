@@ -3,7 +3,7 @@
   <header class="desktop-nav">
     <div class="dn-inner">
       <a class="dn-brand" routerLink="/tabs/dashbord">
-        <img src="assets/images/logo-onehealth-in-cameroon.png" alt="One Health Network" />
+        <img src="assets/icon/brand-icon-192.png" alt="One Health Network" />
         <span>One Health</span>
       </a>
 
@@ -15,25 +15,57 @@
       ></ion-searchbar>
 
       <nav class="dn-links">
-        <a class="dn-link" routerLink="/tabs/dashbord" [class.active]="selectedTab === 'dashbord'">
-          <ion-icon [name]="selectedTab === 'dashbord' ? 'home' : 'home-outline'"></ion-icon>
+        <a
+          class="dn-link"
+          routerLink="/tabs/dashbord"
+          [class.active]="selectedTab === 'dashbord'"
+        >
+          <ion-icon
+            [name]="selectedTab === 'dashbord' ? 'home' : 'home-outline'"
+          ></ion-icon>
           <span>{{ 'TABS.HOME' | translate }}</span>
         </a>
-        <a class="dn-link" routerLink="/tabs/alerts" [class.active]="selectedTab === 'alerts'">
-          <ion-icon [name]="selectedTab === 'alerts' ? 'pulse' : 'pulse-outline'"></ion-icon>
+        <a
+          class="dn-link"
+          routerLink="/tabs/alerts"
+          [class.active]="selectedTab === 'alerts'"
+        >
+          <ion-icon
+            [name]="selectedTab === 'alerts' ? 'pulse' : 'pulse-outline'"
+          ></ion-icon>
           <span>{{ 'ALERTS.NAV' | translate }}</span>
         </a>
-        <a class="dn-link" routerLink="/tabs/home" [class.active]="selectedTab === 'home'">
-          <ion-icon [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"></ion-icon>
+        <a
+          class="dn-link"
+          routerLink="/tabs/home"
+          [class.active]="selectedTab === 'home'"
+        >
+          <ion-icon
+            [name]="selectedTab === 'home' ? 'chatbubble-ellipses' : 'chatbubbles-outline'"
+          ></ion-icon>
           <span>{{ 'TABS.MESSAGES' | translate }}</span>
         </a>
-        <a class="dn-link dn-notif" routerLink="/tabs/notifications" [class.active]="selectedTab === 'notifications'">
-          <ion-icon [name]="selectedTab === 'notifications' ? 'notifications' : 'notifications-outline'"></ion-icon>
-          <ion-badge color="danger" *ngIf="(notifs.unread$ | async) as count">{{ count }}</ion-badge>
+        <a
+          class="dn-link dn-notif"
+          routerLink="/tabs/notifications"
+          [class.active]="selectedTab === 'notifications'"
+        >
+          <ion-icon
+            [name]="selectedTab === 'notifications' ? 'notifications' : 'notifications-outline'"
+          ></ion-icon>
+          <ion-badge color="danger" *ngIf="(notifs.unread$ | async) as count"
+            >{{ count }}</ion-badge
+          >
           <span>{{ 'TABS.NOTIFICATIONS' | translate }}</span>
         </a>
-        <a class="dn-link" routerLink="/tabs/profils" [class.active]="selectedTab === 'profils'">
-          <ion-icon [name]="selectedTab === 'profils' ? 'person' : 'person-outline'"></ion-icon>
+        <a
+          class="dn-link"
+          routerLink="/tabs/profils"
+          [class.active]="selectedTab === 'profils'"
+        >
+          <ion-icon
+            [name]="selectedTab === 'profils' ? 'person' : 'person-outline'"
+          ></ion-icon>
           <span>{{ 'TABS.PROFILE' | translate }}</span>
         </a>
         <a class="dn-publish" routerLink="/tabs/pushpub">
@@ -45,7 +77,11 @@
   </header>
 
   <ion-tabs #tabs (ionTabsDidChange)="setCurrentTab()">
-    <ion-tab-bar slot="bottom" color="success" [class.tabbar-hidden]="chrome.hidden$ | async">
+    <ion-tab-bar
+      slot="bottom"
+      color="success"
+      [class.tabbar-hidden]="chrome.hidden$ | async"
+    >
       <ion-tab-button class="let" tab="dashbord">
         <ion-icon
           color="primary"
@@ -72,7 +108,9 @@
           color="primary"
           [name]="selectedTab === 'notifications' ? 'notifications' : 'notifications-outline'"
         ></ion-icon>
-        <ion-badge color="danger" *ngIf="(notifs.unread$ | async) as count">{{ count }}</ion-badge>
+        <ion-badge color="danger" *ngIf="(notifs.unread$ | async) as count"
+          >{{ count }}</ion-badge
+        >
         {{ 'TABS.NOTIFICATIONS' | translate }}
       </ion-tab-button>
       <ion-tab-button class="let" tab="profils">

@@ -1,99 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      One Health Network — Alertes sanitaires & réseau d'experts One Health
+    </title>
 
-<head>
-  <meta charset="utf-8" />
-  <title>One Health Network — Alertes sanitaires & réseau d'experts One Health</title>
+    <base href="/" />
 
-  <base href="/" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta
+      name="description"
+      content="Réseau des experts One Health (santé humaine, animale, environnementale) : alertes sanitaires en temps réel sur carte interactive, prévention des zoonoses, profils vérifiés et assistant Rudolf AI."
+    />
+    <meta
+      name="keywords"
+      content="One Health, une seule santé, alertes sanitaires, alerte épidémie, signalement d'épidémie, carte des alertes, surveillance des zoonoses, zoonoses, santé publique, santé animale, santé environnementale, surveillance épidémiologique, pandémie, Rudolf AI, Cameroun, Afrique, Yaba-In"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="One Health Network" />
+    <link rel="canonical" href="https://onehealthnetwork.yaba-in.com/" />
 
-  <meta name="color-scheme" content="light" />
-  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="msapplication-tap-highlight" content="no" />
-  <meta name="description" content="Réseau des experts One Health (santé humaine, animale, environnementale) : alertes sanitaires en temps réel sur carte interactive, prévention des zoonoses, profils vérifiés et assistant Rudolf AI." />
-  <meta name="keywords" content="One Health, une seule santé, alertes sanitaires, alerte épidémie, signalement d'épidémie, carte des alertes, surveillance des zoonoses, zoonoses, santé publique, santé animale, santé environnementale, surveillance épidémiologique, pandémie, Rudolf AI, Cameroun, Afrique, Yaba-In" />
-  <meta name="robots" content="index, follow" />
-  <meta name="author" content="One Health Network" />
-  <link rel="canonical" href="https://onehealthnetwork.yaba-in.com/" />
+    <meta
+      property="og:title"
+      content="One Health Network — Alertes sanitaires & une seule santé"
+    />
+    <meta
+      property="og:description"
+      content="Lancez et suivez des alertes sanitaires en temps réel sur la carte interactive. One Health Network connecte les experts de la santé humaine, animale et environnementale pour prévenir les zoonoses : profils vérifiés, messagerie et assistant Rudolf AI."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://onehealthnetwork.yaba-in.com/" />
+    <meta
+      property="og:image"
+      content="https://backend.onehealthnetwork.yaba-in.com/public/onehealth-share.png"
+    />
+    <meta
+      property="og:image:alt"
+      content="One Health Network — santé humaine, animale et environnementale"
+    />
+    <meta property="og:site_name" content="One Health Network" />
+    <meta property="og:locale" content="fr_FR" />
 
-  <meta property="og:title" content="One Health Network — Alertes sanitaires & une seule santé" />
-  <meta property="og:description" content="Lancez et suivez des alertes sanitaires en temps réel sur la carte interactive. One Health Network connecte les experts de la santé humaine, animale et environnementale pour prévenir les zoonoses : profils vérifiés, messagerie et assistant Rudolf AI." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://onehealthnetwork.yaba-in.com/" />
-  <meta property="og:image" content="https://backend.onehealthnetwork.yaba-in.com/public/onehealth-share.png" />
-  <meta property="og:image:alt" content="One Health Network — santé humaine, animale et environnementale" />
-  <meta property="og:site_name" content="One Health Network" />
-  <meta property="og:locale" content="fr_FR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="One Health Network — Alertes sanitaires & une seule santé"
+    />
+    <meta
+      name="twitter:description"
+      content="Alertes sanitaires en temps réel sur carte interactive. Le réseau qui connecte les experts de la santé humaine, animale et environnementale : prévention des zoonoses, profils vérifiés, Rudolf AI."
+    />
+    <meta
+      name="twitter:image"
+      content="https://backend.onehealthnetwork.yaba-in.com/public/onehealth-share.png"
+    />
 
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="One Health Network — Alertes sanitaires & une seule santé" />
-  <meta name="twitter:description" content="Alertes sanitaires en temps réel sur carte interactive. Le réseau qui connecte les experts de la santé humaine, animale et environnementale : prévention des zoonoses, profils vérifiés, Rudolf AI." />
-  <meta name="twitter:image" content="https://backend.onehealthnetwork.yaba-in.com/public/onehealth-share.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Google Identity Services (bouton « Se connecter avec Google ») -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <!-- Google Identity Services (bouton « Se connecter avec Google ») -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="64x64"
+      href="assets/icon/brand-icon-64.png"
+    />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="assets/icon/brand-icon-64.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/icon/brand-icon-180.png"
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#0b4ed6" />
 
-  <link rel="icon" type="image/png" href="assets/images/logo-onehealth-in-cameroon.png" />
-  <link rel="shortcut icon" type="image/png" href="assets/images/logo-onehealth-in-cameroon.png" />
-  <link rel="apple-touch-icon" href="assets/icon/favicon.png" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="theme-color" content="#0b4ed6" />
+    <!-- add to homescreen for ios -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="One Health Network" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-  <!-- add to homescreen for ios -->
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="One Health Network" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "One Health Network",
-      "alternateName": "OneHealth Network",
-      "url": "https://onehealthnetwork.yaba-in.com/",
-      "logo": "https://onehealthnetwork.yaba-in.com/assets/images/logo-onehealth-in-cameroon.png",
-      "image": "https://backend.onehealthnetwork.yaba-in.com/public/onehealth-share.png",
-      "slogan": "Une seule santé",
-      "description": "Plateforme de collaboration One Health : système d'alertes sanitaires en temps réel sur carte interactive, connexion des experts de la santé humaine, animale et environnementale, prévention des zoonoses et assistant intelligent Rudolf AI.",
-      "parentOrganization": {
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
         "@type": "Organization",
-        "name": "Yaba-In"
-      },
-      "areaServed": ["Cameroun", "Afrique centrale", "Afrique", "Monde"],
-      "knowsAbout": [
-        "One Health",
-        "Alertes sanitaires en temps réel",
-        "Signalement d'épidémies",
-        "Cartographie des alertes sanitaires",
-        "Zoonoses",
-        "Santé publique",
-        "Santé animale",
-        "Santé environnementale",
-        "Surveillance épidémiologique"
-      ]
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "One Health Network",
-      "alternateName": ["OneHealth Network", "One Health Cameroun"],
-      "url": "https://onehealthnetwork.yaba-in.com/",
-      "inLanguage": ["fr", "en"],
-      "description": "Réseau des experts One Health : alertes sanitaires en temps réel sur carte interactive, prévention des zoonoses, profils vérifiés et assistant Rudolf AI."
-    }
-  </script>
-</head>
+        "name": "One Health Network",
+        "alternateName": "OneHealth Network",
+        "url": "https://onehealthnetwork.yaba-in.com/",
+        "logo": "https://onehealthnetwork.yaba-in.com/assets/icon/brand-icon-512.png",
+        "image": "https://backend.onehealthnetwork.yaba-in.com/public/onehealth-share.png",
+        "slogan": "Une seule santé",
+        "description": "Plateforme de collaboration One Health : système d'alertes sanitaires en temps réel sur carte interactive, connexion des experts de la santé humaine, animale et environnementale, prévention des zoonoses et assistant intelligent Rudolf AI.",
+        "parentOrganization": {
+          "@type": "Organization",
+          "name": "Yaba-In"
+        },
+        "areaServed": ["Cameroun", "Afrique centrale", "Afrique", "Monde"],
+        "knowsAbout": [
+          "One Health",
+          "Alertes sanitaires en temps réel",
+          "Signalement d'épidémies",
+          "Cartographie des alertes sanitaires",
+          "Zoonoses",
+          "Santé publique",
+          "Santé animale",
+          "Santé environnementale",
+          "Surveillance épidémiologique"
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "One Health Network",
+        "alternateName": ["OneHealth Network", "One Health Cameroun"],
+        "url": "https://onehealthnetwork.yaba-in.com/",
+        "inLanguage": ["fr", "en"],
+        "description": "Réseau des experts One Health : alertes sanitaires en temps réel sur carte interactive, prévention des zoonoses, profils vérifiés et assistant Rudolf AI."
+      }
+    </script>
+  </head>
 
-<body>
-  <app-root></app-root>
-</body>
-
+  <body>
+    <app-root></app-root>
+  </body>
 </html>

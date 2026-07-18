@@ -3,7 +3,7 @@
     <div class="topbar">
       <div class="brand">
         <img
-          src="assets/images/logo-onehealth-in-cameroon.png"
+          src="assets/icon/brand-icon-192.png"
           alt="One Health Network logo"
           class="brand-logo"
           loading="eager"
@@ -31,12 +31,22 @@
             EN
           </button>
         </div>
-        <button type="button" class="icon-btn" [attr.aria-label]="content.exploreNetwork" (click)="exploreAsGuest()">
+        <button
+          type="button"
+          class="icon-btn"
+          [attr.aria-label]="content.exploreNetwork"
+          (click)="exploreAsGuest()"
+        >
           <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
         </button>
-        <button type="button" class="avatar-btn" [attr.aria-label]="content.loginCta" (click)="navigateToLogin()">
+        <button
+          type="button"
+          class="avatar-btn"
+          [attr.aria-label]="content.loginCta"
+          (click)="navigateToLogin()"
+        >
           <img
-            src="assets/images/logo-onehealth-in-cameroon.png"
+            src="assets/icon/brand-icon-192.png"
             alt="Profile avatar"
             loading="eager"
             decoding="async"
@@ -54,10 +64,21 @@
       <h1>{{ content.title }}</h1>
       <p>{{ content.subtitle }}</p>
 
-      <ion-button expand="block" class="cta-primary" shape="round" (click)="navigateToLogin()">
+      <ion-button
+        expand="block"
+        class="cta-primary"
+        shape="round"
+        (click)="navigateToLogin()"
+      >
         {{ content.joinNetwork }}
       </ion-button>
-      <ion-button expand="block" fill="clear" class="cta-secondary" shape="round" (click)="exploreAsGuest()">
+      <ion-button
+        expand="block"
+        fill="clear"
+        class="cta-secondary"
+        shape="round"
+        (click)="exploreAsGuest()"
+      >
         {{ content.exploreNetwork }}
       </ion-button>
       <ion-button
@@ -78,7 +99,10 @@
       <span class="section-underline"></span>
     </div>
 
-    <article class="pillar-card" *ngFor="let pillar of content.pillars; trackBy: trackByPillarTitle">
+    <article
+      class="pillar-card"
+      *ngFor="let pillar of content.pillars; trackBy: trackByPillarTitle"
+    >
       <div class="pillar-icon">
         <ion-icon [name]="pillar.icon"></ion-icon>
       </div>
@@ -107,7 +131,12 @@
       </div>
     </article>
 
-    <ion-button expand="block" fill="clear" class="login-link" (click)="navigateToLogin()">
+    <ion-button
+      expand="block"
+      fill="clear"
+      class="login-link"
+      (click)="navigateToLogin()"
+    >
       {{ content.loginCta }}
     </ion-button>
   </section>

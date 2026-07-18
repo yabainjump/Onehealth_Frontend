@@ -49,11 +49,16 @@ button {
     height: 38px;
     flex: 0 0 38px;
     border-radius: 12px;
-    color: #fff;
-    background: linear-gradient(145deg, #2866c8, #123b7a);
+    overflow: hidden;
+    border: 1px solid #dce5ef;
+    background: #fff;
     box-shadow: 0 7px 16px rgba(29, 81, 165, 0.24);
-    font-size: 1.05rem;
-    font-weight: 800;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
 
   > div:not(.brand-mark) {
@@ -345,9 +350,16 @@ button {
   height: 40px;
   flex: 0 0 40px;
   border-radius: 50%;
-  color: #fff;
-  background: linear-gradient(145deg, #2866c8, #123b7a);
-  font-weight: 800;
+  overflow: visible;
+  border: 1px solid #dce5ef;
+  background: #fff;
+
+  > img {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: contain;
+  }
 
   span {
     position: absolute;
@@ -469,11 +481,16 @@ button {
   width: 56px;
   height: 56px;
   border-radius: 18px;
-  color: #fff;
-  background: linear-gradient(145deg, #2d6bc8, #143f83);
+  overflow: hidden;
+  border: 1px solid #dce5ef;
+  background: #fff;
   box-shadow: 0 12px 30px rgba(29, 81, 165, 0.24);
-  font-size: 1.4rem;
-  font-weight: 800;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 }
 
 .welcome-label {
@@ -611,10 +628,15 @@ button {
   height: 32px;
   flex: 0 0 32px;
   border-radius: 10px;
-  color: #fff;
-  background: linear-gradient(145deg, #2866c8, #123b7a);
-  font-size: 0.75rem;
-  font-weight: 800;
+  overflow: hidden;
+  border: 1px solid #dce5ef;
+  background: #fff;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 }
 
 .message-body {

@@ -11,7 +11,9 @@
     [attr.aria-label]="'RUDOLF.HISTORY' | translate"
   >
     <div class="sidebar-brand">
-      <div class="brand-mark" aria-hidden="true">R</div>
+      <div class="brand-mark" aria-hidden="true">
+        <img src="assets/icon/brand-icon-192.png" alt="" />
+      </div>
       <div>
         <strong>Rudolf</strong>
         <span>One Health AI</span>
@@ -103,7 +105,7 @@
         <ion-icon name="menu-outline"></ion-icon>
       </button>
       <div class="header-avatar" aria-hidden="true">
-        R
+        <img src="assets/icon/brand-icon-192.png" alt="" />
         <span></span>
       </div>
       <div class="header-copy">
@@ -140,7 +142,9 @@
         <div class="welcome-orbit" aria-hidden="true">
           <span class="orbit orbit-one"></span>
           <span class="orbit orbit-two"></span>
-          <div class="welcome-mark">R</div>
+          <div class="welcome-mark">
+            <img src="assets/icon/brand-icon-192.png" alt="" />
+          </div>
         </div>
         <span class="welcome-label">ONE HEALTH INTELLIGENCE</span>
         <h1>{{ "RUDOLF.WELCOME_TITLE" | translate }}</h1>
@@ -196,7 +200,7 @@
             *ngIf="message.role === 'assistant'"
             aria-hidden="true"
           >
-            R
+            <img src="assets/icon/brand-icon-192.png" alt="" />
           </div>
           <div class="message-body">
             <span class="message-author" *ngIf="message.role === 'assistant'"

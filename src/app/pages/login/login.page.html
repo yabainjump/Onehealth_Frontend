@@ -12,8 +12,8 @@
 
   <div class="login-logo-wrapper">
     <img
-      src="assets/images/logo-onehealth-in-cameroon.png"
-      alt="Onehealth logo"
+      src="assets/images/logo-onehealth-network-web.png"
+      alt="Logo One Health Network"
       class="login-logo"
       loading="eager"
       fetchpriority="high"
@@ -24,73 +24,83 @@
   <form [formGroup]="form">
     <ion-list lines="none" class="ion-margin ion-padding ion-text-center">
       <ion-item class="ion-margin-vertical">
-        <ion-icon
-          name="mail-outline" slot="end" color="medium">
-        </ion-icon>
+        <ion-icon name="mail-outline" slot="end" color="medium"> </ion-icon>
         <ion-input
           formControlName="email"
           type="email"
           inputmode="email"
           autocomplete="email"
           [attr.aria-label]="'LOGIN.EMAIL_PLACEHOLDER' | translate"
-          [placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate">
+          [placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate"
+        >
         </ion-input>
       </ion-item>
       <ion-text
         class="ion-text-left"
         color="danger"
-        *ngIf="!form.get('email').valid && form.get('email').touched">
+        *ngIf="!form.get('email').valid && form.get('email').touched"
+      >
         <p class="error">{{ 'LOGIN.EMAIL_ERROR' | translate }}</p>
       </ion-text>
 
       <ion-item class="ion-margin-vertical">
-        <ion-icon (click)="onChange()"
+        <ion-icon
+          (click)="onChange()"
           role="button"
           tabindex="0"
           class="pwd-toggle"
           [attr.aria-label]="'LOGIN.TOGGLE_PASSWORD' | translate"
           [name]="isTypePassword ? 'lock-closed-outline' : 'lock-open-outline'"
           slot="end"
-          [color]="isTypePassword ? 'medium' : 'primary'">
+          [color]="isTypePassword ? 'medium' : 'primary'"
+        >
         </ion-icon>
         <ion-input
           formControlName="password"
           [type]="isTypePassword ? 'password' : 'text'"
           autocomplete="current-password"
           [attr.aria-label]="'LOGIN.PASSWORD_PLACEHOLDER' | translate"
-          [placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate">
+          [placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate"
+        >
         </ion-input>
       </ion-item>
       <ion-text
         class="ion-text-left"
         color="danger"
-        *ngIf="!form.get('password').valid && form.get('password').touched">
+        *ngIf="!form.get('password').valid && form.get('password').touched"
+      >
         <p
           class="error"
-          *ngIf="form.get('password').invalid && form.get('password').errors['required']">
+          *ngIf="form.get('password').invalid && form.get('password').errors['required']"
+        >
           {{ 'LOGIN.PASSWORD_REQUIRED' | translate }}
         </p>
-        <p
-          class="error"
-          *ngIf="form.get('password').dirty">
+        <p class="error" *ngIf="form.get('password').dirty">
           {{ 'LOGIN.PASSWORD_MINLENGTH' | translate }}
         </p>
       </ion-text>
 
       <ion-row class="ion-margin-vertical">
         <ion-col size="6" class="alignItems">
-          <div align=left>
+          <div align="left">
             <ion-checkbox></ion-checkbox>
             <ion-note>{{ 'LOGIN.REMEMBER_ME' | translate }}</ion-note>
           </div>
         </ion-col>
         <ion-col size="6">
-          <div align=right>
-            <ion-note class="link" fill="clear" routerLink="/forgot-password">{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</ion-note>
+          <div align="right">
+            <ion-note class="link" fill="clear" routerLink="/forgot-password"
+              >{{ 'LOGIN.FORGOT_PASSWORD' | translate }}</ion-note
+            >
           </div>
         </ion-col>
       </ion-row>
-      <ion-button color="primary" shape="round" [disabled]="isLogin" (click)="onSubmit()">
+      <ion-button
+        color="primary"
+        shape="round"
+        [disabled]="isLogin"
+        (click)="onSubmit()"
+      >
         <ion-spinner *ngIf="isLogin" name="crescent" slot="start"></ion-spinner>
         {{ 'LOGIN.SUBMIT' | translate }}
       </ion-button>
@@ -98,12 +108,19 @@
       <div class="google-block" *ngIf="showGoogleButton">
         <div class="divider"><span>{{ 'LOGIN.OR' | translate }}</span></div>
         <div id="google-signin-btn" class="google-btn-container"></div>
-        <ion-spinner *ngIf="isGoogleLoading" name="crescent" class="google-spinner"></ion-spinner>
+        <ion-spinner
+          *ngIf="isGoogleLoading"
+          name="crescent"
+          class="google-spinner"
+        ></ion-spinner>
       </div>
 
       <p class="signup">
         <ion-note>
-          {{ 'LOGIN.NO_ACCOUNT' | translate }} <ion-text class="link" (click)="navigateToSignup()" color="primary">{{ 'LOGIN.SIGN_UP' | translate }}</ion-text>
+          {{ 'LOGIN.NO_ACCOUNT' | translate }}
+          <ion-text class="link" (click)="navigateToSignup()" color="primary"
+            >{{ 'LOGIN.SIGN_UP' | translate }}</ion-text
+          >
         </ion-note>
       </p>
     </ion-list>
