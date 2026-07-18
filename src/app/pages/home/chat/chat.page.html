@@ -1,17 +1,30 @@
-<ion-header>
+<ion-header class="chat-header">
   <ion-toolbar class="chat-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button class="chat-back" defaultHref="/tabs/home"></ion-back-button>
+      <ion-back-button
+        class="chat-back"
+        defaultHref="/tabs/home"
+      ></ion-back-button>
     </ion-buttons>
     <ion-title>
-      <button type="button" class="chat-title-trigger" (click)="openOtherUserProfile()">
+      <button
+        type="button"
+        class="chat-title-trigger"
+        (click)="openOtherUserProfile()"
+      >
         <img
           class="chat-title-avatar"
           [src]="otherPhoto"
           alt="contact avatar"
           loading="eager"
           fetchpriority="high"
-          decoding="async" />
+          decoding="async"
+        />
+        <span
+          class="presence-dot"
+          [class.online]="otherStatusText === 'en ligne'"
+          aria-hidden="true"
+        ></span>
         <div class="chat-title-text">
           <span class="chat-title-name">{{ name }}</span>
           <span class="chat-title-status">{{ otherStatusText }}</span>
@@ -19,22 +32,34 @@
       </button>
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button fill="clear" class="toolbar-action" (click)="openOptionsMenu()">
-        <ion-icon name="ellipsis-vertical" [attr.aria-label]="'CHAT.OPTIONS' | translate"></ion-icon>
+      <ion-button
+        fill="clear"
+        class="toolbar-action"
+        [attr.aria-label]="'CHAT.OPTIONS' | translate"
+        (click)="openOptionsMenu()"
+      >
+        <ion-icon
+          name="ellipsis-vertical"
+          [attr.aria-label]="'CHAT.OPTIONS' | translate"
+        ></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-
-
 <ion-content class="chat-content">
-  <app-empty-screen *ngIf="(chats | async)?.length === 0" [model]="model"></app-empty-screen>
+  <app-empty-screen
+    *ngIf="(chats | async)?.length === 0"
+    [model]="model"
+  ></app-empty-screen>
 
   <ng-container *ngIf="(chats | async) as chat$">
     <div class="messages">
-      <div class="msg" *ngFor="let m of chat$; trackBy: trackByMessageId" [ngClass]="{ mine: m.sender === chatService.currentUserId }">
-
+      <div
+        class="msg"
+        *ngFor="let m of chat$; trackBy: trackByMessageId"
+        [ngClass]="{ mine: m.sender === chatService.currentUserId }"
+      >
         <!-- Avatar de l’autre à gauche -->
         <img
           *ngIf="m.sender !== chatService.currentUserId"
@@ -42,7 +67,8 @@
           [src]="otherPhoto"
           alt="user"
           loading="lazy"
-          decoding="async" />
+          decoding="async"
+        />
 
         <div class="bubble">
           <img
@@ -52,13 +78,15 @@
             alt="image"
             loading="lazy"
             decoding="async"
-            (click)="openAttachment(m)" />
+            (click)="openAttachment(m)"
+          />
 
           <button
             *ngIf="isDocumentMessage(m)"
             type="button"
             class="doc-attachment"
-            (click)="openAttachment(m)">
+            (click)="openAttachment(m)"
+          >
             <ion-icon name="document-text-outline"></ion-icon>
             <div class="doc-meta">
               <strong>{{ m.fileName || ('CHAT.DOCUMENT' | translate) }}</strong>
@@ -69,11 +97,13 @@
           <div *ngIf="m.message" class="text">{{ m.message }}</div>
           <!-- si createdAt est déjà un Date c’est OK ; sinon fallback toDate() -->
           <div class="time">
-            {{ (m.createdAt?.toDate ? m.createdAt.toDate() : m.createdAt) | date:'shortTime' }}
+            {{ (m.createdAt?.toDate ? m.createdAt.toDate() : m.createdAt) |
+            date:'shortTime' }}
             <ion-icon
               *ngIf="m.sender === chatService.currentUserId"
               name="checkmark-done"
-              [ngClass]="['read-receipt', readReceiptClass(m)]"></ion-icon>
+              [ngClass]="['read-receipt', readReceiptClass(m)]"
+            ></ion-icon>
           </div>
         </div>
 
@@ -84,15 +114,12 @@
           [src]="myPhoto"
           alt="me"
           loading="lazy"
-          decoding="async" />
-
+          decoding="async"
+        />
       </div>
     </div>
   </ng-container>
 </ion-content>
-
-
-
 
 <ion-footer class="chat-footer">
   <ion-toolbar class="composer-toolbar">
@@ -102,10 +129,17 @@
       type="file"
       accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
       hidden
-      (change)="onFileChosen($event)" />
+      (change)="onFileChosen($event)"
+    />
 
     <div class="composer-wrap">
-      <button type="button" class="composer-icon-btn" [attr.aria-label]="'CHAT.ATTACH' | translate" (click)="triggerFile()">
+      <button
+        type="button"
+        class="composer-icon-btn"
+        [disabled]="isLoading"
+        [attr.aria-label]="'CHAT.ATTACH' | translate"
+        (click)="triggerFile()"
+      >
         <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
       </button>
 
@@ -114,7 +148,8 @@
           autoGrow
           rows="1"
           [placeholder]="'CHAT.MESSAGE_PLACEHOLDER' | translate"
-          [(ngModel)]="message">
+          [(ngModel)]="message"
+        >
         </ion-textarea>
       </div>
 
@@ -122,8 +157,10 @@
         *ngIf="!isLoading"
         type="button"
         class="composer-send-btn"
+        [disabled]="!message?.trim()"
         [attr.aria-label]="'CHAT.SEND' | translate"
-        (click)="sendMessage()">
+        (click)="sendMessage()"
+      >
         <ion-icon name="send" aria-hidden="true"></ion-icon>
       </button>
 
@@ -131,7 +168,8 @@
         *ngIf="isLoading"
         type="button"
         class="composer-send-btn is-loading"
-        disabled>
+        disabled
+      >
         <ion-spinner name="crescent"></ion-spinner>
       </button>
     </div>

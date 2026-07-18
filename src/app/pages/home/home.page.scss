@@ -1,7 +1,17 @@
-/* ===== Messagerie : structure 2 volets ===== */
+:host {
+  --chat-blue: #1d51a5;
+  --chat-ink: #1d2939;
+  --chat-muted: #718096;
+  --chat-line: #e7ecf3;
+  --chat-surface: #ffffff;
+  --chat-canvas: #f5f7fb;
+}
+
+/* Structure responsive de la messagerie */
 .msg-2pane {
   position: absolute;
   inset: 0;
+  background: var(--chat-canvas);
 }
 
 .msg-board {
@@ -13,6 +23,7 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  background: var(--chat-surface);
 }
 
 .msg-convo-pane {
@@ -28,176 +39,267 @@
   display: none;
 }
 
-/* Mobile : conversation ouverte → plein écran, liste masquée (comme avant) */
+/* Sur mobile, une conversation ouverte prend tout l'écran. */
 .msg-2pane.convo-open .msg-list-pane {
   display: none;
 }
 
 .msg-2pane.convo-open .msg-convo-pane {
-  display: block;
   position: relative;
+  display: block;
   height: 100%;
 }
 
-/* ===== PC (≥1024px) : carte centrée façon LinkedIn ===== */
-@media (min-width: 1024px) {
-  .msg-2pane {
-    background: #f1f3f6;
-    overflow: hidden;
+/* En-tête plus léger et navigation compacte. */
+ion-header.title-header {
+  z-index: 4;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(16, 24, 40, 0.06);
+
+  ion-toolbar {
+    --background: #fff;
+    --color: var(--chat-ink);
+    --min-height: 56px;
+    font-family: var(--ion-font-family) !important;
+
+    ion-title {
+      color: var(--chat-ink);
+      font-size: 1.05rem !important;
+      font-weight: 720;
+      letter-spacing: -0.015em;
+    }
   }
 
-  /* Carte blanche centrée contenant les 2 volets */
-  .msg-board {
-    display: flex;
-    max-width: 1128px;
-    height: calc(100% - 32px);
-    margin: 16px auto;
-    background: #ffffff;
-    border: 1px solid #e1e6ee;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: var(--app-shadow-sm);
+  ion-segment {
+    --background: #fff;
+    padding: 0 10px;
+    border-top: 1px solid #f3f5f8;
+
+    ion-segment-button {
+      --color: #7a8698;
+      --color-checked: var(--chat-blue);
+      --indicator-color: var(--chat-blue);
+      --indicator-height: 2px;
+      min-height: 43px;
+      font-size: 0.75rem;
+      font-weight: 680;
+      letter-spacing: 0.01em;
+      text-transform: none;
+    }
+  }
+}
+
+.conversation-content {
+  --background: var(--chat-canvas);
+}
+
+.conversation-list {
+  margin: 0;
+  padding: 12px 8px 96px;
+  background: transparent;
+}
+
+.conversation-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 38px;
+  padding: 2px 10px 8px;
+  color: #7a8698;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+
+  small {
+    display: grid;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    color: #65758b;
+    background: #e9eef5;
+    font-size: 0.65rem;
+    letter-spacing: 0;
+  }
+}
+
+.conversation-card {
+  --background: transparent;
+  --background-activated: #edf3fb;
+  --background-hover: #f0f4fa;
+  --min-height: 72px;
+  --padding-start: 11px;
+  --inner-padding-end: 11px;
+  margin: 3px 0;
+  border-radius: 15px;
+  overflow: hidden;
+
+  &::part(native) {
+    border: 1px solid transparent;
+    border-radius: 15px;
+    transition:
+      background 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
   }
 
-  .msg-list-pane {
-    width: 340px;
-    flex-shrink: 0;
-    border-right: 1px solid #e1e6ee;
+  &:hover::part(native) {
+    border-color: #e0e7f0;
+    background: #f7f9fc;
+    box-shadow: 0 5px 18px rgba(29, 41, 57, 0.045);
   }
+}
 
-  /* La liste reste visible même quand une conversation est ouverte */
-  .msg-2pane.convo-open .msg-list-pane {
-    display: flex;
+.conversation-avatar {
+  width: 44px;
+  height: 44px;
+  margin-inline-end: 11px;
+  border: 2px solid #fff;
+  background: #e8eef7;
+  box-shadow: 0 0 0 1px #dce4ef;
+
+  img {
+    object-fit: cover;
   }
+}
 
-  .msg-convo-pane {
-    display: block;
+.conversation-label {
+  min-width: 0;
+  margin: 11px 0;
+}
+
+.row-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+
+  .name {
     flex: 1;
     min-width: 0;
-    position: relative;
-    height: 100%;
-    background: #eef2f7;
+    overflow: hidden;
+    color: #263247;
+    font-size: 0.84rem;
+    font-weight: 650;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .msg-empty {
-    display: flex;
-    flex-direction: column;
+  .time {
+    flex: 0 0 auto;
+    margin: 0;
+    color: #98a2b3;
+    font-size: 0.62rem;
+    font-weight: 520;
+  }
+}
+
+.row-bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 5px;
+
+  .preview {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    color: #7a8698;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .badge {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    color: #8a96a8;
-    gap: 8px;
-  }
-
-  .msg-empty ion-icon {
-    font-size: 56px;
-  }
-
-  .msg-2pane.convo-open .msg-empty {
-    display: none;
-  }
-}
-
-ion-header.title-header {
-  ion-toolbar {
-    font-family: var(--ion-font-family) !important;
-    ion-title {
-      letter-spacing: 0.2px;
-      font-weight: 700;
-      font-size: 1.35rem !important;
-    }
-  }
-  ion-segment {
-    --background: var(--ion-color-primary);
-    ion-segment-button {
-      font-size: 1rem;
-      --color: var(--ion-color-light);
-      --color-checked: #fff;
-    }
+    min-width: 19px;
+    height: 19px;
+    margin: 0;
+    padding: 0 5px;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--chat-blue);
+    box-shadow: 0 3px 8px rgba(29, 81, 165, 0.2);
+    font-size: 0.61rem;
+    font-weight: 750;
+    line-height: 1;
   }
 }
 
-ion-content {
+.new-chat-fab {
+  right: 16px;
+  bottom: 16px;
+}
+
+.new-chat-button {
+  --background: var(--chat-blue);
+  --background-hover: #17488f;
+  --border-radius: 16px;
+  --box-shadow: 0 9px 22px rgba(29, 81, 165, 0.25);
+  width: 50px;
+  height: 50px;
+}
+
+.new-chat-modal {
+  --background: var(--chat-canvas);
+}
+
+.new-chat-toolbar {
+  --background: #fff;
+  --color: var(--chat-ink);
+  --border-color: var(--chat-line);
+
+  ion-title {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+}
+
+.user-searchbar {
+  --background: #f1f4f8;
+  --border-radius: 13px;
+  --box-shadow: none;
+  --color: #263247;
+  --icon-color: #7a8698;
+  --placeholder-color: #8a96a8;
+  padding: 8px 12px 11px;
+  background: #fff;
+}
+
+.new-chat-content {
+  --background: var(--chat-canvas);
+
   ion-list {
-    ion-list-header {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-    ion-item {
-      margin-top: 2vh;
-      ion-label {
-        font-size: 1.2rem;
-        p {
-          margin-top: 3px;
-        }
-      }
-      ion-text {
-        font-size: 0.9rem;
-      }
-    }
+    padding: 6px 8px 24px;
   }
 }
 
-ion-item {
+.contact-card {
+  --background: #fff;
+  --border-radius: 14px;
+  --min-height: 64px;
   --padding-start: 12px;
-  --inner-padding-end: 8px;
+  --inner-padding-end: 12px;
+  margin: 6px 0;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(29, 41, 57, 0.045);
 
   ion-avatar {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
   }
 
-  ion-label {
-    display: block;
-    .row-top {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      .name {
-        font-weight: 600;
-      }
-      .time {
-        margin-left: auto;
-        color: var(--ion-color);
-      }
-    }
-    .row-bottom {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      .preview {
-        font-size: 15px;
-        flex: 1;
-        min-width: 0;
-        color: var(--ion-color-medium);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 80%;
-      }
-      .badge {
-        /* vrai centrage */
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        /* look de la bulle */
-        background: var(--ion-color-primary);
-        color: #fff;
-        min-width: 20px;
-        height: 20px;
-        padding: 0 6px; /* s’agrandit pour 2–3 chiffres */
-        border-radius: 9999px;
-        font-weight: 600;
-        font-size: 12px;
-        line-height: 1; /* évite le décalage vertical */
-
-        /* reculer un peu la bulle par rapport à la flèche de détail */
-        margin-right: 18px; /* ajuste 8–16px selon ton goût */
-        // /* optionnel si tu veux la reculer encore : */
-        transform: translateX(28px);
-      }
-    }
+  .name {
+    color: #263247;
+    font-size: 0.82rem;
+    font-weight: 650;
   }
 }
 
@@ -207,13 +309,152 @@ app-rudolf-chat {
   min-height: 0;
 }
 
+@media (min-width: 768px) {
+  .conversation-list {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+}
+
+/* Desktop : carte principale douce avec deux panneaux équilibrés. */
 @media (min-width: 1024px) {
+  .msg-2pane {
+    overflow: hidden;
+    background:
+      radial-gradient(
+        circle at 8% 0%,
+        rgba(29, 81, 165, 0.055),
+        transparent 30%
+      ),
+      #f3f5f9;
+  }
+
+  .msg-board {
+    display: flex;
+    width: calc(100% - 32px);
+    max-width: 1220px;
+    height: calc(100% - 28px);
+    margin: 14px auto;
+    overflow: hidden;
+    border: 1px solid #e1e7ef;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 18px 48px rgba(29, 41, 57, 0.09);
+  }
+
+  .msg-list-pane {
+    width: 360px;
+    flex: 0 0 360px;
+    border-right: 1px solid var(--chat-line);
+  }
+
+  .msg-2pane.convo-open .msg-list-pane {
+    display: flex;
+  }
+
+  .msg-convo-pane {
+    position: relative;
+    display: block;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    background: #f5f7fb;
+  }
+
+  .msg-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #8491a3;
+    text-align: center;
+  }
+
+  .msg-empty-icon {
+    display: grid;
+    place-items: center;
+    width: 78px;
+    height: 78px;
+    border: 1px solid #dce5f1;
+    border-radius: 24px;
+    color: #4d74ad;
+    background: linear-gradient(145deg, #f9fbfe, #eaf1fa);
+    box-shadow: 0 12px 30px rgba(29, 81, 165, 0.08);
+
+    ion-icon {
+      font-size: 2rem;
+    }
+  }
+
+  .msg-empty p {
+    max-width: 260px;
+    margin: 16px 0 0;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .msg-2pane.convo-open .msg-empty {
+    display: none;
+  }
+
+  .new-chat-modal {
+    --width: min(520px, calc(100vw - 40px));
+    --height: min(720px, calc(100vh - 56px));
+    --border-radius: 20px;
+    --box-shadow: 0 22px 60px rgba(29, 41, 57, 0.18);
+  }
+
   .msg-2pane.rudolf-active .msg-list-pane {
     width: 100%;
+    flex-basis: 100%;
     border-right: 0;
   }
 
   .msg-2pane.rudolf-active .msg-convo-pane {
     display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  ion-header.title-header {
+    ion-toolbar {
+      --min-height: 52px;
+
+      ion-title {
+        font-size: 0.98rem !important;
+      }
+    }
+
+    ion-segment {
+      padding: 0 4px;
+
+      ion-segment-button {
+        min-width: 0;
+        font-size: 0.7rem;
+      }
+    }
+  }
+
+  .conversation-list {
+    padding: 9px 6px 88px;
+  }
+
+  .conversation-card {
+    --min-height: 68px;
+    --padding-start: 9px;
+    --inner-padding-end: 9px;
+  }
+
+  .conversation-avatar {
+    width: 41px;
+    height: 41px;
+    margin-inline-end: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conversation-card::part(native) {
+    transition: none;
   }
 }

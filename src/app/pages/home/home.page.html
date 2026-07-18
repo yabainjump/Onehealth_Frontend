@@ -42,7 +42,7 @@
 
       <app-rudolf-chat *ngIf="segment === 'rudolf'"></app-rudolf-chat>
 
-      <ion-content color="light" *ngIf="segment !== 'rudolf'">
+      <ion-content class="conversation-content" *ngIf="segment !== 'rudolf'">
         <app-empty-screen
           *ngIf="segment === 'chats' && (chatRooms | async)?.length === 0"
           [model]="model"
@@ -52,18 +52,22 @@
         <ng-container
           *ngIf="segment ==='chats' && (chatRooms | async) as rooms"
         >
-          <ion-list *ngIf="rooms?.length > 0">
-            <ion-list-header class="ion-padding-bottom" color="light">
-              {{ 'HOME.RECENT_CHATS' | translate }}
+          <ion-list class="conversation-list" *ngIf="rooms?.length > 0">
+            <ion-list-header class="conversation-list-header">
+              <span>{{ 'HOME.RECENT_CHATS' | translate }}</span>
+              <small>{{ rooms.length }}</small>
             </ion-list-header>
 
             <ion-item
+              class="conversation-card"
               *ngFor="let item of rooms; trackBy: trackByRoomId"
               (click)="getChat(item)"
-              [detail]="true"
+              button
+              lines="none"
+              [detail]="false"
             >
               <ng-container *ngIf="(item?.user | async) as user">
-                <ion-avatar slot="start">
+                <ion-avatar class="conversation-avatar" slot="start">
                   <img
                     [src]="pickPhoto(user)"
                     alt="avatar utilisateur"
@@ -72,7 +76,7 @@
                   />
                 </ion-avatar>
 
-                <ion-label>
+                <ion-label class="conversation-label">
                   <div class="row-top">
                     <span class="name">{{ pickName(user) }}</span>
 
@@ -118,12 +122,14 @@
         </ng-container>
 
         <ion-fab
+          class="new-chat-fab"
           slot="fixed"
           horizontal="end"
           vertical="bottom"
           *ngIf="segment === 'chats'"
         >
           <ion-fab-button
+            class="new-chat-button"
             [attr.aria-label]="'HOME.NEW_CONVERSATION' | translate"
             (click)="newChat()"
           >
@@ -132,13 +138,14 @@
         </ion-fab>
 
         <ion-modal
+          class="new-chat-modal"
           #new_chat
           [isOpen]="open_new_chat"
           (willDismiss)="onWillDismiss($event)"
         >
           <ng-template>
             <ion-header>
-              <ion-toolbar color="light">
+              <ion-toolbar class="new-chat-toolbar">
                 <ion-title>{{ 'HOME.NEW_CONVERSATION' | translate }}</ion-title>
                 <ion-buttons slot="end">
                   <ion-button (click)="cancel()"
@@ -149,6 +156,7 @@
 
               <!-- plus de select de spécialité -->
               <ion-searchbar
+                class="user-searchbar"
                 (ionInput)="searchUsers($event)"
                 show-clear-button="always"
                 [debounce]="250"
@@ -157,13 +165,17 @@
               </ion-searchbar>
             </ion-header>
 
-            <ion-content color="light" *ngIf="(users | async) as user$">
+            <ion-content
+              class="new-chat-content"
+              *ngIf="(users | async) as user$"
+            >
               <ion-list
                 class="ion-margin-top"
                 [style.background]="'transparent'"
                 lines="none"
               >
                 <ion-item
+                  class="contact-card"
                   *ngFor="let u of user$; trackBy: trackByUserId"
                   (click)="startChat(u)"
                   button
@@ -193,7 +205,9 @@
     <div class="msg-convo-pane">
       <ion-router-outlet></ion-router-outlet>
       <div class="msg-empty" *ngIf="!conversationOpen">
-        <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon>
+        <span class="msg-empty-icon">
+          <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon>
+        </span>
         <p>{{ 'HOME.SELECT_CONVERSATION' | translate }}</p>
       </div>
     </div>
