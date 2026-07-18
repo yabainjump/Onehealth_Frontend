@@ -11,7 +11,13 @@
     />
     <div class="hero-overlay"></div>
 
-    <button id="profile-options-trigger" class="menu-btn" type="button" aria-label="Options">
+    <button
+      *ngIf="isOwnProfile"
+      id="profile-options-trigger"
+      class="menu-btn"
+      type="button"
+      aria-label="Options"
+    >
       <ion-icon name="ellipsis-vertical"></ion-icon>
     </button>
 
@@ -23,12 +29,22 @@
       (click)="coverInput.click()"
     >
       <ion-icon name="camera-outline"></ion-icon>
-      <span>{{ (uploadingCover ? 'PROFILE.COVER_UPLOADING' : 'PROFILE.COVER') | translate }}</span>
+      <span
+        >{{ (uploadingCover ? 'PROFILE.COVER_UPLOADING' : 'PROFILE.COVER') |
+        translate }}</span
+      >
     </button>
-    <input #coverInput type="file" hidden accept="image/*" (change)="onCoverSelected($event)" />
+    <input
+      #coverInput
+      type="file"
+      hidden
+      accept="image/*"
+      (change)="onCoverSelected($event)"
+    />
   </section>
 
   <ion-popover
+    *ngIf="isOwnProfile"
     #popover
     trigger="profile-options-trigger"
     triggerAction="click"
@@ -39,21 +55,37 @@
       <ion-content class="ion-padding">
         <ion-list lines="none">
           <ion-item button (click)="editProfile()">
-            <ion-label color="primary">{{ 'PROFILE.EDIT' | translate }}</ion-label>
+            <ion-label color="primary"
+              >{{ 'PROFILE.EDIT' | translate }}</ion-label
+            >
           </ion-item>
           <ion-item button *ngIf="!isOwnProfile" (click)="openMessage()">
-            <ion-label color="primary">{{ 'PROFILE.MESSAGE' | translate }}</ion-label>
+            <ion-label color="primary"
+              >{{ 'PROFILE.MESSAGE' | translate }}</ion-label
+            >
           </ion-item>
           <ion-item button (click)="setAppLanguage('fr')">
             <ion-label>Français</ion-label>
-            <ion-icon *ngIf="currentAppLanguage === 'fr'" name="checkmark-outline" slot="end" color="primary"></ion-icon>
+            <ion-icon
+              *ngIf="currentAppLanguage === 'fr'"
+              name="checkmark-outline"
+              slot="end"
+              color="primary"
+            ></ion-icon>
           </ion-item>
           <ion-item button (click)="setAppLanguage('en')">
             <ion-label>English</ion-label>
-            <ion-icon *ngIf="currentAppLanguage === 'en'" name="checkmark-outline" slot="end" color="primary"></ion-icon>
+            <ion-icon
+              *ngIf="currentAppLanguage === 'en'"
+              name="checkmark-outline"
+              slot="end"
+              color="primary"
+            ></ion-icon>
           </ion-item>
           <ion-item button (click)="logout()">
-            <ion-label color="danger">{{ 'PROFILE.LOGOUT' | translate }}</ion-label>
+            <ion-label color="danger"
+              >{{ 'PROFILE.LOGOUT' | translate }}</ion-label
+            >
           </ion-item>
         </ion-list>
       </ion-content>
@@ -63,7 +95,12 @@
   <section class="profile-surface">
     <div class="avatar-wrap">
       <ion-avatar class="avatar">
-        <img [src]="photoURL" alt="Photo de profil" loading="lazy" decoding="async" />
+        <img
+          [src]="photoURL"
+          alt="Photo de profil"
+          loading="lazy"
+          decoding="async"
+        />
       </ion-avatar>
       <span class="online-dot"></span>
     </div>
@@ -89,12 +126,23 @@
         [disabled]="followProcessing"
         (click)="toggleFollow()"
       >
-        {{ followProcessing ? '...' : ((isFollowingUser ? 'PROFILE.FOLLOWING' : 'PROFILE.FOLLOW') | translate) }}
+        {{ followProcessing ? '...' : ((isFollowingUser ? 'PROFILE.FOLLOWING' :
+        'PROFILE.FOLLOW') | translate) }}
       </button>
-      <button class="btn btn-outline" type="button" *ngIf="!isOwnProfile" (click)="openMessage()">
+      <button
+        class="btn btn-outline"
+        type="button"
+        *ngIf="!isOwnProfile"
+        (click)="openMessage()"
+      >
         {{ 'PROFILE.MESSAGE' | translate }}
       </button>
-      <button class="btn btn-primary" type="button" *ngIf="isOwnProfile" (click)="editProfile()">
+      <button
+        class="btn btn-primary"
+        type="button"
+        *ngIf="isOwnProfile"
+        (click)="editProfile()"
+      >
         {{ 'PROFILE.EDIT' | translate }}
       </button>
       <button
@@ -106,11 +154,21 @@
         <ion-icon name="ribbon-outline" aria-hidden="true"></ion-icon>
         {{ 'CERT.CTA' | translate }}
       </button>
-      <button class="btn btn-outline" type="button" *ngIf="isAdmin" (click)="goAdmin()">
+      <button
+        class="btn btn-outline"
+        type="button"
+        data-testid="admin-dashboard-action"
+        *ngIf="canAccessAdminDashboard"
+        (click)="goAdmin()"
+      >
         <ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
         {{ 'ADMIN.CTA' | translate }}
       </button>
-      <button class="btn btn-outline" type="button" (click)="shareProfile($event)">
+      <button
+        class="btn btn-outline"
+        type="button"
+        (click)="shareProfile($event)"
+      >
         {{ 'PROFILE.SHARE' | translate }}
       </button>
     </div>
@@ -142,16 +200,37 @@
 
     <div class="posts" *ngIf="(posts$ | async) as feed">
       <article class="post-card skeleton" *ngIf="loadingPosts">
-        <ion-skeleton-text animated style="width: 44%; height: 16px"></ion-skeleton-text>
-        <ion-skeleton-text animated style="width: 100%; height: 14px"></ion-skeleton-text>
-        <ion-skeleton-text animated style="width: 96%; height: 14px"></ion-skeleton-text>
-        <ion-skeleton-text animated style="width: 100%; height: 164px"></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          style="width: 44%; height: 16px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          style="width: 100%; height: 14px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          style="width: 96%; height: 14px"
+        ></ion-skeleton-text>
+        <ion-skeleton-text
+          animated
+          style="width: 100%; height: 164px"
+        ></ion-skeleton-text>
       </article>
 
-      <article class="post-card" *ngFor="let p of feed; trackBy: trackByPostId" (click)="openPostDetail(p)">
+      <article
+        class="post-card"
+        *ngFor="let p of feed; trackBy: trackByPostId"
+        (click)="openPostDetail(p)"
+      >
         <header class="post-header">
           <ion-avatar class="post-avatar">
-            <img [src]="photoURL" alt="avatar auteur" loading="lazy" decoding="async" />
+            <img
+              [src]="photoURL"
+              alt="avatar auteur"
+              loading="lazy"
+              decoding="async"
+            />
           </ion-avatar>
           <div>
             <h3>{{ displayName }}</h3>
@@ -177,7 +256,8 @@
           type="button"
           (click)="toggleExpand(p.id, $event)"
         >
-          {{ (expanded[p.id] ? 'DASHBOARD.SHOW_LESS' : 'DASHBOARD.SHOW_MORE') | translate }}
+          {{ (expanded[p.id] ? 'DASHBOARD.SHOW_LESS' : 'DASHBOARD.SHOW_MORE') |
+          translate }}
         </button>
 
         <img
@@ -206,8 +286,8 @@
           [poster]="p.attachment?.posterUrl || null"
           controls
           playsinline
-          preload="none">
-        </video>
+          preload="none"
+        ></video>
 
         <div class="doc-wrapper" *ngIf="hasDocumentAttachment(p)">
           <div class="doc-head">
@@ -215,14 +295,29 @@
             <div class="doc-meta">
               <strong>{{ p.attachment?.fileName }}</strong>
             </div>
-            <button type="button" class="doc-open" (click)="openAttachment(p, $event)">{{ 'DASHBOARD.OPEN' | translate }}</button>
+            <button
+              type="button"
+              class="doc-open"
+              (click)="openAttachment(p, $event)"
+            >
+              {{ 'DASHBOARD.OPEN' | translate }}
+            </button>
           </div>
         </div>
 
         <footer class="post-actions">
-          <span><ion-icon name="heart-outline"></ion-icon>{{ p.likes || 0 }}</span>
-          <span><ion-icon name="chatbubble-outline"></ion-icon>{{ p.comments?.length || 0 }}</span>
-          <span role="button" aria-label="Partager la publication" (click)="sharePost(p, $event)">
+          <span
+            ><ion-icon name="heart-outline"></ion-icon>{{ p.likes || 0 }}</span
+          >
+          <span
+            ><ion-icon name="chatbubble-outline"></ion-icon>{{
+            p.comments?.length || 0 }}</span
+          >
+          <span
+            role="button"
+            aria-label="Partager la publication"
+            (click)="sharePost(p, $event)"
+          >
             <ion-icon name="share-social-outline"></ion-icon>
           </span>
         </footer>

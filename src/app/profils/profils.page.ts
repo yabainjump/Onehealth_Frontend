@@ -7,14 +7,24 @@ import { catchError, tap } from 'rxjs/operators';
 import { UploadService } from '../core/services/upload.service';
 import { UsersService } from '../core/services/users.service';
 import { ShareLinkService } from '../core/services/share-link.service';
-import { AppLanguage, LanguageService } from '../core/services/language.service';
+import {
+  AppLanguage,
+  LanguageService,
+} from '../core/services/language.service';
 import { resolveMediaUrl } from '../core/utils/media-url.util';
 import { AuthService } from '../services/auth/auth.service';
 import { ChatService } from '../services/chat/chat.service';
-import { PublishService, Post, PostAttachment } from 'src/app/services/publish/publish.service';
+import {
+  PublishService,
+  Post,
+  PostAttachment,
+} from 'src/app/services/publish/publish.service';
 import { TranslateService } from '@ngx-translate/core';
 import { InteractionGuardService } from '../core/services/interaction-guard.service';
-import { buildPostHtml, hashtagFromClick } from '../shared/utils/post-html.util';
+import {
+  buildPostHtml,
+  hashtagFromClick,
+} from '../shared/utils/post-html.util';
 import { openSafeHttpUrl } from '../core/utils/safe-url.util';
 
 @Component({
@@ -56,8 +66,8 @@ export class ProfilsPage implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private publishService: PublishService,
-    private readonly languageService: LanguageService
-  ) { }
+    private readonly languageService: LanguageService,
+  ) {}
 
   get currentAppLanguage(): AppLanguage {
     return this.languageService.getCurrentLanguage();
@@ -69,9 +79,14 @@ export class ProfilsPage implements OnInit {
   }
 
   ngOnInit() {
-    combineLatest([this.authService.getAuthState(), this.route.paramMap]).subscribe({
-      next: ([logged, params]) => this.syncProfileContext(logged?.uid || '', params),
-      error: (error) => console.error('Erreur de synchronisation profil:', error),
+    combineLatest([
+      this.authService.getAuthState(),
+      this.route.paramMap,
+    ]).subscribe({
+      next: ([logged, params]) =>
+        this.syncProfileContext(logged?.uid || '', params),
+      error: (error) =>
+        console.error('Erreur de synchronisation profil:', error),
     });
   }
 
@@ -84,21 +99,32 @@ export class ProfilsPage implements OnInit {
     return this.authService.getCurrentUserSync()?.['role'] === 'admin';
   }
 
+  /** Le dashboard n'est proposé que sur le propre profil de l'admin. */
+  get canAccessAdminDashboard(): boolean {
+    return this.isOwnProfile && this.isAdmin;
+  }
+
   goCertification(): void {
     void this.router.navigateByUrl('/certification');
   }
 
   goAdmin(): void {
+    if (!this.canAccessAdminDashboard) {
+      return;
+    }
     void this.router.navigateByUrl('/admin');
   }
 
   get displayName(): string {
-    const fullName = `${this.user?.firstName || ''} ${this.user?.lastName || ''}`.trim();
+    const fullName =
+      `${this.user?.firstName || ''} ${this.user?.lastName || ''}`.trim();
     return fullName || this.user?.username || 'OneHealth Member';
   }
 
   get displayRole(): string {
-    return this.user?.institution || this.user?.typeMedecin || 'Membre OneHealth';
+    return (
+      this.user?.institution || this.user?.typeMedecin || 'Membre OneHealth'
+    );
   }
 
   get bioText(): string {
@@ -151,7 +177,9 @@ export class ProfilsPage implements OnInit {
     }
 
     try {
-      const user = await firstValueFrom(this.usersService.getUserById(this.userId));
+      const user = await firstValueFrom(
+        this.usersService.getUserById(this.userId),
+      );
       if (user) {
         this.setUserData(user);
         return;
@@ -173,7 +201,8 @@ export class ProfilsPage implements OnInit {
   private setUserData(data: any) {
     this.user = data || {};
     this.photoURL =
-      resolveMediaUrl(data?.photoURL || data?.photo) || 'assets/default-profile.png';
+      resolveMediaUrl(data?.photoURL || data?.photo) ||
+      'assets/default-profile.png';
     this.coverPhotoURL =
       resolveMediaUrl(data?.coverPhotoURL) || 'assets/images/bg1.avif';
     const followersCount = this.resolveMetricValue(
@@ -214,7 +243,7 @@ export class ProfilsPage implements OnInit {
         this.expanded = {};
         console.error(e);
         return of([]);
-      })
+      }),
     );
   }
 
@@ -321,12 +350,22 @@ export class ProfilsPage implements OnInit {
 
     this.uploadingCover = true;
     try {
-      const uploaded = await firstValueFrom(this.uploadService.uploadProfile(file));
-      await firstValueFrom(this.usersService.updateMe({ coverPhotoURL: uploaded.url }));
+      const uploaded = await firstValueFrom(
+        this.uploadService.uploadProfile(file),
+      );
+      await firstValueFrom(
+        this.usersService.updateMe({ coverPhotoURL: uploaded.url }),
+      );
       this.coverPhotoURL = resolveMediaUrl(uploaded.url);
-      this.user = { ...this.user, coverPhotoURL: resolveMediaUrl(uploaded.url) };
+      this.user = {
+        ...this.user,
+        coverPhotoURL: resolveMediaUrl(uploaded.url),
+      };
     } catch (error) {
-      console.error('Erreur lors de la mise a jour de la photo de mur :', error);
+      console.error(
+        'Erreur lors de la mise a jour de la photo de mur :',
+        error,
+      );
     } finally {
       this.uploadingCover = false;
     }
@@ -468,7 +507,10 @@ export class ProfilsPage implements OnInit {
 
     try {
       await navigator.clipboard.writeText(
-        [payload.title, payload.text, payload.url].filter(Boolean).join('\n\n').trim(),
+        [payload.title, payload.text, payload.url]
+          .filter(Boolean)
+          .join('\n\n')
+          .trim(),
       );
       const toast = await this.toastController.create({
         message: this.translate.instant('COMMON.LINK_COPIED'),
