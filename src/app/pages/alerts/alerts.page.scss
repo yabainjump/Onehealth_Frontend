@@ -2,15 +2,6 @@
   --background: #f5f7fb;
 }
 
-ion-fab {
-  margin: 0 6px 72px 0;
-}
-
-ion-fab-button {
-  --background: #1e5bb8;
-  --box-shadow: 0 10px 24px rgba(30, 91, 184, 0.28);
-}
-
 .alerts-page-shell {
   box-sizing: border-box;
   width: min(1240px, calc(100% - 32px));
@@ -286,6 +277,33 @@ ion-fab-button {
   background: #f3f6fa;
   color: #526078;
   cursor: pointer;
+}
+
+.feed-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.report-alert-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  gap: 5px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #1e5bb8;
+  color: #ffffff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 5px 14px rgba(30, 91, 184, 0.2);
+}
+
+.report-alert-btn ion-icon {
+  font-size: 17px;
 }
 
 .refresh-btn ion-icon {
@@ -828,10 +846,6 @@ ion-fab-button {
 }
 
 @media (min-width: 768px) {
-  ion-fab {
-    margin-bottom: 0;
-  }
-
   .map-panel.mobile-hidden,
   .feed-panel.mobile-hidden {
     display: block;

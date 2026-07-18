@@ -177,14 +177,25 @@
               }}</small
             >
           </div>
-          <button
-            type="button"
-            class="refresh-btn"
-            (click)="retryLoad()"
-            [attr.aria-label]="'ALERTS.REFRESH' | translate"
-          >
-            <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
-          </button>
+          <div class="feed-actions">
+            <button
+              type="button"
+              class="refresh-btn"
+              (click)="retryLoad()"
+              [attr.aria-label]="'ALERTS.REFRESH' | translate"
+            >
+              <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
+            </button>
+            <button
+              type="button"
+              class="report-alert-btn"
+              (click)="openReport()"
+              [attr.aria-label]="'ALERTS.REPORT' | translate"
+            >
+              <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+              <span>{{ 'ALERTS.REPORT_SHORT' | translate }}</span>
+            </button>
+          </div>
         </header>
 
         <div class="alerts-loading" *ngIf="loading">
@@ -305,16 +316,6 @@
       </section>
     </div>
   </div>
-
-  <!-- Bouton signaler -->
-  <ion-fab slot="fixed" horizontal="end" vertical="bottom">
-    <ion-fab-button
-      (click)="openReport()"
-      [attr.aria-label]="'ALERTS.REPORT' | translate"
-    >
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 
   <!-- Modale de signalement -->
   <ion-modal

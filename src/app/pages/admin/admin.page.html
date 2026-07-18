@@ -106,6 +106,35 @@
     </aside>
 
     <main class="admin-main">
+      <header class="admin-section-intro">
+        <div>
+          <span class="admin-eyebrow">
+            <ion-icon
+              name="shield-checkmark-outline"
+              aria-hidden="true"
+            ></ion-icon>
+            One Health Network
+          </span>
+          <h1>{{ sectionTitleKey | translate }}</h1>
+          <p>{{ sectionSubtitleKey | translate }}</p>
+        </div>
+        <button
+          type="button"
+          class="admin-refresh"
+          [disabled]="refreshing"
+          (click)="refreshCurrentSection()"
+          [attr.aria-label]="'ADMIN.REFRESH' | translate"
+        >
+          <ion-spinner *ngIf="refreshing" name="crescent"></ion-spinner>
+          <ion-icon
+            *ngIf="!refreshing"
+            name="refresh-outline"
+            aria-hidden="true"
+          ></ion-icon>
+          <span>{{ 'ADMIN.REFRESH' | translate }}</span>
+        </button>
+      </header>
+
       <!-- ===== Vue d'ensemble ===== -->
       <section *ngIf="section === 'overview'">
         <div class="loading-box" *ngIf="loadingStats">
@@ -155,6 +184,29 @@
             ></span>
             <strong>{{ stats.totalAlerts }}</strong>
             <span class="kpi-label">{{ 'ADMIN.KPI_ALERTS' | translate }}</span>
+          </div>
+          <button
+            type="button"
+            class="kpi-card kpi-card--action"
+            (click)="selectSection('content', 'alerts')"
+          >
+            <span class="kpi-icon amber"
+              ><ion-icon name="time" aria-hidden="true"></ion-icon
+            ></span>
+            <strong>{{ stats.pendingAlerts }}</strong>
+            <span class="kpi-label"
+              >{{ 'ADMIN.KPI_ALERTS_PENDING' | translate }}</span
+            >
+            <span class="kpi-link">{{ 'ADMIN.REVIEW' | translate }} →</span>
+          </button>
+          <div class="kpi-card">
+            <span class="kpi-icon green"
+              ><ion-icon name="shield-checkmark" aria-hidden="true"></ion-icon
+            ></span>
+            <strong>{{ stats.verifiedAlerts }}</strong>
+            <span class="kpi-label"
+              >{{ 'ADMIN.KPI_ALERTS_VERIFIED' | translate }}</span
+            >
           </div>
         </div>
       </section>
@@ -645,6 +697,25 @@
               [placeholder]="'ADMIN.SEARCH_ALERTS' | translate"
               mode="md"
             ></ion-searchbar>
+            <ion-select
+              [(ngModel)]="alertsVerificationStatus"
+              (ionChange)="onAlertsFilterChange()"
+              interface="popover"
+              [placeholder]="'ADMIN.FILTER_VERIFICATION' | translate"
+            >
+              <ion-select-option value=""
+                >{{ 'ALERTS.STATUS_ALL' | translate }}</ion-select-option
+              >
+              <ion-select-option value="pending"
+                >{{ 'ALERTS.STATUS_pending' | translate }}</ion-select-option
+              >
+              <ion-select-option value="verified"
+                >{{ 'ALERTS.STATUS_verified' | translate }}</ion-select-option
+              >
+              <ion-select-option value="rejected"
+                >{{ 'ALERTS.STATUS_rejected' | translate }}</ion-select-option
+              >
+            </ion-select>
           </div>
 
           <div class="loading-box" *ngIf="loadingAlerts">
@@ -687,6 +758,15 @@
               <ion-badge color="light" *ngIf="alert.country">
                 {{ alert.city ? alert.city + ', ' : '' }}{{ alert.country }}
               </ion-badge>
+            </p>
+
+            <p class="review-meta" *ngIf="alert.reviewedAt">
+              <ion-icon
+                name="checkmark-done-outline"
+                aria-hidden="true"
+              ></ion-icon>
+              {{ 'ADMIN.REVIEWED_AT' | translate }} {{ alert.reviewedAt | date:
+              'short' }}
             </p>
 
             <p class="block-text" *ngIf="alert.description">

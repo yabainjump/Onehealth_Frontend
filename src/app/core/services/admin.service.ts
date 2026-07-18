@@ -12,6 +12,8 @@ export interface AdminStats {
   pendingCertifications: number;
   totalPosts: number;
   totalAlerts: number;
+  pendingAlerts: number;
+  verifiedAlerts: number;
 }
 
 export interface PagedResult<T> {
@@ -158,9 +160,16 @@ export class AdminService {
     );
   }
 
-  listAlerts(search = '', page = 1): Promise<PagedResult<AdminAlert>> {
+  listAlerts(
+    search = '',
+    page = 1,
+    verificationStatus = '',
+  ): Promise<PagedResult<AdminAlert>> {
     const params = new URLSearchParams({ page: `${page}`, limit: '20' });
     if (search) params.set('search', search);
+    if (verificationStatus) {
+      params.set('verificationStatus', verificationStatus);
+    }
     return firstValueFrom(
       this.api.get<PagedResult<AdminAlert>>(
         `/admin/alerts?${params.toString()}`,

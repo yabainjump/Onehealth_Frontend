@@ -68,8 +68,10 @@ export class AdminPage implements OnInit {
   alertsTotal = 0;
   alertsPage = 1;
   alertsSearch = '';
+  alertsVerificationStatus: '' | AdminAlert['verificationStatus'] = '';
   loadingAlerts = false;
   processingContentId = '';
+  refreshing = false;
 
   private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -83,12 +85,8 @@ export class AdminPage implements OnInit {
   }
 
   onSectionChange(): void {
-    if (
-      this.section === 'content' &&
-      !this.posts.length &&
-      !this.alerts.length
-    ) {
-      void this.loadPosts();
+    if (this.section === 'content') {
+      this.onContentModeChange();
     }
   }
 
@@ -97,7 +95,6 @@ export class AdminPage implements OnInit {
     this.section = section;
     if (mode) {
       this.contentMode = mode;
-      this.onContentModeChange();
     }
     this.onSectionChange();
   }
@@ -108,6 +105,40 @@ export class AdminPage implements OnInit {
     }
     if (this.contentMode === 'alerts' && !this.alerts.length) {
       void this.loadAlerts();
+    }
+  }
+
+  get sectionTitleKey(): string {
+    if (this.section === 'content') {
+      return this.contentMode === 'alerts' ? 'ADMIN.ALERTS' : 'ADMIN.POSTS';
+    }
+    return `ADMIN.SECTION_${this.section.toUpperCase()}`;
+  }
+
+  get sectionSubtitleKey(): string {
+    if (this.section === 'content') {
+      return this.contentMode === 'alerts'
+        ? 'ADMIN.ALERTS_SUBTITLE'
+        : 'ADMIN.POSTS_SUBTITLE';
+    }
+    return `ADMIN.SECTION_${this.section.toUpperCase()}_SUBTITLE`;
+  }
+
+  async refreshCurrentSection(): Promise<void> {
+    if (this.refreshing) return;
+    this.refreshing = true;
+    try {
+      if (this.section === 'overview') await this.loadStats();
+      if (this.section === 'users') await this.loadUsers();
+      if (this.section === 'certifications') await this.loadCertifications();
+      if (this.section === 'content' && this.contentMode === 'posts') {
+        await this.loadPosts();
+      }
+      if (this.section === 'content' && this.contentMode === 'alerts') {
+        await this.loadAlerts();
+      }
+    } finally {
+      this.refreshing = false;
     }
   }
 
@@ -122,7 +153,12 @@ export class AdminPage implements OnInit {
   async loadStats(): Promise<void> {
     this.loadingStats = true;
     try {
-      this.stats = await this.adminService.getStats();
+      const stats = await this.adminService.getStats();
+      this.stats = {
+        ...stats,
+        pendingAlerts: stats.pendingAlerts ?? 0,
+        verifiedAlerts: stats.verifiedAlerts ?? 0,
+      };
     } catch {
       await this.toast(this.translate.instant('ADMIN.LOAD_ERR'), 'danger');
     } finally {
@@ -464,12 +500,18 @@ export class AdminPage implements OnInit {
     });
   }
 
+  onAlertsFilterChange(): void {
+    this.alertsPage = 1;
+    void this.loadAlerts();
+  }
+
   async loadAlerts(): Promise<void> {
     this.loadingAlerts = true;
     try {
       const result = await this.adminService.listAlerts(
         this.alertsSearch.trim(),
         this.alertsPage,
+        this.alertsVerificationStatus,
       );
       this.alerts = result.items.map((alert) => ({
         ...alert,
@@ -530,6 +572,14 @@ export class AdminPage implements OnInit {
       );
       alert.verificationStatus = result.verificationStatus;
       alert.reviewedAt = result.reviewedAt;
+      if (
+        this.alertsVerificationStatus &&
+        result.verificationStatus !== this.alertsVerificationStatus
+      ) {
+        this.alerts = this.alerts.filter((item) => item.id !== alert.id);
+        this.alertsTotal = Math.max(0, this.alertsTotal - 1);
+      }
+      void this.loadStats();
       await this.toast(
         this.translate.instant('ADMIN.ALERT_STATUS_DONE'),
         'success',
