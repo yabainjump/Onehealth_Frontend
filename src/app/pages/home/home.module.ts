@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { HomePageRoutingModule } from './home-routing.module';
 
 import { HomePage } from './home.page';
+import { RudolfChatComponent } from './rudolf-chat/rudolf-chat.component';
 
 @NgModule({
   imports: [
@@ -19,8 +20,8 @@ import { HomePage } from './home.page';
     HomePageRoutingModule,
     ComponentsModule,
     ReactiveFormsModule,
-    TranslateModule
+    TranslateModule,
   ],
-  declarations: [HomePage, UserListComponent]
+  declarations: [HomePage, RudolfChatComponent, UserListComponent],
 })
 export class HomePageModule {}

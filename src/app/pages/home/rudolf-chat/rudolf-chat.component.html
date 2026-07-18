@@ -1,0 +1,260 @@
+<div class="rudolf-app" [class.history-open]="historyOpen">
+  <button
+    type="button"
+    class="history-backdrop"
+    [attr.aria-label]="'RUDOLF.CLOSE_HISTORY' | translate"
+    (click)="historyOpen = false"
+  ></button>
+
+  <aside
+    class="rudolf-sidebar"
+    [attr.aria-label]="'RUDOLF.HISTORY' | translate"
+  >
+    <div class="sidebar-brand">
+      <div class="brand-mark" aria-hidden="true">R</div>
+      <div>
+        <strong>Rudolf</strong>
+        <span>One Health AI</span>
+      </div>
+      <button
+        type="button"
+        class="mobile-close"
+        [attr.aria-label]="'RUDOLF.CLOSE_HISTORY' | translate"
+        (click)="historyOpen = false"
+      >
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
+
+    <button
+      type="button"
+      class="new-conversation"
+      [disabled]="sending"
+      (click)="startNewConversation()"
+    >
+      <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+      <span>{{ "RUDOLF.NEW_CONVERSATION" | translate }}</span>
+    </button>
+
+    <div class="history-heading">
+      <span>{{ "RUDOLF.HISTORY" | translate }}</span>
+      <small>{{ conversations.length }}</small>
+    </div>
+
+    <div
+      class="conversation-list"
+      *ngIf="conversations.length > 0; else noHistory"
+    >
+      <div
+        class="conversation-item"
+        *ngFor="let conversation of conversations; trackBy: trackConversation"
+        [class.active]="conversation.id === activeConversationId"
+      >
+        <button
+          type="button"
+          class="conversation-open"
+          [disabled]="sending"
+          (click)="openConversation(conversation.id)"
+        >
+          <span class="conversation-icon" aria-hidden="true">
+            <ion-icon name="chatbubble-outline"></ion-icon>
+          </span>
+          <span class="conversation-copy">
+            <strong>{{ conversation.title }}</strong>
+            <span>{{
+              conversation.preview || ("RUDOLF.EMPTY_CONVERSATION" | translate)
+            }}</span>
+          </span>
+          <time>{{ formatDate(conversation.updatedAt) }}</time>
+        </button>
+        <button
+          type="button"
+          class="delete-conversation"
+          [disabled]="sending"
+          [attr.aria-label]="'RUDOLF.DELETE' | translate"
+          (click)="confirmDelete($event, conversation)"
+        >
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+    <ng-template #noHistory>
+      <div class="empty-history">
+        <ion-icon name="chatbubbles-outline" aria-hidden="true"></ion-icon>
+        <span>{{ "RUDOLF.NO_HISTORY" | translate }}</span>
+      </div>
+    </ng-template>
+
+    <div class="sidebar-privacy">
+      <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
+      <span>{{ "RUDOLF.PRIVACY_SHORT" | translate }}</span>
+    </div>
+  </aside>
+
+  <main class="rudolf-chat-panel">
+    <header class="rudolf-chat-header">
+      <button
+        type="button"
+        class="history-toggle"
+        [attr.aria-label]="'RUDOLF.OPEN_HISTORY' | translate"
+        (click)="toggleHistory()"
+      >
+        <ion-icon name="menu-outline"></ion-icon>
+      </button>
+      <div class="header-avatar" aria-hidden="true">
+        R
+        <span></span>
+      </div>
+      <div class="header-copy">
+        <strong>{{ activeTitle }}</strong>
+        <span>{{ "RUDOLF.ONLINE_STATUS" | translate }}</span>
+      </div>
+      <button
+        type="button"
+        class="header-new"
+        [disabled]="sending"
+        [attr.aria-label]="'RUDOLF.NEW_CONVERSATION' | translate"
+        (click)="startNewConversation()"
+      >
+        <ion-icon name="create-outline"></ion-icon>
+        <span>{{ "RUDOLF.NEW" | translate }}</span>
+      </button>
+    </header>
+
+    <ion-content #messagesContent class="rudolf-content" [scrollEvents]="false">
+      <div class="loading-state" *ngIf="loading">
+        <ion-spinner name="crescent"></ion-spinner>
+        <span>{{ "RUDOLF.LOADING" | translate }}</span>
+      </div>
+
+      <div class="config-state" *ngIf="!loading && !configured">
+        <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
+        <h2>{{ "RUDOLF.NOT_CONFIGURED" | translate }}</h2>
+      </div>
+
+      <section
+        class="rudolf-welcome"
+        *ngIf="!loading && configured && messages.length === 0"
+      >
+        <div class="welcome-orbit" aria-hidden="true">
+          <span class="orbit orbit-one"></span>
+          <span class="orbit orbit-two"></span>
+          <div class="welcome-mark">R</div>
+        </div>
+        <span class="welcome-label">ONE HEALTH INTELLIGENCE</span>
+        <h1>{{ "RUDOLF.WELCOME_TITLE" | translate }}</h1>
+        <p>{{ "RUDOLF.WELCOME_TEXT" | translate }}</p>
+
+        <div class="suggestion-grid">
+          <button type="button" (click)="useSuggestion('RUDOLF.SUGGESTION_1')">
+            <span class="suggestion-icon blue">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+            </span>
+            <span>
+              <strong>{{ "RUDOLF.SUGGESTION_LABEL_1" | translate }}</strong>
+              <small>{{ "RUDOLF.SUGGESTION_1" | translate }}</small>
+            </span>
+            <ion-icon class="arrow" name="arrow-forward-outline"></ion-icon>
+          </button>
+          <button type="button" (click)="useSuggestion('RUDOLF.SUGGESTION_2')">
+            <span class="suggestion-icon green">
+              <ion-icon name="medkit-outline"></ion-icon>
+            </span>
+            <span>
+              <strong>{{ "RUDOLF.SUGGESTION_LABEL_2" | translate }}</strong>
+              <small>{{ "RUDOLF.SUGGESTION_2" | translate }}</small>
+            </span>
+            <ion-icon class="arrow" name="arrow-forward-outline"></ion-icon>
+          </button>
+          <button type="button" (click)="useSuggestion('RUDOLF.SUGGESTION_3')">
+            <span class="suggestion-icon amber">
+              <ion-icon name="leaf-outline"></ion-icon>
+            </span>
+            <span>
+              <strong>{{ "RUDOLF.SUGGESTION_LABEL_3" | translate }}</strong>
+              <small>{{ "RUDOLF.SUGGESTION_3" | translate }}</small>
+            </span>
+            <ion-icon class="arrow" name="arrow-forward-outline"></ion-icon>
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="message-list"
+        *ngIf="messages.length > 0"
+        aria-live="polite"
+      >
+        <article
+          class="message-row"
+          *ngFor="let message of messages; trackBy: trackMessage"
+          [class.from-user]="message.role === 'user'"
+          [class.from-rudolf]="message.role === 'assistant'"
+        >
+          <div
+            class="assistant-avatar"
+            *ngIf="message.role === 'assistant'"
+            aria-hidden="true"
+          >
+            R
+          </div>
+          <div class="message-body">
+            <span class="message-author" *ngIf="message.role === 'assistant'"
+              >Rudolf</span
+            >
+            <div class="message-content">
+              <ng-container *ngIf="message.content; else waitingForWords">{{
+                message.content
+              }}</ng-container>
+              <span
+                class="stream-cursor"
+                *ngIf="message.createdAt === streamingMessageCreatedAt"
+                aria-hidden="true"
+              ></span>
+              <ng-template #waitingForWords>
+                <span class="word-loader"><i></i><i></i><i></i></span>
+              </ng-template>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <div class="rudolf-error" *ngIf="error" role="alert">
+        <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+        <span>{{ error }}</span>
+      </div>
+    </ion-content>
+
+    <footer class="rudolf-composer-footer">
+      <form class="rudolf-composer" (ngSubmit)="sendMessage()">
+        <div class="composer-box">
+          <ion-textarea
+            name="rudolfMessage"
+            [(ngModel)]="input"
+            [disabled]="sending || !configured"
+            [placeholder]="'RUDOLF.PLACEHOLDER' | translate"
+            [maxlength]="2000"
+            [autoGrow]="true"
+            rows="1"
+          ></ion-textarea>
+          <button
+            type="submit"
+            class="send-button"
+            [disabled]="!input.trim() || sending || !configured"
+            [attr.aria-label]="'RUDOLF.SEND' | translate"
+          >
+            <ion-spinner *ngIf="sending" name="crescent"></ion-spinner>
+            <ion-icon *ngIf="!sending" name="arrow-up-outline"></ion-icon>
+          </button>
+        </div>
+        <p>
+          <ion-icon
+            name="information-circle-outline"
+            aria-hidden="true"
+          ></ion-icon>
+          {{ "RUDOLF.DISCLAIMER_COMPACT" | translate }}
+        </p>
+      </form>
+    </footer>
+  </main>
+</div>
