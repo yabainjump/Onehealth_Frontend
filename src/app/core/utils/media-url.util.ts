@@ -50,6 +50,15 @@ export function resolveMediaUrl(raw?: string | null): string {
     return value;
   }
 
+  // Anciennes migrations Firebase peuvent contenir une URI `gs://`, qui
+  // n'est pas affichable directement par un navigateur. La convertir vers
+  // l'endpoint de lecture Firebase permet de conserver les objets publics.
+  const firebaseStorageMatch = value.match(/^gs:\/\/([^/]+)\/(.+)$/i);
+  if (firebaseStorageMatch) {
+    const [, bucket, objectPath] = firebaseStorageMatch;
+    return `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(bucket)}/o/${encodeURIComponent(objectPath)}?alt=media`;
+  }
+
   // Tout chemin `/uploads/...` (relatif ou avec une origine erronee) est
   // reconstruit sur l'origine du backend configure.
   const uploadsIndex = value.indexOf('/uploads/');

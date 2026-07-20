@@ -97,6 +97,7 @@
       <ion-avatar class="avatar">
         <img
           [src]="photoURL"
+          [appImageFallback]="'assets/default-profile.png'"
           alt="Photo de profil"
           loading="lazy"
           decoding="async"
@@ -227,6 +228,7 @@
           <ion-avatar class="post-avatar">
             <img
               [src]="photoURL"
+              [appImageFallback]="'assets/default-profile.png'"
               alt="avatar auteur"
               loading="lazy"
               decoding="async"

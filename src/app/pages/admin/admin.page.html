@@ -279,7 +279,11 @@
               <tr *ngFor="let user of users">
                 <td>
                   <div class="cell-user" (click)="openProfile(user)">
-                    <img [src]="photo(user)" alt="" />
+                    <img
+                      [src]="photo(user)"
+                      [appImageFallback]="'assets/default-profile.png'"
+                      alt=""
+                    />
                     <div>
                       <p class="cell-name">
                         {{ displayName(user) }}
@@ -352,6 +356,7 @@
           <div class="item-card" *ngFor="let user of users">
             <img
               [src]="photo(user)"
+              [appImageFallback]="'assets/default-profile.png'"
               alt=""
               class="item-avatar"
               (click)="openProfile(user)"
@@ -458,7 +463,12 @@
 
         <div class="block-card" *ngFor="let request of certifications">
           <div class="block-head" (click)="openProfile(request.user)">
-            <img [src]="photo(request.user)" alt="" class="item-avatar" />
+            <img
+              [src]="photo(request.user)"
+              [appImageFallback]="'assets/default-profile.png'"
+              alt=""
+              class="item-avatar"
+            />
             <div>
               <p class="item-title">{{ displayName(request.user) }}</p>
               <p class="item-sub">
@@ -581,6 +591,7 @@
             <div class="block-head">
               <img
                 [src]="photo(post.author)"
+                [appImageFallback]="'assets/default-profile.png'"
                 alt=""
                 class="item-avatar"
                 (click)="openProfile(post.author)"
@@ -730,6 +741,7 @@
             <div class="block-head">
               <img
                 [src]="photo(alert.author)"
+                [appImageFallback]="'assets/default-profile.png'"
                 alt=""
                 class="item-avatar"
                 (click)="openProfile(alert.author)"

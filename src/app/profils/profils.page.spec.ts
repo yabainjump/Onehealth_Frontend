@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 import { TestSupportModule } from 'src/testing/test-support.module';
 import { AuthService } from '../services/auth/auth.service';
+import { ImageFallbackDirective } from '../shared/directives/image-fallback.directive';
 
 import { ProfilsPage } from './profils.page';
 
@@ -13,7 +14,11 @@ describe('ProfilsPage', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ProfilsPage],
-      imports: [IonicModule.forRoot(), TestSupportModule],
+      imports: [
+        IonicModule.forRoot(),
+        TestSupportModule,
+        ImageFallbackDirective,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProfilsPage);

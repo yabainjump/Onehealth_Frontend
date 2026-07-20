@@ -15,6 +15,7 @@ import {
 import { AuthService } from '../../services/auth/auth.service';
 import { PublicUser } from '../../core/models/user.models';
 import { resolveMediaUrl } from '../../core/utils/media-url.util';
+import { ImageFallbackDirective } from '../../shared/directives/image-fallback.directive';
 
 type AdminSection = 'overview' | 'users' | 'certifications' | 'content';
 type ContentMode = 'posts' | 'alerts';
@@ -23,7 +24,13 @@ type ContentMode = 'posts' | 'alerts';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, TranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    TranslateModule,
+    ImageFallbackDirective,
+  ],
   templateUrl: './admin.page.html',
   styleUrls: ['./admin.page.scss'],
 })

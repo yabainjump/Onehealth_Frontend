@@ -405,7 +405,7 @@
   },
   "ADMIN": {
     "TITLE": "Administration",
-    "CTA": "Admin dashboard",
+    "CTA": "Admin",
     "OVERVIEW": "Overview",
     "SECTION_OVERVIEW": "Overview",
     "SECTION_OVERVIEW_SUBTITLE": "Monitor key network activity and quickly reach items requiring moderation.",

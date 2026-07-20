@@ -11,6 +11,7 @@ import { DashbordPageRoutingModule } from './dashbord-routing.module';
 import { DashbordPage } from './dashbord.page';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { PauseOffscreenDirective } from 'src/app/shared/directives/pause-offscreen.directive';
+import { ImageFallbackDirective } from 'src/app/shared/directives/image-fallback.directive';
 
 @NgModule({
   exports: [FormatPostPipe],
@@ -21,8 +22,9 @@ import { PauseOffscreenDirective } from 'src/app/shared/directives/pause-offscre
     DashbordPageRoutingModule,
     TranslateModule,
     ComponentsModule,
-    PauseOffscreenDirective
+    PauseOffscreenDirective,
+    ImageFallbackDirective,
   ],
-  declarations: [DashbordPage, FormatPostPipe]
+  declarations: [DashbordPage, FormatPostPipe],
 })
 export class DashbordPageModule {}

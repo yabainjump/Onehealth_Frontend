@@ -405,7 +405,7 @@
   },
   "ADMIN": {
     "TITLE": "Administration",
-    "CTA": "Dashboard admin",
+    "CTA": "Espace admin",
     "OVERVIEW": "Vue d'ensemble",
     "SECTION_OVERVIEW": "Vue d'ensemble",
     "SECTION_OVERVIEW_SUBTITLE": "Suivez l'activité essentielle du réseau et accédez rapidement aux éléments à modérer.",

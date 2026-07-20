@@ -136,19 +136,33 @@ h1 .certified-badge {
 .action-row {
   margin-top: 20px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
 }
 
 .btn {
-  min-width: 104px;
-  height: 44px;
+  min-width: 0;
+  min-height: 44px;
+  height: auto;
+  flex: 1 1 132px;
+  max-width: 210px;
   border-radius: 999px;
-  font-size: 16px;
+  font-size: 0.9rem;
   font-weight: 600;
-  padding: 0 18px;
+  line-height: 1.2;
+  padding: 9px 14px;
+  overflow-wrap: anywhere;
   cursor: pointer;
-  transition: transform var(--app-transition), box-shadow var(--app-transition);
+  transition:
+    transform var(--app-transition),
+    box-shadow var(--app-transition);
+}
+
+.btn ion-icon {
+  margin-right: 4px;
+  font-size: 16px;
+  vertical-align: -2px;
 }
 
 .btn:active {
@@ -368,6 +382,17 @@ h1 .certified-badge {
 
   h1 {
     font-size: 30px;
+  }
+
+  .action-row {
+    gap: 7px;
+  }
+
+  .btn {
+    flex-basis: calc(50% - 4px);
+    max-width: calc(50% - 4px);
+    padding: 9px 8px;
+    font-size: 0.78rem;
   }
 
   .post-text {

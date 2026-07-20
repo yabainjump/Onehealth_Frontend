@@ -8,9 +8,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ProfilsPageRoutingModule } from './profils-routing.module';
 
 import { ProfilsPage } from './profils.page';
+import { ImageFallbackDirective } from '../shared/directives/image-fallback.directive';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, ProfilsPageRoutingModule, TranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    ProfilsPageRoutingModule,
+    TranslateModule,
+    ImageFallbackDirective,
+  ],
   declarations: [ProfilsPage],
 })
 export class ProfilsPageModule {}

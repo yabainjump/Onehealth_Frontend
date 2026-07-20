@@ -99,7 +99,8 @@ export class DashbordPage implements OnInit, OnDestroy {
       next: (users) => {
         this.suggestions = (users || []).map((u) => ({
           ...u,
-          photoURL: resolveMediaUrl(u?.photoURL) || 'assets/default-profile.png',
+          photoURL:
+            resolveMediaUrl(u?.photoURL) || 'assets/default-profile.png',
         }));
       },
       error: () => {
@@ -154,7 +155,11 @@ export class DashbordPage implements OnInit, OnDestroy {
 
   /** Réagit au défilement du fil pour cacher/montrer le chrome de navigation. */
   onContentScroll(ev: CustomEvent): void {
-    const top = Math.max(0, (ev as CustomEvent & { detail?: { scrollTop?: number } })?.detail?.scrollTop ?? 0);
+    const top = Math.max(
+      0,
+      (ev as CustomEvent & { detail?: { scrollTop?: number } })?.detail
+        ?.scrollTop ?? 0,
+    );
     const delta = top - this.lastScrollTop;
     if (Math.abs(delta) < 6) {
       return; // ignore les micro-mouvements (évite le clignotement)
@@ -357,7 +362,8 @@ export class DashbordPage implements OnInit, OnDestroy {
   private decoratePost(post: Post): Post {
     post.relativeTime = this.getRelativeTime(post.timestamp);
     const content = (post.content || '') as string;
-    const isLong = content.length > 220 || (content.match(/\n/g)?.length || 0) > 6;
+    const isLong =
+      content.length > 220 || (content.match(/\n/g)?.length || 0) > 6;
     const postId = post.id || '';
     this.longPost[postId] = isLong;
     if (this.expanded[postId] === undefined) {
@@ -644,7 +650,8 @@ export class DashbordPage implements OnInit, OnDestroy {
     try {
       const userData = await this.authService.getUserData(this.currentUserId);
       this.userPhoto =
-        userData?.photoURL || userData?.photo || 'assets/default-profile.png';
+        resolveMediaUrl(userData?.photoURL || userData?.photo) ||
+        'assets/default-profile.png';
       this.userName =
         `${userData?.firstName || ''} ${userData?.lastName || ''}`.trim() ||
         userData?.username ||
@@ -655,7 +662,7 @@ export class DashbordPage implements OnInit, OnDestroy {
     } catch (error) {
       console.error(
         'Erreur lors du chargement de la photo utilisateur :',
-        error
+        error,
       );
     }
   }
@@ -696,7 +703,7 @@ export class DashbordPage implements OnInit, OnDestroy {
 
     const now = new Date();
     const diffInSeconds = Math.floor(
-      (now.getTime() - timestamp.getTime()) / 1000
+      (now.getTime() - timestamp.getTime()) / 1000,
     );
 
     if (diffInSeconds < 60) {
@@ -731,7 +738,10 @@ export class DashbordPage implements OnInit, OnDestroy {
     this.commentsOpen[postId] = !this.commentsOpen[postId];
   }
 
-  private async publishComment(post: Post, text: string): Promise<CommentData | null> {
+  private async publishComment(
+    post: Post,
+    text: string,
+  ): Promise<CommentData | null> {
     try {
       // 🔐 récupère l’UID de manière fiable (utilise la version que je t’ai donnée)
       const userId = await this.authService.getUserIdOrThrow();
@@ -759,7 +769,8 @@ export class DashbordPage implements OnInit, OnDestroy {
       );
       if (createdComment) {
         commentData.id = createdComment.id;
-        commentData.createdAt = createdComment.createdAt || commentData.createdAt;
+        commentData.createdAt =
+          createdComment.createdAt || commentData.createdAt;
       }
 
       // ✅ mise à jour optimiste + déclenchement détection de changements
@@ -809,7 +820,8 @@ export class DashbordPage implements OnInit, OnDestroy {
     try {
       const userId = await this.authService.getUserIdOrThrow();
 
-      const alreadyLiked = !!post.userHasLiked || post.likedBy?.includes(userId);
+      const alreadyLiked =
+        !!post.userHasLiked || post.likedBy?.includes(userId);
 
       if (alreadyLiked) {
         await this.publicationService.unlikePost(post.id!);
@@ -849,7 +861,11 @@ export class DashbordPage implements OnInit, OnDestroy {
       }
 
       if (comment.userHasLiked) {
-        await this.publicationService.unlikeComment(post.id, commentId, comment);
+        await this.publicationService.unlikeComment(
+          post.id,
+          commentId,
+          comment,
+        );
         comment.userHasLiked = false;
         comment.likesCount = Math.max(0, (comment.likesCount ?? 0) - 1);
       } else {
@@ -907,7 +923,9 @@ export class DashbordPage implements OnInit, OnDestroy {
       target.likesCount = (target.likesCount ?? 0) + 1;
     }
 
-    const idx = (post.comments || []).findIndex((item) => item.id === target.id);
+    const idx = (post.comments || []).findIndex(
+      (item) => item.id === target.id,
+    );
     if (idx >= 0) {
       post.comments![idx] = { ...target };
     }
@@ -930,7 +948,10 @@ export class DashbordPage implements OnInit, OnDestroy {
     } catch (err) {
       try {
         await navigator.clipboard.writeText(
-          [payload.title, payload.text, payload.url].filter(Boolean).join('\n\n').trim(),
+          [payload.title, payload.text, payload.url]
+            .filter(Boolean)
+            .join('\n\n')
+            .trim(),
         );
         const t = await this.toastCtrl.create({
           message: this.translate.instant('COMMON.LINK_COPIED'),
@@ -1105,7 +1126,9 @@ export class DashbordPage implements OnInit, OnDestroy {
   }
 
   private getImageNameParts(post: Post): string {
-    const urls = [...(post.imageUrls || []), post.imageUrl || ''].filter(Boolean);
+    const urls = [...(post.imageUrls || []), post.imageUrl || ''].filter(
+      Boolean,
+    );
     const names = urls.map((rawUrl) => {
       try {
         const pathname = new URL(rawUrl, window.location.origin).pathname;
@@ -1121,7 +1144,9 @@ export class DashbordPage implements OnInit, OnDestroy {
   private buildPostMetadata(post: Post): string {
     const commentCount = post.comments?.length || 0;
     const commentsText = (post.comments || [])
-      .map((comment) => `${comment.userName || ''} ${comment.comment || ''}`.trim())
+      .map((comment) =>
+        `${comment.userName || ''} ${comment.comment || ''}`.trim(),
+      )
       .join(' ');
     const dynamicMeta = this.extractDynamicMetadata(post);
 
@@ -1150,7 +1175,11 @@ export class DashbordPage implements OnInit, OnDestroy {
     return this.normalizeSearchValue(this.buildPostMetadata(post));
   }
 
-  private buildSharePayload(post: Post): { title: string; text: string; url: string } {
+  private buildSharePayload(post: Post): {
+    title: string;
+    text: string;
+    url: string;
+  } {
     const url = this.buildPostUrl(post.id!);
     const authorName = this.getAuthorFullName(post);
     const institution = `${post.author?.institution || ''}`.trim();
@@ -1160,7 +1189,8 @@ export class DashbordPage implements OnInit, OnDestroy {
         : '';
     const commentCount = post.comments?.length || 0;
     const excerpt = `${post.content || ''}`.trim();
-    const trimmedExcerpt = excerpt.length > 220 ? `${excerpt.slice(0, 217)}...` : excerpt;
+    const trimmedExcerpt =
+      excerpt.length > 220 ? `${excerpt.slice(0, 217)}...` : excerpt;
 
     const metadataLines = [
       `Auteur: ${authorName}`,
@@ -1172,7 +1202,9 @@ export class DashbordPage implements OnInit, OnDestroy {
     ].filter(Boolean);
 
     const shareTitle = `${post.title || 'Publication OneHealth'}`.trim();
-    const shareText = [trimmedExcerpt, metadataLines.join(' | ')].filter(Boolean).join('\n\n');
+    const shareText = [trimmedExcerpt, metadataLines.join(' | ')]
+      .filter(Boolean)
+      .join('\n\n');
 
     return {
       title: shareTitle,
@@ -1200,11 +1232,18 @@ export class DashbordPage implements OnInit, OnDestroy {
 
     const flatten = (value: unknown): string => {
       if (value === null || value === undefined) return '';
-      if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      if (
+        typeof value === 'string' ||
+        typeof value === 'number' ||
+        typeof value === 'boolean'
+      ) {
         return `${value}`;
       }
       if (Array.isArray(value)) {
-        return value.map((item) => flatten(item)).filter(Boolean).join(' ');
+        return value
+          .map((item) => flatten(item))
+          .filter(Boolean)
+          .join(' ');
       }
       if (typeof value === 'object') {
         return Object.values(value as Record<string, unknown>)
@@ -1215,6 +1254,9 @@ export class DashbordPage implements OnInit, OnDestroy {
       return '';
     };
 
-    return candidates.map((item) => flatten(item)).filter(Boolean).join(' ');
+    return candidates
+      .map((item) => flatten(item))
+      .filter(Boolean)
+      .join(' ');
   }
 }

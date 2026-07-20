@@ -2,7 +2,7 @@
   <ion-toolbar color="success">
     <!-- Photo de profil -->
     <ion-avatar slot="start">
-      <img [src]="userPhoto" alt="Profile Photo" loading="lazy" decoding="async" />
+      <img [src]="userPhoto" [appImageFallback]="'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
     </ion-avatar>
 
     <!-- Barre de recherche -->
@@ -50,7 +50,7 @@
     <aside class="rail rail-left">
       <section class="side-card profile-mini">
         <div class="pm-cover"></div>
-        <img class="pm-avatar" [src]="userPhoto" alt="" loading="lazy" decoding="async" />
+        <img class="pm-avatar" [src]="userPhoto" [appImageFallback]="'assets/default-profile.png'" alt="" loading="lazy" decoding="async" />
         <h3 class="pm-name" *ngIf="userName">{{ userName }}</h3>
         <p class="pm-head" *ngIf="userHeadline">{{ userHeadline }}</p>
         <a class="pm-link" routerLink="/tabs/profils">{{ 'DASHBOARD.SIDE_VIEW_PROFILE' | translate }}</a>
@@ -94,7 +94,7 @@
     <!-- En-tête -->
     <div class="post-header">
       <ion-avatar class="clickable-avatar" (click)="openAuthorProfile(post, $event)">
-        <img [src]="post.author?.photoURL || 'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
+        <img [src]="post.author?.photoURL || 'assets/default-profile.png'" [appImageFallback]="'assets/default-profile.png'" alt="Profile Photo" loading="lazy" decoding="async" />
       </ion-avatar>
 
       <div (click)="openPostDetail(post)" class="post-author-details">
@@ -236,6 +236,7 @@
             <img
               class="comment-avatar"
               [src]="comment.userPhoto || 'assets/default-profile.png'"
+              [appImageFallback]="'assets/default-profile.png'"
               alt="avatar"
               loading="lazy"
               decoding="async"
@@ -263,7 +264,7 @@
         </div>
 
         <div class="comment-composer">
-          <img class="comment-avatar" [src]="userPhoto || 'assets/default-profile.png'" alt="avatar" loading="lazy" decoding="async" />
+          <img class="comment-avatar" [src]="userPhoto || 'assets/default-profile.png'" [appImageFallback]="'assets/default-profile.png'" alt="avatar" loading="lazy" decoding="async" />
           <ion-input
             class="comment-input"
             [placeholder]="'DASHBOARD.COMMENT_PLACEHOLDER' | translate"
@@ -317,6 +318,7 @@
           <img
             class="sg-avatar"
             [src]="u.photoURL"
+            [appImageFallback]="'assets/default-profile.png'"
             alt=""
             loading="lazy"
             decoding="async"
