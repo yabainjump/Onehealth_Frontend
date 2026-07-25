@@ -24,6 +24,10 @@ import {
 import { InteractionGuardService } from '../../core/services/interaction-guard.service';
 import { PublishService } from '../../services/publish/publish.service';
 import { resolveMediaUrl } from '../../core/utils/media-url.util';
+import {
+  OPENSTREETMAP_ATTRIBUTION,
+  OPENSTREETMAP_TILE_URL,
+} from '../../core/constants/map.constants';
 
 @Component({
   selector: 'app-alerts',
@@ -94,9 +98,9 @@ export class AlertsPage implements OnInit, OnDestroy {
       center: [6.5, 16], // Afrique centrale par défaut
       zoom: 3,
     });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer(OPENSTREETMAP_TILE_URL, {
       maxZoom: 18,
-      attribution: '© OpenStreetMap',
+      attribution: OPENSTREETMAP_ATTRIBUTION,
     }).addTo(this.map);
     this.markersLayer = L.markerClusterGroup({ maxClusterRadius: 50 });
     this.map.addLayer(this.markersLayer);
@@ -376,9 +380,9 @@ export class AlertsPage implements OnInit, OnDestroy {
       ? [this.form.lat as number, this.form.lng as number]
       : [6.5, 16];
     this.pickMap = L.map(el, { center, zoom: hasPoint ? 9 : 3 });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer(OPENSTREETMAP_TILE_URL, {
       maxZoom: 18,
-      attribution: '© OpenStreetMap',
+      attribution: OPENSTREETMAP_ATTRIBUTION,
     }).addTo(this.pickMap);
 
     if (hasPoint) {

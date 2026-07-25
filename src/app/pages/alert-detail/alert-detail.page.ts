@@ -18,6 +18,10 @@ import { AuthService } from '../../services/auth/auth.service';
 import { InteractionGuardService } from '../../core/services/interaction-guard.service';
 import { PublishService } from '../../services/publish/publish.service';
 import { resolveMediaUrl } from '../../core/utils/media-url.util';
+import {
+  OPENSTREETMAP_ATTRIBUTION,
+  OPENSTREETMAP_TILE_URL,
+} from '../../core/constants/map.constants';
 
 type AlertLoadResult =
   | { id: string; status: 'success'; alert: HealthAlert }
@@ -392,9 +396,9 @@ export class AlertDetailPage implements OnInit, OnDestroy {
       return;
     }
     this.map = L.map(el, { center: [this.alert.lat, this.alert.lng], zoom: 9 });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer(OPENSTREETMAP_TILE_URL, {
       maxZoom: 18,
-      attribution: '© OpenStreetMap',
+      attribution: OPENSTREETMAP_ATTRIBUTION,
     }).addTo(this.map);
     const icon = L.divIcon({
       className: `alert-marker alert-marker--${this.alert.category}`,
