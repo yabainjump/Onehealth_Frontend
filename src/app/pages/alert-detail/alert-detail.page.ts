@@ -1,9 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, IonicModule, ToastController } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Observable, Subject, catchError, distinctUntilChanged, map, of, startWith, switchMap, timeout } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as L from 'leaflet';
 
 import {
@@ -17,6 +19,10 @@ import { InteractionGuardService } from '../../core/services/interaction-guard.s
 import { PublishService } from '../../services/publish/publish.service';
 import { resolveMediaUrl } from '../../core/utils/media-url.util';
 
+type AlertLoadResult =
+  | { id: string; status: 'success'; alert: HealthAlert }
+  | { id: string; status: 'not-found' | 'error' };
+
 @Component({
   selector: 'app-alert-detail',
   standalone: true,
@@ -24,7 +30,7 @@ import { resolveMediaUrl } from '../../core/utils/media-url.util';
   templateUrl: './alert-detail.page.html',
   styleUrls: ['./alert-detail.page.scss'],
 })
-export class AlertDetailPage implements OnInit {
+export class AlertDetailPage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly alertsService = inject(AlertsService);
@@ -34,10 +40,12 @@ export class AlertDetailPage implements OnInit {
   private readonly toastCtrl = inject(ToastController);
   private readonly alertCtrl = inject(AlertController);
   private readonly translate = inject(TranslateService);
+  private readonly destroyRef = inject(DestroyRef);
 
   alert?: HealthAlert;
   images: string[] = [];
   loading = true;
+  loadError = false;
   currentUserId = '';
 
   // Réaction / commentaire
@@ -53,34 +61,64 @@ export class AlertDetailPage implements OnInit {
 
   private map?: L.Map;
   private alertId = '';
+  private readonly reload$ = new Subject<void>();
 
   ngOnInit(): void {
     this.currentUserId = (
       this.authService.getCurrentUserSync()?.uid || ''
     ).trim();
-    this.authService.getAuthState().subscribe((user) => {
-      this.currentUserId = (user?.uid || '').trim();
-    });
+    this.authService
+      .getAuthState()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((user) => {
+        this.currentUserId = (user?.uid || '').trim();
+      });
 
-    this.alertId = this.route.snapshot.paramMap.get('id') || '';
-    if (!this.alertId) {
-      this.loading = false;
-      return;
-    }
-    this.alertsService.getById(this.alertId).subscribe({
-      next: (a) => {
-        this.applyAlert(a);
+    // Ionic conserve certaines pages dans sa pile de navigation. Écouter
+    // paramMap garantit donc que le bon détail est chargé même lorsque le
+    // composant est réutilisé pour une autre alerte.
+    this.route.paramMap
+      .pipe(
+        map((params) => (params.get('id') || '').trim()),
+        distinctUntilChanged(),
+        switchMap((id) =>
+          this.reload$.pipe(
+            startWith(undefined),
+            switchMap(() => this.loadAlert(id)),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
+        // Ignore toute réponse devenue obsolète après un changement de route.
+        if (result.id !== this.alertId) {
+          return;
+        }
+
         this.loading = false;
+        this.loadError = result.status === 'error';
+
+        if (result.status !== 'success') {
+          return;
+        }
+
+        this.applyAlert(result.alert);
         setTimeout(() => this.tryInitMap(), 300);
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });
+      });
   }
 
   ionViewDidEnter(): void {
     setTimeout(() => this.tryInitMap(), 300);
+  }
+
+  ngOnDestroy(): void {
+    this.destroyMap();
+  }
+
+  retryLoad(): void {
+    if (this.alertId && !this.loading) {
+      this.reload$.next();
+    }
   }
 
   get isAuthor(): boolean {
@@ -309,6 +347,35 @@ export class AlertDetailPage implements OnInit {
 
   trackByComment(_i: number, c: AlertComment): string {
     return c.id || String(_i);
+  }
+
+  private loadAlert(id: string): Observable<AlertLoadResult> {
+    this.alertId = id;
+    this.alert = undefined;
+    this.images = [];
+    this.loading = !!id;
+    this.loadError = false;
+    this.destroyMap();
+
+    if (!id) {
+      return of({ id, status: 'not-found' });
+    }
+
+    return this.alertsService.getById(id).pipe(
+      timeout({ first: 15_000 }),
+      map((alert): AlertLoadResult => ({ id, status: 'success', alert })),
+      catchError((error: { status?: number } | null) =>
+        of({
+          id,
+          status: error?.status === 404 ? 'not-found' : 'error',
+        } as AlertLoadResult),
+      ),
+    );
+  }
+
+  private destroyMap(): void {
+    this.map?.remove();
+    this.map = undefined;
   }
 
   private tryInitMap(): void {

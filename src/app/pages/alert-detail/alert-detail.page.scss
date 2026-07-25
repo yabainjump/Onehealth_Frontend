@@ -49,6 +49,32 @@
   margin-bottom: 8px;
 }
 
+.ad-empty p {
+  margin: 0 0 16px;
+}
+
+.ad-empty button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
+  border-radius: 999px;
+  background: rgba(var(--ion-color-primary-rgb), 0.08);
+  color: var(--ion-color-primary);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ad-empty button ion-icon {
+  margin: 0;
+  font-size: 18px;
+}
+
 .ad-card {
   display: block;
   background: #ffffff;

@@ -31,8 +31,18 @@
   </div>
 
   <div class="ad-empty" *ngIf="!loading && !alert">
-    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
-    <p>{{ 'ALERTS.NOT_FOUND' | translate }}</p>
+    <ion-icon
+      [name]="loadError ? 'cloud-offline-outline' : 'alert-circle-outline'"
+      aria-hidden="true"
+    ></ion-icon>
+    <p>
+      {{ (loadError ? 'ALERTS.DETAIL_LOAD_ERROR' : 'ALERTS.NOT_FOUND') |
+      translate }}
+    </p>
+    <button type="button" *ngIf="loadError" (click)="retryLoad()">
+      <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
+      {{ 'ALERTS.RETRY' | translate }}
+    </button>
   </div>
 
   <article class="ad-card" *ngIf="alert">

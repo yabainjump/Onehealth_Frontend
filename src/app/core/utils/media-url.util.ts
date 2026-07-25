@@ -17,12 +17,32 @@ const API_BASE = (environment.apiBaseUrl || '').replace(/\/+$/, '');
  * cache. A incrementer si le cache edge se re-empoisonne un jour.
  */
 const MEDIA_URL_VERSION = '2';
+const FIREBASE_STORAGE_HOST = 'firebasestorage.googleapis.com';
 
 /** Extrait la portion `/uploads/...` d'une URL, ou '' si absente. */
 function uploadsPath(rawUrl?: string | null): string {
   const value = `${rawUrl ?? ''}`.trim();
   const index = value.indexOf('/uploads/');
   return index >= 0 ? value.substring(index) : '';
+}
+
+/**
+ * Les anciennes photos Firebase ne sont pas gérées par notre cache PWA.
+ * `ngsw-bypass` indique au worker Angular de laisser le navigateur effectuer
+ * directement la requête <img>, évitant qu'une ancienne CSP du worker bloque
+ * ces médias externes.
+ */
+function bypassServiceWorkerForFirebase(rawUrl: string): string {
+  try {
+    const url = new URL(rawUrl);
+    if (url.hostname.toLowerCase() !== FIREBASE_STORAGE_HOST) {
+      return rawUrl;
+    }
+    url.searchParams.set('ngsw-bypass', 'true');
+    return url.toString();
+  } catch {
+    return rawUrl;
+  }
 }
 
 /**
@@ -56,7 +76,9 @@ export function resolveMediaUrl(raw?: string | null): string {
   const firebaseStorageMatch = value.match(/^gs:\/\/([^/]+)\/(.+)$/i);
   if (firebaseStorageMatch) {
     const [, bucket, objectPath] = firebaseStorageMatch;
-    return `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(bucket)}/o/${encodeURIComponent(objectPath)}?alt=media`;
+    return bypassServiceWorkerForFirebase(
+      `https://${FIREBASE_STORAGE_HOST}/v0/b/${encodeURIComponent(bucket)}/o/${encodeURIComponent(objectPath)}?alt=media`,
+    );
   }
 
   // Tout chemin `/uploads/...` (relatif ou avec une origine erronee) est
@@ -66,7 +88,7 @@ export function resolveMediaUrl(raw?: string | null): string {
     return `${BACKEND_ORIGIN}${value.substring(uploadsIndex)}`;
   }
 
-  return value;
+  return bypassServiceWorkerForFirebase(value);
 }
 
 /**

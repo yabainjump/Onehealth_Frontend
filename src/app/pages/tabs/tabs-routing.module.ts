@@ -55,16 +55,17 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'alerts',
-        loadComponent: () =>
-          import('../alerts/alerts.page').then((m) => m.AlertsPage),
-      },
-      {
         path: 'alerts/:id',
         loadComponent: () =>
           import('../alert-detail/alert-detail.page').then(
             (m) => m.AlertDetailPage,
           ),
+      },
+      {
+        path: 'alerts',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('../alerts/alerts.page').then((m) => m.AlertsPage),
       },
       {
         path: '',

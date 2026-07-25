@@ -176,6 +176,7 @@
     "REMOVE_PHOTO": "Remove photo",
     "DETAIL_TITLE": "Alert details",
     "NOT_FOUND": "Alert not found.",
+    "DETAIL_LOAD_ERROR": "Unable to load this alert's details.",
     "COMMENTS": "Comments",
     "COMMENT_PH": "Write a comment…",
     "COMMENT_SEND": "Send",

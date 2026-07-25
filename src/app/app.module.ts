@@ -27,10 +27,11 @@ import { environment } from '../environments/environment';
         suffix: '.json',
       }),
     }),
-    ServiceWorkerModule.register('ngsw-worker.js', {
+    ServiceWorkerModule.register('onehealth-sw.js', {
       enabled: environment.production,
-      // Delay registration so the first render is not blocked on constrained devices.
-      registrationStrategy: 'registerWhenStable:30000',
+      // Enregistrement immédiat : remplace rapidement les anciennes versions
+      // du worker qui peuvent conserver une CSP obsolète.
+      registrationStrategy: 'registerImmediately',
     }),
   ],
   providers: [

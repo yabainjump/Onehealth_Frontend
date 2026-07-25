@@ -176,6 +176,7 @@
     "REMOVE_PHOTO": "Retirer la photo",
     "DETAIL_TITLE": "Détail de l'alerte",
     "NOT_FOUND": "Alerte introuvable.",
+    "DETAIL_LOAD_ERROR": "Impossible de charger le détail de cette alerte.",
     "COMMENTS": "Commentaires",
     "COMMENT_PH": "Écrire un commentaire…",
     "COMMENT_SEND": "Envoyer",

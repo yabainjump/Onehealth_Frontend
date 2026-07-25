@@ -25,6 +25,7 @@
               "src/robots.txt",
               "src/sitemap.xml",
               "src/manifest.webmanifest",
+              "src/onehealth-sw.js",
               {
                 "glob": "**/*",
                 "input": "src/assets",
