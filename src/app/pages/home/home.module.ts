@@ -11,6 +11,7 @@ import { HomePageRoutingModule } from './home-routing.module';
 
 import { HomePage } from './home.page';
 import { RudolfChatComponent } from './rudolf-chat/rudolf-chat.component';
+import { ImageFallbackDirective } from '../../shared/directives/image-fallback.directive';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { RudolfChatComponent } from './rudolf-chat/rudolf-chat.component';
     ComponentsModule,
     ReactiveFormsModule,
     TranslateModule,
+    ImageFallbackDirective,
   ],
   declarations: [HomePage, RudolfChatComponent, UserListComponent],
 })

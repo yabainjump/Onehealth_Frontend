@@ -70,7 +70,8 @@
                 <ion-avatar class="conversation-avatar" slot="start">
                   <img
                     [src]="pickPhoto(user)"
-                    alt="avatar utilisateur"
+                    [appImageFallback]="'assets/default-profile.png'"
+                    alt=""
                     loading="lazy"
                     decoding="async"
                   />
@@ -184,7 +185,8 @@
                   <ion-avatar slot="start">
                     <img
                       [src]="pickPhoto(u)"
-                      alt="avatar utilisateur"
+                      [appImageFallback]="'assets/default-profile.png'"
+                      alt=""
                       loading="lazy"
                       decoding="async"
                     />
