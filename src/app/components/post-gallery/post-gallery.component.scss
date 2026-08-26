@@ -19,6 +19,34 @@
   width: 100%;
 }
 
+.media-unavailable {
+  display: none;
+  min-height: 150px;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(145deg, #f3f7fa, #e8eef3);
+  color: #667785;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  ion-icon {
+    color: #0b6b57;
+    font-size: 26px;
+  }
+}
+
+.tile img.is-unavailable {
+  display: none;
+
+  + .media-unavailable {
+    display: flex;
+  }
+}
+
 /* 1 image : pleine largeur, ratio naturel, hauteur plafonnee (style LinkedIn) */
 .gallery.count-1 .tile img {
   height: auto;

@@ -115,11 +115,25 @@ export class PostGalleryComponent {
   }
 
   // Repli : si la miniature (/media/thumb) echoue, on bascule sur l'original.
+  // Si l'original est lui aussi absent, masquer l'element natif casse (alt-text)
+  // et afficher l'etat indisponible prevu par la galerie.
   onImgError(event: Event, fallback?: string): void {
     const img = event.target as HTMLImageElement | null;
-    if (img && fallback && img.getAttribute('src') !== fallback) {
-      img.src = fallback;
+    if (!img) {
+      return;
     }
+
+    if (
+      fallback &&
+      img.dataset['fallbackApplied'] !== 'true' &&
+      img.getAttribute('src') !== fallback
+    ) {
+      img.dataset['fallbackApplied'] = 'true';
+      img.src = fallback;
+      return;
+    }
+
+    img.classList.add('is-unavailable');
   }
 
   trackByIndex(index: number): number {
