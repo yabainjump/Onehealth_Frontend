@@ -24,6 +24,11 @@ export class PushpubPage implements OnDestroy {
   attachmentPreviewUrl: string | null = null;
   attachmentType: 'video' | 'document' | null = null;
   readonly maxAttachmentBytes = 50 * 1024 * 1024;
+  readonly maxImages = 8;
+
+  /** URLs deja envoyees pour pouvoir reprendre un lot interrompu. */
+  private uploadedImageUrls: Array<string | null> = [];
+  private failedImagePosition: number | null = null;
 
   constructor(
     private router: Router,
@@ -82,6 +87,8 @@ export class PushpubPage implements OnDestroy {
   }
 
   handleImageInput(event: any) {
+    if (this.isPublishing) return;
+
     const selectedFiles: File[] = Array.from(event?.target?.files || []);
     if (!selectedFiles.length) return;
 
@@ -101,6 +108,15 @@ export class PushpubPage implements OnDestroy {
     const imageFiles = selectedFiles.filter((file) => file.type.startsWith('image/'));
     const nonImageFiles = selectedFiles.filter((file) => !file.type.startsWith('image/'));
 
+    if (imageFiles.length > this.maxImages) {
+      this.presentToast(
+        this.translate.instant('PUSHPUB.TOO_MANY_IMAGES', { max: this.maxImages }),
+        'danger',
+      );
+      this.clearSelection();
+      return;
+    }
+
     if (imageFiles.length && nonImageFiles.length) {
       this.presentToast(this.translate.instant('PUSHPUB.MIX_ERROR'), 'danger');
       this.clearSelection();
@@ -116,6 +132,7 @@ export class PushpubPage implements OnDestroy {
     if (imageFiles.length) {
       this.clearSelection(false);
       this.imageFiles = imageFiles;
+      this.uploadedImageUrls = imageFiles.map(() => null);
       this.previewUrls = imageFiles.map((file) => URL.createObjectURL(file));
       return;
     }
@@ -225,9 +242,10 @@ export class PushpubPage implements OnDestroy {
 
     let published = false;
     try {
-      // 1) upload images (si présentes)
+      // Envoi sequentiel : plusieurs compressions et requetes simultanees
+      // saturent facilement la memoire mobile et une faible connexion montante.
       const imageUrls = this.imageFiles?.length
-        ? await Promise.all(this.imageFiles.map(f => this.publicationService.uploadImage(f)))
+        ? await this.uploadSelectedImages(loading)
         : [];
 
       const attachment =
@@ -267,7 +285,7 @@ export class PushpubPage implements OnDestroy {
     } catch (error: any) {
       // Log détaillé (status + corps) pour diagnostiquer en prod.
       console.error('Error uploading/adding post:', error?.status, error?.error || error);
-      await this.presentToast(this.translate.instant('PUSHPUB.PUBLISH_ERROR'), 'danger');
+      await this.presentToast(this.publishErrorMessage(error), 'danger');
     } finally {
       // dismiss DÉFENSIF : ne doit JAMAIS empêcher la réinitialisation de l'état,
       // sinon isPublishing reste bloqué à true et plus aucune publication ne passe.
@@ -285,8 +303,64 @@ export class PushpubPage implements OnDestroy {
     }
   }
 
+  private async uploadSelectedImages(loading: HTMLIonLoadingElement): Promise<string[]> {
+    if (this.uploadedImageUrls.length !== this.imageFiles.length) {
+      this.uploadedImageUrls = this.imageFiles.map(() => null);
+    }
+
+    for (let index = 0; index < this.imageFiles.length; index += 1) {
+      if (this.uploadedImageUrls[index]) continue;
+
+      const position = index + 1;
+      this.failedImagePosition = position;
+      loading.message = this.translate.instant('PUSHPUB.UPLOADING_IMAGE', {
+        current: position,
+        total: this.imageFiles.length,
+      });
+
+      const url = await this.publicationService.uploadImage(this.imageFiles[index]);
+      if (!url) {
+        throw new Error('Upload response did not contain a media URL');
+      }
+      this.uploadedImageUrls[index] = url;
+    }
+
+    this.failedImagePosition = null;
+    return this.uploadedImageUrls.map((url) => url as string);
+  }
+
+  private publishErrorMessage(error: any): string {
+    if (this.failedImagePosition === null) {
+      return this.translate.instant('PUSHPUB.PUBLISH_ERROR');
+    }
+
+    const params = {
+      current: this.failedImagePosition,
+      total: this.imageFiles.length,
+    };
+    const status = Number(error?.status || 0);
+
+    if (status === 413) {
+      return this.translate.instant('PUSHPUB.FILE_TOO_LARGE');
+    }
+
+    const isOffline =
+      typeof navigator !== 'undefined' && navigator.onLine === false;
+    const isTemporary =
+      isOffline || status === 0 || status === 408 || status === 429 || status >= 500;
+
+    return this.translate.instant(
+      isTemporary ? 'PUSHPUB.UPLOAD_RESUME' : 'PUSHPUB.IMAGE_UPLOAD_ERROR',
+      params,
+    );
+  }
+
   private async presentToast(message: string, color: 'success' | 'danger' | 'medium' = 'medium') {
-    const t = await this.toastCtrl.create({ message, duration: 1800, color });
+    const t = await this.toastCtrl.create({
+      message,
+      duration: color === 'danger' ? 4000 : 1800,
+      color,
+    });
     await t.present();
   }
 
@@ -298,6 +372,8 @@ export class PushpubPage implements OnDestroy {
 
   private clearSelection(clearInput = true) {
     this.imageFiles = [];
+    this.uploadedImageUrls = [];
+    this.failedImagePosition = null;
     this.revokePreviewUrls();
     this.previewUrls = [];
     if (this.attachmentPreviewUrl) {

@@ -47,6 +47,7 @@
       type="button"
       class="media-remove"
       (click)="removeMedia()"
+      [disabled]="isPublishing"
       [attr.aria-label]="'PUSHPUB.REMOVE_MEDIA' | translate"
     >
       <ion-icon name="close" aria-hidden="true"></ion-icon>
@@ -93,6 +94,7 @@
         type="button"
         class="add-btn photo"
         (click)="photoInput.click()"
+        [disabled]="isPublishing"
         [attr.aria-label]="'PUSHPUB.PHOTO' | translate"
       >
         <ion-icon name="image-outline" aria-hidden="true"></ion-icon>
@@ -101,6 +103,7 @@
         type="button"
         class="add-btn video"
         (click)="videoInput.click()"
+        [disabled]="isPublishing"
         [attr.aria-label]="'PUSHPUB.VIDEO' | translate"
       >
         <ion-icon name="videocam-outline" aria-hidden="true"></ion-icon>
@@ -109,6 +112,7 @@
         type="button"
         class="add-btn doc"
         (click)="docInput.click()"
+        [disabled]="isPublishing"
         [attr.aria-label]="'PUSHPUB.DOCUMENT' | translate"
       >
         <ion-icon name="document-attach-outline" aria-hidden="true"></ion-icon>
@@ -117,13 +121,29 @@
   </div>
 
   <!-- Sélecteurs natifs (filtrés par type pour un meilleur choix) -->
-  <input type="file" #photoInput accept="image/*" multiple hidden (change)="handleImageInput($event)" />
-  <input type="file" #videoInput accept="video/*" hidden (change)="handleImageInput($event)" />
+  <input
+    type="file"
+    #photoInput
+    accept="image/*"
+    multiple
+    hidden
+    [disabled]="isPublishing"
+    (change)="handleImageInput($event)"
+  />
+  <input
+    type="file"
+    #videoInput
+    accept="video/*"
+    hidden
+    [disabled]="isPublishing"
+    (change)="handleImageInput($event)"
+  />
   <input
     type="file"
     #docInput
     accept=".pdf,.ppt,.pptx,.doc,.docx"
     hidden
+    [disabled]="isPublishing"
     (change)="handleImageInput($event)"
   />
 </ion-footer>
