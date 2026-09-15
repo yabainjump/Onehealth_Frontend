@@ -1,7 +1,6 @@
 import { ChatService } from './../../../services/chat/chat.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AfterViewChecked,
   Component,
   OnDestroy,
   OnInit,
@@ -10,18 +9,19 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonContent, NavController, ToastController } from '@ionic/angular';
-import { firstValueFrom, Observable, take } from 'rxjs';
+import { firstValueFrom, Observable, take, tap } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { openSafeHttpUrl } from '../../../core/utils/safe-url.util';
+import { ForegroundPoller } from '../../../core/utils/foreground-poller';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
-  
+
   standalone: false,
 })
-export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
+export class ChatPage implements OnInit, OnDestroy {
   private static readonly MAX_ATTACHMENT_BYTES = 50 * 1024 * 1024;
 
   @ViewChild(IonContent, { static: false }) content: IonContent;
@@ -35,9 +35,17 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
   myUid: string | null = null;
   private participantUid = '';
   private roomRecoveryInProgress = false;
-  private statusRefreshTimer: ReturnType<typeof setInterval> | null = null;
-  private readSyncTimer: ReturnType<typeof setInterval> | null = null;
-  private messageRefreshTimer: ReturnType<typeof setInterval> | null = null;
+  private pageActive = false;
+  private lastRenderedMessageId = '';
+  private readonly statusPoller = new ForegroundPoller(
+    () => this.refreshOtherUserStatus(),
+    30_000,
+  );
+  private readonly messagePoller = new ForegroundPoller(async () => {
+    if (!this.id || !this.pageActive) return;
+    await this.chatService.getChatRoomMessages(this.id);
+    if (this.pageActive) await this.chatService.syncSelectedRoomRead(this.id);
+  }, 4_000);
 
   id: string;
   name: string;
@@ -56,7 +64,7 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
     private navCtrl: NavController,
     private toastCtrl: ToastController,
     public chatService: ChatService,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {}
 
   private pickPhoto(u: any): string {
@@ -70,7 +78,9 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   async ngOnInit() {
-    this.translate.get('CHAT.EMPTY_TITLE').subscribe((t) => (this.model.title = t));
+    this.translate
+      .get('CHAT.EMPTY_TITLE')
+      .subscribe((t) => (this.model.title = t));
     const data: any = this.route.snapshot.queryParams;
     const wasRecovered = `${data?.recovered || ''}` === '1';
     if (data?.name) {
@@ -83,7 +93,6 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
       return;
     }
     this.id = id;
-    this.chatService.getChatRoomMessages(this.id);
     try {
       await this.chatService.markRoomRead(this.id);
     } catch (error) {
@@ -92,18 +101,28 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
       }
     }
 
-    this.chats = this.chatService.selectedChatRoomMessages;
+    this.chats = this.chatService.selectedChatRoomMessages.pipe(
+      tap((messages) => {
+        const lastId = messages[messages.length - 1]?.id || '';
+        if (lastId && lastId !== this.lastRenderedMessageId) {
+          setTimeout(() => {
+            if (this.pageActive) this.scrollToBottom();
+          }, 0);
+        }
+        this.lastRenderedMessageId = lastId;
+      }),
+    );
     this.startMessageRefresh();
 
     const authUser = await firstValueFrom(
-      this.chatService.auth.getAuthState().pipe(take(1))
+      this.chatService.auth.getAuthState().pipe(take(1)),
     );
     this.myUid = authUser?.uid ?? this.chatService.currentUserId ?? null;
 
     try {
       const info = await this.chatService.getRoomInfo(
         this.id,
-        this.myUid || undefined
+        this.myUid || undefined,
       );
       this.otherUid = info?.otherUid || '';
       if (!this.participantUid && this.otherUid) {
@@ -113,7 +132,6 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
       this.otherStatusText = this.formatPresenceStatus(info?.otherUser);
       this.myPhoto = this.pickPhoto(info?.myUser);
       this.startStatusRefresh();
-      this.startReadSync();
     } catch (e) {
       if (await this.tryRecoverMissingRoom(e)) {
         return;
@@ -122,7 +140,10 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
       console.warn('roomInfo error:', e);
     }
     if (wasRecovered) {
-      await this.presentToast(this.translate.instant('CHAT.ROOM_RESTORED'), 'success');
+      await this.presentToast(
+        this.translate.instant('CHAT.ROOM_RESTORED'),
+        'success',
+      );
     }
   }
 
@@ -135,9 +156,7 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
     const file = input.files?.[0];
     if (!file) return;
     if (file.size > ChatPage.MAX_ATTACHMENT_BYTES) {
-      await this.presentToast(
-        this.translate.instant('CHAT.FILE_TOO_LARGE'),
-      );
+      await this.presentToast(this.translate.instant('CHAT.FILE_TOO_LARGE'));
       input.value = '';
       return;
     }
@@ -149,11 +168,11 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
       console.error(error);
       if (
         error?.message === 'FILE_TOO_LARGE' ||
-        `${error?.error?.message || ''}`.toLowerCase().includes('file too large')
+        `${error?.error?.message || ''}`
+          .toLowerCase()
+          .includes('file too large')
       ) {
-        await this.presentToast(
-          this.translate.instant('CHAT.FILE_TOO_LARGE'),
-        );
+        await this.presentToast(this.translate.instant('CHAT.FILE_TOO_LARGE'));
       } else {
         await this.presentToast(this.translate.instant('CHAT.FILE_SEND_ERROR'));
       }
@@ -163,34 +182,26 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  ngAfterViewChecked() {
-    this.scrollToBottom();
+  ionViewDidEnter() {
+    this.pageActive = true;
+    this.startMessageRefresh();
+    this.startStatusRefresh();
+  }
+
+  ionViewWillLeave() {
+    this.pageActive = false;
+    this.statusPoller.stop();
+    this.messagePoller.stop();
+    if (this.id) this.chatService.stopMessageRefresh(this.id);
   }
 
   ngOnDestroy() {
-    if (this.statusRefreshTimer) {
-      clearInterval(this.statusRefreshTimer);
-      this.statusRefreshTimer = null;
-    }
-    if (this.readSyncTimer) {
-      clearInterval(this.readSyncTimer);
-      this.readSyncTimer = null;
-    }
-    if (this.messageRefreshTimer) {
-      clearInterval(this.messageRefreshTimer);
-      this.messageRefreshTimer = null;
-    }
+    this.ionViewWillLeave();
   }
 
   // Quasi temps reel : re-recupere les messages periodiquement (pas de WebSocket).
   private startMessageRefresh() {
-    if (!this.id || this.messageRefreshTimer) {
-      return;
-    }
-
-    this.messageRefreshTimer = setInterval(() => {
-      this.chatService.getChatRoomMessages(this.id);
-    }, 4000);
+    if (this.id && this.pageActive) this.messagePoller.start();
   }
 
   scrollToBottom() {
@@ -212,7 +223,9 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
     } catch (e) {
       this.isLoading = false;
       console.log(e);
-      await this.presentToast(this.translate.instant('CHAT.MESSAGE_SEND_ERROR'));
+      await this.presentToast(
+        this.translate.instant('CHAT.MESSAGE_SEND_ERROR'),
+      );
       // this.global.errorToast();
     }
   }
@@ -223,7 +236,9 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
 
   async openOtherUserProfile() {
     if (!this.otherUid) {
-      await this.presentToast(this.translate.instant('CHAT.PROFILE_UNAVAILABLE'));
+      await this.presentToast(
+        this.translate.instant('CHAT.PROFILE_UNAVAILABLE'),
+      );
       return;
     }
     await this.navCtrl.navigateForward(`/tabs/profils/${this.otherUid}`);
@@ -287,23 +302,7 @@ export class ChatPage implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   private startStatusRefresh() {
-    if (!this.otherUid || this.statusRefreshTimer) {
-      return;
-    }
-
-    this.statusRefreshTimer = setInterval(() => {
-      void this.refreshOtherUserStatus();
-    }, 30_000);
-  }
-
-  private startReadSync() {
-    if (!this.id || this.readSyncTimer) {
-      return;
-    }
-
-    this.readSyncTimer = setInterval(() => {
-      void this.chatService.markRoomRead(this.id).catch(() => undefined);
-    }, 8_000);
+    if (this.otherUid && this.pageActive) this.statusPoller.start();
   }
 
   private async refreshOtherUserStatus() {

@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  EMPTY,
   Observable,
   Subscription,
   catchError,
   firstValueFrom,
+  finalize,
   map,
   of,
+  timeout,
 } from 'rxjs';
 
 import { ChatService as CoreChatService } from '../../core/services/chat.service';
@@ -38,6 +41,11 @@ export class ChatService {
     this.selectedChatRoomMessagesSubject.asObservable();
   private selectedRoomId = '';
   private selectedRoomMessagesSub?: Subscription;
+  private roomsRequest?: Promise<void>;
+  private messagesRequest?: Promise<void>;
+  private sessionVersion = 0;
+  private lastReadIncomingId = '';
+  private readRequest?: Promise<void>;
 
   constructor(
     public auth: AuthService,
@@ -46,6 +54,7 @@ export class ChatService {
     private readonly uploadService: UploadService,
   ) {
     this.auth.getAuthState().subscribe((user) => {
+      if (this.currentUserId !== (user?.uid || '')) this.resetCache();
       this.currentUserId = user?.uid || '';
     });
   }
@@ -58,13 +67,15 @@ export class ChatService {
     const uid = this.currentUserId || this.auth._uid.getValue();
     // La recherche est transmise au serveur (toute la base, pas seulement
     // les 100 derniers inscrits).
-    return this.usersService.listUsers(search).pipe(
-      map((users) =>
-        users
-          .filter((user) => user.id !== uid)
-          .map((user) => this.toLegacyUser(user)),
-      ),
-    );
+    return this.usersService
+      .listUsers(search)
+      .pipe(
+        map((users) =>
+          users
+            .filter((user) => user.id !== uid)
+            .map((user) => this.toLegacyUser(user)),
+        ),
+      );
   }
 
   getCurrentUserProfil(): Observable<any[]> {
@@ -99,89 +110,184 @@ export class ChatService {
     };
   }
 
-  getChatRooms() {
-    this.chatRoomsSub?.unsubscribe();
-    this.chatRoomsSub = this.coreChat.listRooms().subscribe((rooms) => {
-      const list = rooms || [];
-
-      // Signature des donnees pertinentes : on ne met a jour l'UI QUE si quelque
-      // chose a change (nouveau message, non-lus, ordre). Sinon, liste stable.
-      const signature = list
-        .map(
-          (room) =>
-            `${room.id}:${room.lastMessage || ''}:${room.unreadCount || 0}:${room.updatedAt || ''}`,
+  getChatRooms(): Promise<void> {
+    if (!this.currentUserId) return Promise.resolve();
+    if (this.roomsRequest) return this.roomsRequest;
+    const version = this.sessionVersion;
+    const request = new Promise<void>((resolve) => {
+      this.chatRoomsSub = this.coreChat
+        .listRooms()
+        .pipe(
+          timeout(15_000),
+          catchError((error) => {
+            if (error?.status === 401 || error?.status === 403)
+              this.resetCache();
+            return EMPTY;
+          }),
+          finalize(resolve),
         )
-        .join('|');
-      if (signature === this.lastRoomsSignature) {
-        return;
-      }
-      this.lastRoomsSignature = signature;
+        .subscribe((rooms) => {
+          if (version !== this.sessionVersion) return;
+          const list = rooms || [];
 
-      const mapped = list.map((room) => ({
-        id: room.id,
-        members: room.members || [],
-        updatedAt: room.updatedAt,
-        user: of(this.toLegacyUser(room.otherUser)),
-        lastMsg: of(
-          room.lastMessage
-            ? {
-                message: room.lastMessage,
-                sender: '',
-                createdAt: room.updatedAt,
-              }
-            : null,
-        ),
-        unread: {
-          [this.currentUserId]: room.unreadCount || 0,
-        },
-        lastMessage: room.lastMessage || '',
-      }));
+          // Signature des donnees pertinentes : on ne met a jour l'UI QUE si quelque
+          // chose a change (nouveau message, non-lus, ordre). Sinon, liste stable.
+          const signature = list
+            .map(
+              (room) =>
+                `${room.id}:${room.lastMessage || ''}:${room.unreadCount || 0}:${room.updatedAt || ''}`,
+            )
+            .join('|');
+          if (signature === this.lastRoomsSignature) {
+            return;
+          }
+          this.lastRoomsSignature = signature;
 
-      this.chatRoomsSubject.next(mapped);
+          const mapped = list.map((room) => ({
+            id: room.id,
+            members: room.members || [],
+            updatedAt: room.updatedAt,
+            user: of(this.toLegacyUser(room.otherUser)),
+            lastMsg: of(
+              room.lastMessage
+                ? {
+                    message: room.lastMessage,
+                    sender: '',
+                    createdAt: room.updatedAt,
+                  }
+                : null,
+            ),
+            unread: {
+              [this.currentUserId]: room.unreadCount || 0,
+            },
+            lastMessage: room.lastMessage || '',
+          }));
+
+          this.chatRoomsSubject.next(mapped);
+        });
     });
+    this.roomsRequest = request;
+    void request.then(() => {
+      if (this.roomsRequest === request) this.roomsRequest = undefined;
+    });
+    return request;
   }
 
-  getChatRoomMessages(chatRoomId: string) {
+  getChatRoomMessages(chatRoomId: string): Promise<void> {
+    if (!this.currentUserId) return Promise.resolve();
     if (chatRoomId !== this.selectedRoomId) {
-      this.lastMessagesSignature = '';
+      this.stopMessageRefresh();
     }
     this.selectedRoomId = chatRoomId;
+    if (this.messagesRequest) return this.messagesRequest;
+    const version = this.sessionVersion;
+    const request = new Promise<void>((resolve) => {
+      this.selectedRoomMessagesSub = this.coreChat
+        .listMessages(chatRoomId)
+        .pipe(
+          timeout(15_000),
+          map((messages) =>
+            messages.map((message) => ({
+              id: message.id,
+              sender: message.senderId,
+              message: message.text || '',
+              imageUrl: resolveMediaUrl(message.imageUrl),
+              fileUrl: resolveMediaUrl(message.fileUrl),
+              fileName: message.fileName || '',
+              fileMimeType: message.fileMimeType || '',
+              fileSize: message.fileSize || 0,
+              isRead: !!message.isRead,
+              createdAt: new Date(message.createdAt),
+            })),
+          ),
+          catchError((error) => {
+            if (error?.status === 401 || error?.status === 403)
+              this.resetCache();
+            return EMPTY;
+          }),
+          finalize(resolve),
+        )
+        .subscribe((messages) => {
+          if (
+            version !== this.sessionVersion ||
+            this.selectedRoomId !== chatRoomId
+          )
+            return;
+          const signature =
+            `${messages.length}:` +
+            messages
+              .map(
+                (m) => `${m.id}:${m.isRead ? 1 : 0}:${m.fileUrl}:${m.imageUrl}`,
+              )
+              .join('|');
+          if (signature === this.lastMessagesSignature) {
+            return;
+          }
+          this.lastMessagesSignature = signature;
+          this.selectedChatRoomMessagesSubject.next(messages);
+        });
+    });
+    this.messagesRequest = request;
+    void request.then(() => {
+      if (this.messagesRequest === request) this.messagesRequest = undefined;
+    });
+    return request;
+  }
+
+  stopMessageRefresh(chatRoomId?: string): void {
+    if (chatRoomId && chatRoomId !== this.selectedRoomId) return;
     this.selectedRoomMessagesSub?.unsubscribe();
-    this.selectedRoomMessagesSub = this.coreChat
-      .listMessages(chatRoomId)
-      .pipe(
-        map((messages) =>
-          messages.map((message) => ({
-            id: message.id,
-            sender: message.senderId,
-            message: message.text || '',
-            imageUrl: resolveMediaUrl(message.imageUrl),
-            fileUrl: resolveMediaUrl(message.fileUrl),
-            fileName: message.fileName || '',
-            fileMimeType: message.fileMimeType || '',
-            fileSize: message.fileSize || 0,
-            isRead: !!message.isRead,
-            createdAt: new Date(message.createdAt),
-          })),
-        ),
-        catchError((error) => {
-          console.error('Chat messages load error:', error);
-          return of([]);
-        }),
-      )
-      .subscribe((messages) => {
-        const signature =
-          `${messages.length}:` +
-          messages.map((m) => `${m.id}:${m.isRead ? 1 : 0}`).join('|');
-        if (signature === this.lastMessagesSignature) {
-          return;
-        }
-        this.lastMessagesSignature = signature;
-        this.selectedChatRoomMessagesSubject.next(messages);
-      });
+    this.messagesRequest = undefined;
+    this.selectedRoomId = '';
+    this.lastMessagesSignature = '';
+    this.lastReadIncomingId = '';
+    this.readRequest = undefined;
+    this.selectedChatRoomMessagesSubject.next([]);
+  }
+
+  stopRoomsRefresh(): void {
+    this.chatRoomsSub?.unsubscribe();
+    this.roomsRequest = undefined;
+  }
+
+  async syncSelectedRoomRead(chatRoomId: string): Promise<void> {
+    if (
+      document.hidden ||
+      this.selectedRoomId !== chatRoomId ||
+      this.readRequest
+    )
+      return;
+    const incoming = [...this.selectedChatRoomMessagesSubject.value]
+      .reverse()
+      .find((message) => message.sender !== this.currentUserId);
+    if (!incoming || incoming.id === this.lastReadIncomingId) return;
+    const version = this.sessionVersion;
+    const request = this.markRoomRead(chatRoomId).then(() => {
+      if (
+        version === this.sessionVersion &&
+        this.selectedRoomId === chatRoomId
+      ) {
+        this.lastReadIncomingId = incoming.id;
+      }
+    });
+    this.readRequest = request;
+    try {
+      await request;
+    } finally {
+      if (this.readRequest === request) this.readRequest = undefined;
+    }
+  }
+
+  private resetCache(): void {
+    this.sessionVersion += 1;
+    this.stopRoomsRefresh();
+    this.stopMessageRefresh();
+    this.lastRoomsSignature = '';
+    this.chatRoomsSubject.next([]);
   }
 
   async sendMessage(chatId: string, msg?: string, file?: File) {
+    const version = this.sessionVersion;
     let imageUrl = '';
     let fileUrl = '';
     let fileName = '';
@@ -192,7 +298,9 @@ export class ChatService {
       if (file.size > ChatService.MAX_ATTACHMENT_BYTES) {
         throw new Error('FILE_TOO_LARGE');
       }
-      const uploaded = await firstValueFrom(this.uploadService.uploadMessage(file));
+      const uploaded = await firstValueFrom(
+        this.uploadService.uploadMessage(file),
+      );
       fileUrl = uploaded.url;
       fileName = uploaded.originalName || file.name || uploaded.filename || '';
       fileMimeType = uploaded.mimetype || file.type || '';
@@ -202,6 +310,7 @@ export class ChatService {
       }
     }
 
+    if (version !== this.sessionVersion) throw new Error('Session changed');
     const sent = await firstValueFrom(
       this.coreChat.sendMessage(chatId, {
         text: msg?.trim() || undefined,
@@ -226,9 +335,11 @@ export class ChatService {
       createdAt: new Date(sent.createdAt),
     };
 
-    if (this.selectedRoomId === chatId) {
+    if (version === this.sessionVersion && this.selectedRoomId === chatId) {
       const current = this.selectedChatRoomMessagesSubject.value || [];
-      this.selectedChatRoomMessagesSubject.next([...current, localMessage]);
+      if (!current.some((message) => message.id === localMessage.id)) {
+        this.selectedChatRoomMessagesSubject.next([...current, localMessage]);
+      }
     }
 
     return localMessage;
@@ -251,7 +362,8 @@ export class ChatService {
       throw new Error('room-not-found');
     }
 
-    const otherUid = (room.members || []).find((memberId) => memberId !== me) || '';
+    const otherUid =
+      (room.members || []).find((memberId) => memberId !== me) || '';
     const [otherUser, myUser] = await Promise.all([
       otherUid ? this.auth.getUserData(otherUid) : Promise.resolve(undefined),
       me ? this.auth.getUserData(me) : Promise.resolve(undefined),
@@ -266,11 +378,12 @@ export class ChatService {
   }
 
   async markRoomRead(chatId: string) {
-    await firstValueFrom(this.coreChat.markRead(chatId));
+    await firstValueFrom(this.coreChat.markRead(chatId).pipe(timeout(15_000)));
   }
 
   async clearRoomsCacheFor(uid?: string) {
     void uid;
+    this.resetCache();
   }
 
   private toLegacyUser(user: any): any {

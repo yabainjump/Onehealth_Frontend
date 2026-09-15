@@ -7,6 +7,7 @@ import { ApiService } from 'src/app/services/api/api.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { InteractionGuardService } from 'src/app/core/services/interaction-guard.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ForegroundPoller } from '../../core/utils/foreground-poller';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,11 @@ import { TranslateService } from '@ngx-translate/core';
   standalone: false,
 })
 export class HomePage implements OnInit, OnDestroy {
-  private roomsRefreshTimer: ReturnType<typeof setInterval> | null = null;
+  private authenticated = false;
+  private readonly roomsPoller = new ForegroundPoller(
+    () => this.getRooms(),
+    10_000,
+  );
   // Vue PC : vrai quand une conversation est ouverte (affichage 2 volets).
   conversationOpen = false;
   private routerSub?: Subscription;
@@ -130,7 +135,8 @@ export class HomePage implements OnInit, OnDestroy {
       void this.router.navigateByUrl('/tabs/dashbord', { replaceUrl: true });
       return;
     }
-    this.getRooms();
+    this.authenticated = true;
+    this.syncRoomsPolling();
     this.chatService
       .getCurrentUserProfil()
       .subscribe((user) => (this.currentUser = user[0]));
@@ -140,18 +146,34 @@ export class HomePage implements OnInit, OnDestroy {
     this.routerSub = this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.conversationOpen = this.router.url.includes('/home/chats/');
+        this.syncRoomsPolling();
       }
     });
+  }
 
-    // Rafraichit periodiquement la liste des conversations (nouveaux messages / non-lus).
-    this.roomsRefreshTimer = setInterval(() => this.getRooms(), 10000);
+  ionViewDidEnter() {
+    this.syncRoomsPolling();
+  }
+
+  ionViewWillLeave() {
+    this.roomsPoller.stop();
+    this.chatService.stopRoomsRefresh();
+  }
+
+  private syncRoomsPolling() {
+    if (
+      this.authenticated &&
+      this.segment === 'chats' &&
+      /^\/tabs\/home(?:\/|$)/.test(this.router.url)
+    ) {
+      this.roomsPoller.start();
+    } else {
+      this.ionViewWillLeave();
+    }
   }
 
   ngOnDestroy() {
-    if (this.roomsRefreshTimer) {
-      clearInterval(this.roomsRefreshTimer);
-      this.roomsRefreshTimer = null;
-    }
+    this.ionViewWillLeave();
     this.routerSub?.unsubscribe();
   }
 
@@ -192,9 +214,8 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   getRooms() {
-    // this.chatService.getId();
-    this.chatService.getChatRooms();
     this.chatRooms = this.chatService.chatRooms;
+    return this.chatService.getChatRooms();
   }
 
   async logout() {
@@ -212,6 +233,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   onSegmentChanged(event: any) {
     this.segment = event.detail.value;
+    this.syncRoomsPolling();
   }
 
   blurActive() {
