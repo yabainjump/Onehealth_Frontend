@@ -157,7 +157,7 @@
           #mapEl
           [attr.aria-label]="'ALERTS.LIVE_MAP' | translate"
         ></div>
-        <div class="map-legend" aria-hidden="true">
+        <div class="map-legend" aria-label="Légende des secteurs">
           <span class="legend-human">{{ 'ALERTS.CAT_human' | translate }}</span>
           <span class="legend-animal"
             >{{ 'ALERTS.CAT_animal' | translate }}</span
@@ -165,6 +165,7 @@
           <span class="legend-environment"
             >{{ 'ALERTS.CAT_environment' | translate }}</span
           >
+          <span class="legend-verified">{{ 'ALERTS.STATUS_verified' | translate }}</span>
         </div>
       </aside>
 

@@ -19,7 +19,7 @@ import { InteractionGuardService } from '../../core/services/interaction-guard.s
 import { PublishService } from '../../services/publish/publish.service';
 import { resolveMediaUrl } from '../../core/utils/media-url.util';
 import {
-  OPENSTREETMAP_ATTRIBUTION,
+  OPENSTREETMAP_TILE_OPTIONS,
   OPENSTREETMAP_TILE_URL,
 } from '../../core/constants/map.constants';
 
@@ -395,16 +395,27 @@ export class AlertDetailPage implements OnInit, OnDestroy {
     if (!el) {
       return;
     }
-    this.map = L.map(el, { center: [this.alert.lat, this.alert.lng], zoom: 9 });
-    L.tileLayer(OPENSTREETMAP_TILE_URL, {
+    this.map = L.map(el, {
+      center: [this.alert.lat, this.alert.lng],
+      zoom: 9,
+      minZoom: 2,
       maxZoom: 18,
-      attribution: OPENSTREETMAP_ATTRIBUTION,
-    }).addTo(this.map);
+      zoomControl: false,
+      scrollWheelZoom: false,
+    });
+    L.tileLayer(OPENSTREETMAP_TILE_URL, { ...OPENSTREETMAP_TILE_OPTIONS }).addTo(this.map);
+    L.control.zoom({ position: 'topright' }).addTo(this.map);
     const icon = L.divIcon({
-      className: `alert-marker alert-marker--${this.alert.category}`,
+      className: [
+        'alert-marker',
+        `alert-marker--${this.alert.category}`,
+        `alert-marker--severity-${this.alert.severity}`,
+        `alert-marker--status-${this.alert.verificationStatus}`,
+        'alert-marker--selected',
+      ].join(' '),
       html: '<span></span>',
-      iconSize: [22, 22],
-      iconAnchor: [11, 11],
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
     });
     L.marker([this.alert.lat, this.alert.lng], { icon }).addTo(this.map);
     setTimeout(() => this.map?.invalidateSize(), 200);

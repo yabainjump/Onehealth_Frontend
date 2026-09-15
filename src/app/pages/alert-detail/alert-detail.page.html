@@ -103,11 +103,23 @@
       />
     </div>
 
-    <div
-      id="alert-detail-map"
-      class="ad-map"
-      *ngIf="alert.lat && alert.lng"
-    ></div>
+    <section class="ad-map-shell" *ngIf="alert.lat !== null && alert.lng !== null">
+      <div class="ad-map-heading">
+        <span>
+          <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+          Localisation signalée
+        </span>
+        <small>
+          {{ alert.city }}<ng-container *ngIf="alert.city && alert.country"> · </ng-container
+          >{{ alert.country }}
+        </small>
+      </div>
+      <div
+        id="alert-detail-map"
+        class="ad-map"
+        [attr.aria-label]="'ALERTS.LIVE_MAP' | translate"
+      ></div>
+    </section>
 
     <!-- Réactions -->
     <div class="ad-actions">

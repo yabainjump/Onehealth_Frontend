@@ -25,7 +25,7 @@ import { InteractionGuardService } from '../../core/services/interaction-guard.s
 import { PublishService } from '../../services/publish/publish.service';
 import { resolveMediaUrl } from '../../core/utils/media-url.util';
 import {
-  OPENSTREETMAP_ATTRIBUTION,
+  OPENSTREETMAP_TILE_OPTIONS,
   OPENSTREETMAP_TILE_URL,
 } from '../../core/constants/map.constants';
 
@@ -97,12 +97,24 @@ export class AlertsPage implements OnInit, OnDestroy {
     this.map = L.map(this.mapEl.nativeElement, {
       center: [6.5, 16], // Afrique centrale par défaut
       zoom: 3,
-    });
-    L.tileLayer(OPENSTREETMAP_TILE_URL, {
+      minZoom: 2,
       maxZoom: 18,
-      attribution: OPENSTREETMAP_ATTRIBUTION,
-    }).addTo(this.map);
-    this.markersLayer = L.markerClusterGroup({ maxClusterRadius: 50 });
+      zoomControl: false,
+    });
+    L.tileLayer(OPENSTREETMAP_TILE_URL, { ...OPENSTREETMAP_TILE_OPTIONS }).addTo(this.map);
+    L.control.zoom({ position: 'topright' }).addTo(this.map);
+    this.markersLayer = L.markerClusterGroup({
+      maxClusterRadius: 44,
+      showCoverageOnHover: false,
+      removeOutsideVisibleBounds: true,
+      iconCreateFunction: (cluster) =>
+        L.divIcon({
+          className: 'ohn-alert-cluster',
+          html: `<span>${cluster.getChildCount()}</span>`,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17],
+        }),
+    });
     this.map.addLayer(this.markersLayer);
     this.renderMarkers();
   }
@@ -285,18 +297,29 @@ export class AlertsPage implements OnInit, OnDestroy {
       (a) => typeof a.lat === 'number' && typeof a.lng === 'number',
     );
     for (const a of withCoords) {
+      const severity = a.severity || 'medium';
+      const verificationStatus = a.verificationStatus || 'pending';
       const icon = L.divIcon({
-        className: `alert-marker alert-marker--${a.category}`,
+        className: [
+          'alert-marker',
+          `alert-marker--${a.category}`,
+          `alert-marker--severity-${severity}`,
+          `alert-marker--status-${verificationStatus}`,
+          a.id === this.selectedAlertId ? 'alert-marker--selected' : '',
+        ]
+          .filter(Boolean)
+          .join(' '),
         html: '<span></span>',
-        iconSize: [20, 20],
-        iconAnchor: [10, 10],
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
       });
       const marker = L.marker([a.lat as number, a.lng as number], { icon })
-        .bindPopup(
-          `<strong>${this.escape(a.title)}</strong><br>${this.escape(
-            [a.city, a.country].filter(Boolean).join(', '),
-          )}`,
-        )
+        .bindPopup(this.buildAlertPopup(a), {
+          className: 'ohn-alert-popup',
+          maxWidth: 290,
+          minWidth: 220,
+          offset: [0, -9],
+        })
         .addTo(this.markersLayer);
       marker.on('click', () => this.selectAlert(a, true));
       if (a.id) {
@@ -318,7 +341,10 @@ export class AlertsPage implements OnInit, OnDestroy {
   }
 
   selectAlert(a: HealthAlert, scrollToCard = false): void {
+    const previousId = this.selectedAlertId;
     this.selectedAlertId = a.id;
+    this.setMarkerSelected(previousId, false);
+    this.setMarkerSelected(a.id, true);
     if (this.map && typeof a.lat === 'number' && typeof a.lng === 'number') {
       this.map.setView([a.lat, a.lng], 9);
       this.markersByAlertId.get(a.id)?.openPopup();
@@ -379,11 +405,15 @@ export class AlertsPage implements OnInit, OnDestroy {
     const center: [number, number] = hasPoint
       ? [this.form.lat as number, this.form.lng as number]
       : [6.5, 16];
-    this.pickMap = L.map(el, { center, zoom: hasPoint ? 9 : 3 });
-    L.tileLayer(OPENSTREETMAP_TILE_URL, {
+    this.pickMap = L.map(el, {
+      center,
+      zoom: hasPoint ? 9 : 3,
+      minZoom: 2,
       maxZoom: 18,
-      attribution: OPENSTREETMAP_ATTRIBUTION,
-    }).addTo(this.pickMap);
+      zoomControl: false,
+    });
+    L.tileLayer(OPENSTREETMAP_TILE_URL, { ...OPENSTREETMAP_TILE_OPTIONS }).addTo(this.pickMap);
+    L.control.zoom({ position: 'topright' }).addTo(this.pickMap);
 
     if (hasPoint) {
       this.pickMarker = L.marker(center, { icon: this.pickIcon() }).addTo(
@@ -413,6 +443,49 @@ export class AlertsPage implements OnInit, OnDestroy {
       iconSize: [24, 24],
       iconAnchor: [12, 12],
     });
+  }
+
+  private setMarkerSelected(alertId: string, selected: boolean): void {
+    const element = this.markersByAlertId.get(alertId)?.getElement();
+    element?.classList.toggle('alert-marker--selected', selected);
+  }
+
+  private buildAlertPopup(alert: HealthAlert): HTMLElement {
+    const severity = alert.severity || 'medium';
+    const verificationStatus = alert.verificationStatus || 'pending';
+    const popup = document.createElement('article');
+    popup.className = 'ohn-alert-popup__content';
+
+    const badges = document.createElement('div');
+    badges.className = 'ohn-alert-popup__badges';
+    const category = document.createElement('span');
+    category.className = `ohn-alert-popup__category ohn-alert-popup__category--${alert.category}`;
+    category.textContent = this.translate.instant(`ALERTS.CAT_${alert.category}`);
+    const status = document.createElement('span');
+    status.className = `ohn-alert-popup__status ohn-alert-popup__status--${verificationStatus}`;
+    status.textContent = this.translate.instant(`ALERTS.STATUS_${verificationStatus}`);
+    badges.append(category, status);
+
+    const title = document.createElement('strong');
+    title.className = 'ohn-alert-popup__title';
+    title.textContent = alert.title;
+
+    const location = document.createElement('p');
+    location.className = 'ohn-alert-popup__location';
+    location.textContent = [alert.city, alert.country].filter(Boolean).join(' · ');
+
+    const risk = document.createElement('small');
+    risk.className = `ohn-alert-popup__risk ohn-alert-popup__risk--${severity}`;
+    risk.textContent = `${this.translate.instant('ALERTS.FIELD_SEVERITY')} : ${this.translate.instant(
+      `ALERTS.SEV_${severity}`,
+    )}`;
+
+    popup.append(badges, title);
+    if (location.textContent) {
+      popup.append(location);
+    }
+    popup.append(risk);
+    return popup;
   }
 
   useMyLocation(): void {
@@ -514,19 +587,6 @@ export class AlertsPage implements OnInit, OnDestroy {
       city: '',
       severity: 'medium',
     };
-  }
-
-  private escape(value: string): string {
-    return `${value || ''}`.replace(
-      /[&<>"]/g,
-      (c) =>
-        (
-          ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }) as Record<
-            string,
-            string
-          >
-        )[c],
-    );
   }
 
   private async toast(
