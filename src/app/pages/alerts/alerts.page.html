@@ -141,7 +141,11 @@
     </section>
 
     <div class="alerts-workspace">
-      <aside class="map-panel" [class.mobile-hidden]="mobileView !== 'map'">
+      <aside
+        #alertsMapHost
+        class="map-panel ohn-map-fullscreen-host"
+        [class.mobile-hidden]="mobileView !== 'map'"
+      >
         <header class="panel-heading">
           <div>
             <span>{{ 'ALERTS.LIVE_MAP' | translate }}</span>
@@ -157,6 +161,11 @@
           #mapEl
           [attr.aria-label]="'ALERTS.LIVE_MAP' | translate"
         ></div>
+        <app-map-fullscreen-control
+          [target]="alertsMapHost"
+          [enterLabel]="'ALERTS.FULLSCREEN_ENTER' | translate"
+          [exitLabel]="'ALERTS.FULLSCREEN_EXIT' | translate"
+        />
         <div class="map-legend" aria-label="Légende des secteurs">
           <span class="legend-human">{{ 'ALERTS.CAT_human' | translate }}</span>
           <span class="legend-animal"
@@ -467,7 +476,14 @@
 
         <!-- Choisir le lieu en touchant la carte (sans permission GPS) -->
         <p class="pick-hint">{{ 'ALERTS.PICK_HINT' | translate }}</p>
-        <div id="alert-pick-map" class="pick-map"></div>
+        <div #pickMapHost class="pick-map-shell ohn-map-fullscreen-host">
+          <div id="alert-pick-map" class="pick-map"></div>
+          <app-map-fullscreen-control
+            [target]="pickMapHost"
+            [enterLabel]="'ALERTS.FULLSCREEN_ENTER' | translate"
+            [exitLabel]="'ALERTS.FULLSCREEN_EXIT' | translate"
+          />
+        </div>
 
         <ion-button
           expand="block"

@@ -28,11 +28,18 @@ import {
   OPENSTREETMAP_TILE_OPTIONS,
   OPENSTREETMAP_TILE_URL,
 } from '../../core/constants/map.constants';
+import { MapFullscreenControlComponent } from '../../shared/components/map-fullscreen-control/map-fullscreen-control.component';
 
 @Component({
   selector: 'app-alerts',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, TranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    TranslateModule,
+    MapFullscreenControlComponent,
+  ],
   templateUrl: './alerts.page.html',
   styleUrls: ['./alerts.page.scss'],
 })

@@ -22,6 +22,7 @@ import {
   OPENSTREETMAP_TILE_OPTIONS,
   OPENSTREETMAP_TILE_URL,
 } from '../../core/constants/map.constants';
+import { MapFullscreenControlComponent } from '../../shared/components/map-fullscreen-control/map-fullscreen-control.component';
 
 type AlertLoadResult =
   | { id: string; status: 'success'; alert: HealthAlert }
@@ -30,7 +31,13 @@ type AlertLoadResult =
 @Component({
   selector: 'app-alert-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonicModule, TranslateModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    TranslateModule,
+    MapFullscreenControlComponent,
+  ],
   templateUrl: './alert-detail.page.html',
   styleUrls: ['./alert-detail.page.scss'],
 })

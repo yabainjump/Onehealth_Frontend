@@ -128,6 +128,8 @@
     "FILTERS": "Alert filters",
     "VERIFICATION": "Verification",
     "LIVE_MAP": "Reports map",
+    "FULLSCREEN_ENTER": "Show map in fullscreen",
+    "FULLSCREEN_EXIT": "Exit fullscreen",
     "RECENT_ALERTS": "Recent alerts",
     "REFRESH": "Refresh alerts",
     "LOAD_ERROR": "Unable to load alerts.",

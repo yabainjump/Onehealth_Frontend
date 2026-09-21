@@ -103,7 +103,11 @@
       />
     </div>
 
-    <section class="ad-map-shell" *ngIf="alert.lat !== null && alert.lng !== null">
+    <section
+      #detailMapHost
+      class="ad-map-shell ohn-map-fullscreen-host"
+      *ngIf="alert.lat !== null && alert.lng !== null"
+    >
       <div class="ad-map-heading">
         <span>
           <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
@@ -119,6 +123,11 @@
         class="ad-map"
         [attr.aria-label]="'ALERTS.LIVE_MAP' | translate"
       ></div>
+      <app-map-fullscreen-control
+        [target]="detailMapHost"
+        [enterLabel]="'ALERTS.FULLSCREEN_ENTER' | translate"
+        [exitLabel]="'ALERTS.FULLSCREEN_EXIT' | translate"
+      />
     </section>
 
     <!-- Réactions -->

@@ -128,6 +128,8 @@
     "FILTERS": "Filtres des alertes",
     "VERIFICATION": "Vérification",
     "LIVE_MAP": "Carte des signalements",
+    "FULLSCREEN_ENTER": "Afficher la carte en plein écran",
+    "FULLSCREEN_EXIT": "Quitter le plein écran",
     "RECENT_ALERTS": "Alertes récentes",
     "REFRESH": "Actualiser les alertes",
     "LOAD_ERROR": "Impossible de charger les alertes.",
