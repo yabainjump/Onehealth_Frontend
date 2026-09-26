@@ -97,15 +97,13 @@ export class LoginPage implements OnInit, AfterViewInit {
 
   onSubmit() {
     if(!this.form.valid) return;
-    console.log(this.form.value);
     this.login(this.form);
   }
 
   login(form) {
     // this.global.showLoader();
     this.isLogin = true;
-    this.authService.login(form.value.email, form.value.password).then(data => {
-      console.log(data);
+    this.authService.login(form.value.email, form.value.password).then(() => {
       this.isLogin = false;
       this.router.navigateByUrl('/tabs');
       // this.global.hideLoader();
@@ -113,7 +111,6 @@ export class LoginPage implements OnInit, AfterViewInit {
     })
     .catch(e => {
       this.isLogin = false;
-      console.log(e);
       // this.global.hideLoader();
       let msg: string = this.translate.instant('LOGIN.ERROR_GENERIC');
       if(e.code == 'auth/user-not-found') msg = this.translate.instant('LOGIN.ERROR_USER_NOT_FOUND');

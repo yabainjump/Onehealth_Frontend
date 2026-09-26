@@ -79,7 +79,7 @@ export class CertificationPage implements OnInit {
   }
 
   fileName(url: string): string {
-    return url.split('/').pop() || url;
+    return url.split('?')[0].split('/').pop() || url;
   }
 
   async handleFiles(event: any): Promise<void> {
@@ -96,7 +96,9 @@ export class CertificationPage implements OnInit {
       const uploads = await Promise.all(
         files
           .slice(0, room)
-          .map((file) => firstValueFrom(this.uploadService.uploadPost(file))),
+          .map((file) =>
+            firstValueFrom(this.uploadService.uploadCertification(file)),
+          ),
       );
       this.documents = [...this.documents, ...uploads.map((u) => u.url)];
     } catch {

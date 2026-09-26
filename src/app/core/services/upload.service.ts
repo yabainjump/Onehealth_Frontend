@@ -36,6 +36,19 @@ export class UploadService {
     );
   }
 
+  uploadCertification(file: File): Observable<UploadResponse> {
+    return from(this.prepareFile(file)).pipe(
+      switchMap((preparedFile) => {
+        const formData = new FormData();
+        formData.append('file', preparedFile);
+        return this.api.post<UploadResponse, FormData>(
+          '/upload/certification',
+          formData,
+        );
+      }),
+    );
+  }
+
   uploadMessage(file: File): Observable<UploadResponse> {
     return from(this.prepareFile(file)).pipe(
       switchMap((preparedFile) => {

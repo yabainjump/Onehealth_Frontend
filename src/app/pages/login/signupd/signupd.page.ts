@@ -47,23 +47,19 @@ export class SignupdPage {
 
   onSubmit() {
     if(!this.signupForm.valid) return;
-    console.log(this.signupForm.value);
     this.register(this.signupForm);
   }
 
   register(form) {
     // this.global.showLoader();
     this.isLoading = true;
-    console.log(form.value);
-    this.authService.register(form.value).then((data: any) => {
-      console.log(data);
+    this.authService.register(form.value).then(() => {
       this.router.navigateByUrl('/tabs', {replaceUrl: true});
       // this.global.hideLoader();
       this.isLoading = false;
       form.reset();
     })
     .catch(e => {
-      console.log(e);
       // this.global.hideLoader();
       this.isLoading = false;
       let msg: string = this.translate.instant('SIGNUPD.ERROR_GENERIC');
