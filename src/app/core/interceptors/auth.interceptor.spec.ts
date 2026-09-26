@@ -9,7 +9,7 @@ describe('isBackendApiRequest', () => {
   });
 
   it('rejects external and lookalike URLs', () => {
-    expect(isBackendApiRequest('https://api.groq.com/openai/v1', apiBaseUrl)).toBeFalse();
+    expect(isBackendApiRequest('https://openrouter.ai/api/v1/chat/completions', apiBaseUrl)).toBeFalse();
     expect(isBackendApiRequest('https://backend.example.com/api.evil/posts', apiBaseUrl)).toBeFalse();
     expect(isBackendApiRequest('/assets/i18n/fr.json', apiBaseUrl)).toBeFalse();
   });
