@@ -98,4 +98,27 @@ describe('RudolfChatComponent', () => {
     ]);
     expect(component.messages[1].content).toBe('Réponse progressive');
   });
+
+  it('submits the Rudolf prompt on Enter but keeps Shift+Enter as a line break', () => {
+    const send = spyOn(component, 'sendMessage').and.resolveTo();
+    const enter = {
+      key: 'Enter',
+      shiftKey: false,
+      isComposing: false,
+      repeat: false,
+      preventDefault: jasmine.createSpy('preventDefault'),
+    } as unknown as KeyboardEvent;
+    const shiftEnter = {
+      ...enter,
+      shiftKey: true,
+      preventDefault: jasmine.createSpy('preventDefaultShiftEnter'),
+    } as unknown as KeyboardEvent;
+
+    component.onComposerKeydown(enter);
+    component.onComposerKeydown(shiftEnter);
+
+    expect(enter.preventDefault).toHaveBeenCalledTimes(1);
+    expect(shiftEnter.preventDefault).not.toHaveBeenCalled();
+    expect(send).toHaveBeenCalledTimes(1);
+  });
 });

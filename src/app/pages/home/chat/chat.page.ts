@@ -210,7 +210,7 @@ export class ChatPage implements OnInit, OnDestroy {
   }
 
   async sendMessage() {
-    if (!this.message || this.message?.trim() == '') {
+    if (this.isLoading || !this.message || this.message.trim() === '') {
       // this.global.errorToast('Please enter a proper message', 2000);
       return;
     }
@@ -228,6 +228,21 @@ export class ChatPage implements OnInit, OnDestroy {
       );
       // this.global.errorToast();
     }
+  }
+
+  onComposerKeydown(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    if (
+      keyboardEvent.key !== 'Enter' ||
+      keyboardEvent.shiftKey ||
+      keyboardEvent.isComposing ||
+      keyboardEvent.repeat
+    ) {
+      return;
+    }
+
+    keyboardEvent.preventDefault();
+    void this.sendMessage();
   }
 
   async openOptionsMenu() {

@@ -203,6 +203,21 @@ export class RudolfChatComponent implements OnInit, OnDestroy {
     }
   }
 
+  onComposerKeydown(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    if (
+      keyboardEvent.key !== 'Enter' ||
+      keyboardEvent.shiftKey ||
+      keyboardEvent.isComposing ||
+      keyboardEvent.repeat
+    ) {
+      return;
+    }
+
+    keyboardEvent.preventDefault();
+    void this.sendMessage();
+  }
+
   useSuggestion(key: string): void {
     this.input = this.translate.instant(key);
     void this.sendMessage();

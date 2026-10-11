@@ -11,6 +11,7 @@ describe('MapFullscreenControlComponent', () => {
     fixture = TestBed.createComponent(MapFullscreenControlComponent);
     target = document.createElement('div');
     Object.defineProperty(target, 'requestFullscreen', { value: undefined });
+    Object.defineProperty(target, 'webkitRequestFullscreen', { value: undefined });
     fixture.componentRef.setInput('target', target);
     fixture.detectChanges();
   });

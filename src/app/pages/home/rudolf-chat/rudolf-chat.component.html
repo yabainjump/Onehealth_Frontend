@@ -239,7 +239,10 @@
             [placeholder]="'RUDOLF.PLACEHOLDER' | translate"
             [maxlength]="2000"
             [autoGrow]="true"
+            enterkeyhint="send"
+            aria-keyshortcuts="Enter"
             rows="1"
+            (keydown)="onComposerKeydown($event)"
           ></ion-textarea>
           <button
             type="submit"

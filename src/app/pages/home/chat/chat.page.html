@@ -147,8 +147,12 @@
         <ion-textarea
           autoGrow
           rows="1"
+          enterkeyhint="send"
+          aria-keyshortcuts="Enter"
           [placeholder]="'CHAT.MESSAGE_PLACEHOLDER' | translate"
+          [disabled]="isLoading"
           [(ngModel)]="message"
+          (keydown)="onComposerKeydown($event)"
         >
         </ion-textarea>
       </div>
